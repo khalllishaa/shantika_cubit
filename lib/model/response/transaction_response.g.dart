@@ -14,7 +14,5 @@ TransactionResponse _$TransactionResponseFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$TransactionResponseToJson(
-        TransactionResponse instance) =>
-    <String, dynamic>{
-      'transaction': instance.transaction,
-    };
+  TransactionResponse instance,
+) => <String, dynamic>{'transaction': instance.transaction};

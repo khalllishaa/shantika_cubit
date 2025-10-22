@@ -86,8 +86,7 @@ dependencies:
   flutter_pdfview: ^1.4.0
   path: ^1.9.0
   jiffy: ^6.3.2
-
-
+  uuid: ^4.2.2
 
   # State Management
   flutter_bloc: ^8.0.1

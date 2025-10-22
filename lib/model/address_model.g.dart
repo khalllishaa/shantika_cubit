@@ -7,23 +7,23 @@ part of 'address_model.dart';
 // **************************************************************************
 
 AddressModel _$AddressModelFromJson(Map<String, dynamic> json) => AddressModel(
-      id: json['id'] as String?,
-      userId: json['user_id'] as String?,
-      name: json['name'] as String?,
-      phone: json['phone'] as String?,
-      address: json['address'] as String?,
-      note: json['note'] as String?,
-      latitude: json['latitude'] as String?,
-      longitude: json['longitude'] as String?,
-      isMainAddress: json['is_main_address'] as bool?,
-      deletedAt: json['deleted_at'],
-      createdAt: json['created_at'] == null
-          ? null
-          : DateTime.parse(json['created_at'] as String),
-      updatedAt: json['updated_at'] == null
-          ? null
-          : DateTime.parse(json['updated_at'] as String),
-    );
+  id: json['id'] as String?,
+  userId: json['user_id'] as String?,
+  name: json['name'] as String?,
+  phone: json['phone'] as String?,
+  address: json['address'] as String?,
+  note: json['note'] as String?,
+  latitude: json['latitude'] as String?,
+  longitude: json['longitude'] as String?,
+  isMainAddress: json['is_main_address'] as bool?,
+  deletedAt: json['deleted_at'],
+  createdAt: json['created_at'] == null
+      ? null
+      : DateTime.parse(json['created_at'] as String),
+  updatedAt: json['updated_at'] == null
+      ? null
+      : DateTime.parse(json['updated_at'] as String),
+);
 
 Map<String, dynamic> _$AddressModelToJson(AddressModel instance) =>
     <String, dynamic>{

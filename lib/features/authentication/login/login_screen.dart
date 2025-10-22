@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nested/nested.dart';
+import 'package:shantika_cubit/features/authentication/login/cubit/login_phone_cubit.dart';
 import 'package:shantika_cubit/utility/extensions/email_validator_extension.dart';
 import 'package:shantika_cubit/utility/extensions/show_toast.dart';
-
 import '../../../config/constant.dart';
 import '../../../ui/color.dart';
 import '../../../ui/dimension.dart';
@@ -18,323 +16,199 @@ import '../../../utility/loading_overlay.dart';
 import '../../navigation/navigation_screen.dart';
 import '../password/forgot_password_screen.dart';
 import '../register/register_screen.dart';
-import 'cubit/login_apple_cubit.dart';
-import 'cubit/login_email_cubit.dart';
-import 'cubit/login_google_cubit.dart';
+// import 'cubit/login_apple_cubit.dart';
+// import 'cubit/login_email_cubit.dart';
+// import 'cubit/login_google_cubit.dart';
 
-// ignore: must_be_immutable
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
-
-  final _passwordController = TextEditingController();
-
-  ValueNotifier<bool> obscureText = ValueNotifier(false);
-
+  final _phoneController = TextEditingController();
   final _key = GlobalKey<FormState>();
-
-  late LoginEmailCubit _loginEmailCubit;
-  late LoginGoogleCubit _loginGoogleCubit;
-  late LoginAppleCubit _loginAppleCubit;
-
-  LoadingOverlay _overlay = LoadingOverlay();
-
-  @override
-  void initState() {
-    _emailController.addListener(() {
-      setState(() {});
-    });
-
-    _passwordController.addListener(() {
-      setState(() {});
-    });
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+  final LoadingOverlay _overlay = LoadingOverlay();
 
   @override
   Widget build(BuildContext context) {
-    _loginEmailCubit = context.read();
-    _loginEmailCubit.init();
+    final loginPhoneCubit = context.read<LoginPhoneCubit>()..init();
+    // final loginGoogleCubit = context.read<LoginGoogleCubit>()..init();
 
-    _loginGoogleCubit = context.read();
-    _loginGoogleCubit.init();
-
-    _loginAppleCubit = context.read();
-    _loginAppleCubit.init();
-
-    return _buildMainView();
-  }
-
-  Widget _buildMainView() {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Form(
-        key: _key,
-        child: SafeArea(
-          child: MultiBlocListener(
-            listeners: _loginListener,
-            child: Padding(
-              padding: const EdgeInsets.all(space400),
-              child: SingleChildScrollView(
+      body: Stack(
+        children: [
+          _buildBackgroundImage(),
+
+          SafeArea(
+            child: Form(
+              key: _key,
+              child: MultiBlocListener(
+                listeners: _buildLoginListeners(context, _overlay),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Selamat Datang!', style: xsMedium),
-                    const SizedBox(height: space150),
-                    const Text('Masuk Sekarang', style: lgSemiBold),
-                    const SizedBox(height: 36),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: space400),
-                        Image.asset(
-                          'assets/images/img_new_auth.png',
-                          height: 224,
-                          width: 299,
-                        ),
-                      ],
+                    Expanded(
+                      flex: 2,
+                      child: _buildLogoSection(),
                     ),
-                    const SizedBox(height: 20),
-                    CustomTextFormField(
-                      titleSection: 'Email',
-                      keyboardType: TextInputType.text,
-                      maxLines: 1,
-                      controller: _emailController,
-                      placeholder: 'Masukan email anda',
-                      validator: (input) => input.isValidEmail() ? null : "Email tidak valid",
-                    ),
-                    ValueListenableBuilder(
-                      valueListenable: obscureText,
-                      builder: (context, value, child) => CustomTextFormField(
-                        obsecureText: value,
-                        titleSection: 'Password',
-                        keyboardType: TextInputType.text,
-                        controller: _passwordController,
-                        textInputAction: TextInputAction.done,
-                        placeholder: 'Masukan Password',
-                        maxLines: 1,
-                        validator: (e) => e.isEmpty ? "Tolong diisi terlebih dahulu" : null,
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              obscureText.value = !obscureText.value;
-                            },
-                            child: SvgPicture.asset(
-                              value ? 'assets/images/ic_eye_disabled.svg' : 'assets/images/ic_eye_enabled.svg',
-                              fit: BoxFit.scaleDown,
-                            ),
-                          ),
-                        ),
+                    Expanded(
+                      flex: 3,
+                      child: _buildLoginFormSection(
+                        context,
+                        loginPhoneCubit,
+                        // loginGoogleCubit,
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
-                            );
-                          },
-                          child: Text(
-                            'Lupa Password',
-                            style: smRegular.copyWith(
-                              color: textInfo,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: space300),
-                    CustomButton(
-                      onPressed: _key.currentState?.validate() == true
-                          ? () {
-                              if (_key.currentState!.validate()) {
-                                _loginEmailCubit.login(
-                                  email: _emailController.text,
-                                  password: _passwordController.text,
-                                );
-                              }
-                            }
-                          : null,
-                      child: const Text('Masuk'),
-                    ),
-                    const SizedBox(height: space400 + 1),
-                    _buildDividerView(),
-                    const SizedBox(height: space400 + 1),
-                    _buildOtherMethodLoginView(),
-                    const SizedBox(height: space800),
-                    _buildDontHaveAccountView(),
-                    const SizedBox(height: space800),
-                    const SizedBox(height: space800),
-                    const SizedBox(height: space800),
-                    const SizedBox(height: space800),
                   ],
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  List<SingleChildWidget> get _loginListener {
-    return [
-      BlocListener<LoginEmailCubit, LoginEmailState>(
-        listener: (context, state) {
-          if (state is LoginStateEmailSuccess) {
-            _overlay.hide();
-
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationScreen(),
-                ),
-                (route) => false);
-          } else if (state is LoginStateEmailError) {
-            _overlay.hide();
-
-            context.showCustomToast(
-              position: SnackBarPosition.top,
-              title: "Error",
-              message: state.message,
-              isSuccess: false,
-            );
-          } else {
-            _overlay.show(context);
-          }
-        },
-      ),
-      BlocListener<LoginGoogleCubit, LoginGoogleState>(
-        listener: (context, state) {
-          if (state is LoginGoogleStateSuccess) {
-            _overlay.hide();
-
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationScreen(),
-                ),
-                (route) => false);
-          } else if (state is LoginGoogleStateError) {
-            _overlay.hide();
-            debugPrint(state.message);
-
-            context.showCustomToast(
-              position: SnackBarPosition.top,
-              title: "Error",
-              message: state.message,
-              isSuccess: false,
-            );
-          } else {
-            _overlay.show(context);
-          }
-        },
-      ),
-      BlocListener<LoginAppleCubit, LoginAppleState>(
-        listener: (context, state) {
-          if (state is LoginAppleStateSuccess) {
-            _overlay.hide();
-
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationScreen(),
-                ),
-                (route) => false);
-          } else if (state is LoginAppleStateError) {
-            _overlay.hide();
-            context.showCustomToast(
-              position: SnackBarPosition.top,
-              title: "Error",
-              message: state.message,
-              isSuccess: false,
-            );
-          } else {
-            _overlay.show(context);
-          }
-        },
-      ),
-    ];
-  }
-
-  Widget _buildDontHaveAccountView() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text('Belum punya akun?', style: smRegular),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => RegisterScreen()),
-            );
-          },
-          child: Text(
-            ' Daftar',
-            style: smRegular.copyWith(color: primaryColor),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildOtherMethodLoginView() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        ShadowedButton(
-          onPressed: () {
-            _loginGoogleCubit.loginGoogle();
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset('assets/images/ic_google.svg'),
-              const SizedBox(width: space150),
-              const Text('Continue With Google', style: mdMedium),
-            ],
-          ),
-        ),
-        const SizedBox(height: space400),
-        Visibility(
-          visible: Platform.isIOS,
-          child: ShadowedButton(
-            onPressed: () {
-              _loginAppleCubit.loginApple();
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset('assets/images/ic_apple.svg'),
-                const SizedBox(width: space150),
-                const Text('Continue With Apple', style: mdMedium),
-              ],
+  Widget _buildBackgroundImage() {
+    return Transform.rotate(
+      angle: -3.1416,
+      alignment: Alignment.center,
+      child: Container(
+        height: 375,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/img_banner_shantika.png'),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              secondaryColor_60,
+              BlendMode.darken,
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildDividerView() {
+  Widget _buildLogoSection() {
+    return Center(
+      child: Image.asset(
+        'assets/images/img_logo_shantika.png',
+        width: 200,
+        height: 200,
+        fit: BoxFit.contain,
+      ),
+    );
+  }
+
+  Widget _buildLoginFormSection(
+      BuildContext context,
+      LoginPhoneCubit loginPhoneCubit,
+      // LoginGoogleCubit loginGoogleCubit,
+      ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
+        ),
+      ),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: 20),
+
+            Text(
+              'Selamat Datang',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: navy800,
+              ),
+            ),
+            Text(
+              'di Aplikasi Customer New Shantika',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[700],
+              ),
+            ),
+            SizedBox(height: 32),
+
+            CustomTextFormField(
+              titleSection: 'Nomor Telepon',
+              keyboardType: TextInputType.phone,
+              maxLines: 1,
+              controller: _phoneController,
+              placeholder: 'Masukan nomor telepon anda',
+              validator: (input) =>
+              input?.isEmpty == true ? "Nomor telepon tidak boleh kosong" : null,
+            ),
+            SizedBox(height: 24),
+
+            CustomButton(
+              onPressed: () {
+                if (_key.currentState!.validate()) {
+                  loginPhoneCubit.login(phone: _phoneController.text);
+                }
+              },
+              child: const Text('Masuk'),
+            ),
+            SizedBox(height: 24),
+
+            _buildDivider(),
+            SizedBox(height: 24),
+
+            ShadowedButton(
+              onPressed: () {
+                // loginGoogleCubit.loginGoogle();
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset('assets/images/ic_google.svg'),
+                  const SizedBox(width: space150),
+                  const Text('masuk dengan google', style: mdMedium),
+                ],
+              ),
+            ),
+            SizedBox(height: 24),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'belum punya akun? ',
+                  style: smRegular.copyWith(color: Colors.grey[600]),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterScreen()),
+                    );
+                  },
+                  child: Text(
+                    'Daftar',
+                    style: smRegular.copyWith(
+                      color: primaryColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Text(
+                  ' sekarang',
+                  style: smRegular.copyWith(color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
     return Row(
       children: [
         Expanded(
@@ -343,9 +217,13 @@ class _LoginScreenState extends State<LoginScreen> {
             color: borderNeutralLight.withOpacity(0.10),
           ),
         ),
-        const SizedBox(width: space150),
-        const Text('Atau', style: xsRegular),
-        const SizedBox(width: space150),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'atau masuk dengan google',
+            style: xsRegular.copyWith(color: Colors.grey[600]),
+          ),
+        ),
         Expanded(
           child: Container(
             height: 1,
@@ -354,5 +232,58 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ],
     );
+  }
+
+  List<SingleChildWidget> _buildLoginListeners(
+      BuildContext context,
+      LoadingOverlay overlay,
+      ) {
+    return [
+      BlocListener<LoginPhoneCubit, LoginPhoneState>(
+        listener: (context, state) {
+          if (state is LoginPhoneStateSuccess) {
+            overlay.hide();
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => NavigationScreen()),
+                  (route) => false,
+            );
+          } else if (state is LoginPhoneStateError) {
+            overlay.hide();
+            context.showCustomToast(
+              position: SnackBarPosition.top,
+              title: "Error",
+              message: state.message,
+              isSuccess: false,
+            );
+          } else if (state is LoginPhoneStateLoading) {
+            overlay.show(context);
+          }
+        },
+      ),
+
+      // BlocListener<LoginGoogleCubit, LoginGoogleState>(
+      //   listener: (context, state) {
+      //     if (state is LoginGoogleStateSuccess) {
+      //       overlay.hide();
+      //       Navigator.pushAndRemoveUntil(
+      //         context,
+      //         MaterialPageRoute(builder: (context) => NavigationScreen()),
+      //             (route) => false,
+      //       );
+      //     } else if (state is LoginGoogleStateError) {
+      //       overlay.hide();
+      //       context.showCustomToast(
+      //         position: SnackBarPosition.top,
+      //         title: "Error",
+      //         message: state.message,
+      //         isSuccess: false,
+      //       );
+      //     } else if (state is LoginGoogleStateLoading) {
+      //       overlay.show(context);
+      //     }
+      //   },
+      // ),
+    ];
   }
 }

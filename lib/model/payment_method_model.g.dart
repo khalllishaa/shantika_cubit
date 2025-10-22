@@ -35,33 +35,33 @@ Map<String, dynamic> _$PaymentMethodModelToJson(PaymentMethodModel instance) =>
     };
 
 OfflinePaymentMethodModel _$OfflinePaymentMethodModelFromJson(
-        Map<String, dynamic> json) =>
-    OfflinePaymentMethodModel(
-      id: json['id'] as String?,
-      owner: json['owner'] as String?,
-      bankAccount: json['bank_account'] as String?,
-      bankAccountNumber: json['bank_account_number'] as String?,
-      deletedAt: json['deleted_at'],
-      createdAt: json['created_at'] == null
-          ? null
-          : DateTime.parse(json['created_at'] as String),
-      updatedAt: json['updated_at'] == null
-          ? null
-          : DateTime.parse(json['updated_at'] as String),
-      translatedBankAccount: json['translated_bank_account'] as String?,
-      thumbnail: json['thumbnail'] as String?,
-    );
+  Map<String, dynamic> json,
+) => OfflinePaymentMethodModel(
+  id: json['id'] as String?,
+  owner: json['owner'] as String?,
+  bankAccount: json['bank_account'] as String?,
+  bankAccountNumber: json['bank_account_number'] as String?,
+  deletedAt: json['deleted_at'],
+  createdAt: json['created_at'] == null
+      ? null
+      : DateTime.parse(json['created_at'] as String),
+  updatedAt: json['updated_at'] == null
+      ? null
+      : DateTime.parse(json['updated_at'] as String),
+  translatedBankAccount: json['translated_bank_account'] as String?,
+  thumbnail: json['thumbnail'] as String?,
+);
 
 Map<String, dynamic> _$OfflinePaymentMethodModelToJson(
-        OfflinePaymentMethodModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'owner': instance.owner,
-      'bank_account': instance.bankAccount,
-      'bank_account_number': instance.bankAccountNumber,
-      'deleted_at': instance.deletedAt,
-      'created_at': instance.createdAt?.toIso8601String(),
-      'updated_at': instance.updatedAt?.toIso8601String(),
-      'translated_bank_account': instance.translatedBankAccount,
-      'thumbnail': instance.thumbnail,
-    };
+  OfflinePaymentMethodModel instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'owner': instance.owner,
+  'bank_account': instance.bankAccount,
+  'bank_account_number': instance.bankAccountNumber,
+  'deleted_at': instance.deletedAt,
+  'created_at': instance.createdAt?.toIso8601String(),
+  'updated_at': instance.updatedAt?.toIso8601String(),
+  'translated_bank_account': instance.translatedBankAccount,
+  'thumbnail': instance.thumbnail,
+};

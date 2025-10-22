@@ -27,7 +27,7 @@ class CustomButton extends StatelessWidget {
     this.textColorDisabled = textDisabled,
     this.maximumSize,
     this.minimumSize,
-    this.backgroundColor = bgFillPrimary,
+    this.backgroundColor = bgButtonInfoPressed,
     this.border,
     this.disabledColor = bgDisabled,
     this.width,

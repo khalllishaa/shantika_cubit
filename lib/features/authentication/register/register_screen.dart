@@ -1,229 +1,208 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:shantika_cubit/utility/extensions/email_validator_extension.dart';
 import 'package:shantika_cubit/utility/extensions/show_toast.dart';
 
 import '../../../config/constant.dart';
 import '../../../ui/color.dart';
-import '../../../ui/dimension.dart';
 import '../../../ui/shared_widget/custom_button.dart';
 import '../../../ui/shared_widget/custom_checkbox.dart';
-import '../../../ui/shared_widget/custom_text_form_field.dart';
-import '../../../ui/shared_widget/shadowed_button.dart';
 import '../../../ui/typography.dart';
 import '../../../utility/loading_overlay.dart';
 import '../../navigation/navigation_screen.dart';
-import '../login/login_screen.dart';
 import 'cubit/register_cubit.dart';
-// ignore: must_be_immutable
-class RegisterScreen extends StatefulWidget {
+import 'package:uuid/uuid.dart';
+
+class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
 
-  @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
-}
-
-class _RegisterScreenState extends State<RegisterScreen> {
-  final _firstNameController = TextEditingController();
-
-  final _lastNameController = TextEditingController();
-
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
+  final _birthPlaceController = TextEditingController();
+  final _birthDateController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _idTypeController = TextEditingController();
+  final _idNumberController = TextEditingController();
 
-  final _passwordController = TextEditingController();
-
-  ValueNotifier<bool> obscureText = ValueNotifier(false);
-
-  ValueNotifier<bool> isAgreementChecked = ValueNotifier(false);
+  final ValueNotifier<String> selectedGender = ValueNotifier('Pria');
+  final ValueNotifier<bool> isAgreementChecked = ValueNotifier(false);
 
   final _key = GlobalKey<FormState>();
-
-  late RegisterCubit _registerCubit;
-
-  LoadingOverlay _overlay = LoadingOverlay();
-
-  @override
-  void initState() {
-    _firstNameController.addListener(() {
-      setState(() {});
-    });
-
-    _lastNameController.addListener(() {
-      setState(() {});
-    });
-
-    _emailController.addListener(() {
-      setState(() {});
-    });
-
-    _passwordController.addListener(() {
-      setState(() {});
-    });
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _lastNameController.dispose();
-    _firstNameController.dispose();
-    super.dispose();
-  }
+  final LoadingOverlay _overlay = LoadingOverlay();
 
   @override
   Widget build(BuildContext context) {
-    _registerCubit = context.read();
-    _registerCubit.init();
+    final registerCubit = context.read<RegisterCubit>();
+    registerCubit.init();
 
-    return _buildMainView();
-  }
-
-  Widget _buildMainView() {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leadingWidth: 60.5,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 27.5),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black, size: 20),
+            onPressed: () => Navigator.pop(context),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ),
+        titleSpacing: 33,
+        title: const Text(
+          'Daftar',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
       body: Form(
         key: _key,
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(space400),
-            child: SingleChildScrollView(
-              child: BlocListener<RegisterCubit, RegisterState>(
-                listener: (context, state) {
-                  if (state is RegisterStateLoading) {
-                    _overlay.show(context);
-                  } else if (state is RegisterStateSuccess) {
-                    _overlay.hide();
+        child: BlocListener<RegisterCubit, RegisterState>(
+          listener: (context, state) {
+            if (state is RegisterStateLoading) {
+              _overlay.show(context);
+            } else if (state is RegisterStateSuccess) {
+              _overlay.hide();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationScreen(),
+                ),
+                    (route) => false,
+              );
+            } else if (state is RegisterStateError) {
+              _overlay.hide();
+              context.showCustomToast(
+                position: SnackBarPosition.top,
+                title: "Oopss",
+                message: state.message,
+                isSuccess: false,
+              );
+            }
+          },
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Nama Lengkap
+                _buildTextField(
+                  label: 'Nama Lengkap',
+                  controller: _nameController,
+                  validator: (val) => val?.isEmpty == true ? 'Nama lengkap harus diisi' : null,
+                ),
+                const SizedBox(height: 16),
 
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NavigationScreen(),
-                        ),
-                        (route) => false);
-                  } else if (state is RegisterStateError) {
-                    _overlay.hide();
-                    context.showCustomToast(
-                      position: SnackBarPosition.top,
-                      title: "Oopss",
-                      message: state.message,
-                      isSuccess: false,
-                    );
-                  }
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                // Nomor Telepon
+                _buildTextField(
+                  label: 'Nomor Telepon',
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  validator: (val) => val?.isEmpty == true ? 'Nomor telepon harus diisi' : null,
+                ),
+                const SizedBox(height: 16),
+
+                // Email
+                _buildTextField(
+                  label: 'Email',
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (val) => val?.isValidEmail() == false ? 'Email tidak valid' : null,
+                ),
+                const SizedBox(height: 16),
+
+                // Tempat & Tanggal Lahir
+                Row(
                   children: [
-                    const Text('Selamat Datang!', style: xsMedium),
-                    const SizedBox(height: space150),
-                    const Text('Daftarkan Sekarang', style: lgSemiBold),
-                    const SizedBox(height: 36),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: space400),
-                        Image.asset(
-                          'assets/images/img_new_auth.png',
-                          height: 224,
-                          width: 299,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextFormField(
-                            titleSection: 'Nama Depan',
-                            keyboardType: TextInputType.text,
-                            maxLines: 1,
-                            controller: _firstNameController,
-                            placeholder: 'Masukan Nama',
-                            validator: (input) => input.isNotEmpty ? null : "Nama depan harus diisi",
-                          ),
-                        ),
-                        const SizedBox(width: space400),
-                        Expanded(
-                          child: CustomTextFormField(
-                            titleSection: 'Nama Belakang',
-                            keyboardType: TextInputType.text,
-                            maxLines: 1,
-                            controller: _lastNameController,
-                            placeholder: 'Masukan Nama',
-                            validator: (input) => input.isNotEmpty ? null : "Nama belakang harus diisi",
-                          ),
-                        ),
-                      ],
-                    ),
-                    CustomTextFormField(
-                      titleSection: 'Email',
-                      keyboardType: TextInputType.text,
-                      maxLines: 1,
-                      controller: _emailController,
-                      placeholder: 'Masukan email anda',
-                      validator: (input) => input.isValidEmail() ? null : "Email tidak valid",
-                    ),
-                    ValueListenableBuilder(
-                      valueListenable: obscureText,
-                      builder: (context, value, child) => CustomTextFormField(
-                        obsecureText: value,
-                        titleSection: 'Password',
-                        keyboardType: TextInputType.text,
-                        controller: _passwordController,
-                        textInputAction: TextInputAction.done,
-                        placeholder: 'Masukan Password',
-                        maxLines: 1,
-                        validator: (e) => e.isEmpty ? "Tolong diisi terlebih dahulu" : null,
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              obscureText.value = !obscureText.value;
-                            },
-                            child: SvgPicture.asset(
-                              value ? 'assets/images/ic_eye_disabled.svg' : 'assets/images/ic_eye_enabled.svg',
-                              fit: BoxFit.scaleDown,
-                            ),
-                          ),
-                        ),
+                    Expanded(
+                      child: _buildTextField(
+                        label: 'Tempat Lahir',
+                        controller: _birthPlaceController,
+                        validator: (val) => val?.isEmpty == true ? 'Tempat lahir harus diisi' : null,
                       ),
                     ),
-                    const SizedBox(height: space300),
-                    _buildTermsAndConditionView(),
-                    const SizedBox(height: space300),
-                    CustomButton(
-                      onPressed: (_key.currentState?.validate() == true) && isAgreementChecked.value
-                          ? () {
-                              if (_key.currentState!.validate()) {
-                                _registerCubit.register(
-                                  firstName: _firstNameController.text,
-                                  lastName: _lastNameController.text,
-                                  email: _emailController.text,
-                                  password: _passwordController.text,
-                                  confirmPassword: _passwordController.text,
-                                );
-                              }
-                            }
-                          : null,
-                      child: const Text('Daftar'),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildDateField(
+                        label: 'Tanggal Lahir',
+                        controller: _birthDateController,
+                        context: context,
+                      ),
                     ),
-                    const SizedBox(height: space400 + 1),
-                    _buildDividerView(),
-                    const SizedBox(height: space400 + 1),
-                    _buildOtherMethodLoginView(),
-                    const SizedBox(height: space800),
-                    _buildHaveAnAccountView(),
-                    const SizedBox(height: space800),
-                    const SizedBox(height: space800),
-                    const SizedBox(height: space800),
-                    const SizedBox(height: space800),
                   ],
                 ),
-              ),
+                const SizedBox(height: 16),
+
+                // Gender
+                _buildGenderSelector(),
+                const SizedBox(height: 16),
+
+                // Alamat Lengkap
+                _buildTextField(
+                  label: 'Alamat Lengkap',
+                  controller: _addressController,
+                  maxLines: 3,
+                  validator: (val) => val?.isEmpty == true ? 'Alamat harus diisi' : null,
+                ),
+                const SizedBox(height: 16),
+
+                // Jenis Kartu Identitas
+                _buildTextField(
+                  label: 'Jenis Kartu Identitas',
+                  controller: _idTypeController,
+                  validator: (val) => val?.isEmpty == true ? 'Jenis kartu identitas harus diisi' : null,
+                ),
+                const SizedBox(height: 16),
+
+                // Nomor Kartu Identitas
+                _buildTextField(
+                  label: 'Nomor Kartu Identitas',
+                  controller: _idNumberController,
+                  keyboardType: TextInputType.number,
+                  validator: (val) => val?.isEmpty == true ? 'Nomor kartu identitas harus diisi' : null,
+                ),
+                const SizedBox(height: 24),
+
+                // Terms & Conditions Checkbox
+                _buildTermsAndConditionView(),
+                const SizedBox(height: 24),
+
+                // Register Button
+                ValueListenableBuilder(
+                  valueListenable: isAgreementChecked,
+                  builder: (context, isChecked, _) {
+                    return CustomButton(
+                        onPressed: isChecked
+                            ? () {
+                          if (_key.currentState?.validate() == true) {
+                            final birthDate = _parseDateToApi(_birthDateController.text);
+
+                            // 🔹 Generate UUID unik
+                            final uuid = const Uuid().v4();
+
+                            registerCubit.register(
+                              uuid: uuid,
+                              name: _nameController.text,
+                              email: _emailController.text,
+                              phone: _phoneController.text,
+                              birth: birthDate,
+                              birthPlace: _birthPlaceController.text,
+                              gender: selectedGender.value == 'Pria' ? 'Male' : 'Female',
+                            );
+                          }
+                        }
+                        : null,
+                      child: const Text('Daftar'),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ),
@@ -231,95 +210,77 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Row _buildTermsAndConditionView() {
-    return Row(
-      children: [
-        ValueListenableBuilder(
-          valueListenable: isAgreementChecked,
-          builder: (context, value, child) => CustomCheckbox(
-            value: value,
-            onChanged: (e) {
-              isAgreementChecked.value = e;
-              setState(() {});
-            },
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            'Dengan mendaftar, Anda menyetujui Syarat & Ketentuan serta Kebijakan Privasi dari GARDA',
-            style: smRegular.copyWith(color: textDarkPrimary),
-            textAlign: TextAlign.start,
-            // maxLines: 2,
-            // overflow: TextOverflow.ellipsis,
-          ),
-        )
-        // Text.rich(
-        //   overflow: TextOverflow.visible,
-        //   TextSpan(
-        //     style: smRegular,
-        //     text: 'Saya menyetujui Syarat & Ketentuan\n',
-        //     children: <InlineSpan>[
-        //       TextSpan(
-        //         text: 'Dengan mendaftar, Anda menyetujui Syarat &\nKetentuan serta Kebijakan Privasi yang berlaku.',
-        //         style: smRegular.copyWith(color: textDarkSecondary),
-        //       )
-        //     ],
-        //   ),
-        // ),
-      ],
-    );
+  // Helper function untuk convert tanggal dari DD/MM/YYYY ke YYYY-MM-DD
+  String _parseDateToApi(String dateStr) {
+    try {
+      final parts = dateStr.split('/');
+      if (parts.length == 3) {
+        final day = parts[0].padLeft(2, '0');
+        final month = parts[1].padLeft(2, '0');
+        final year = parts[2];
+        return '$year-$month-$day'; // Format: YYYY-MM-DD
+      }
+      return dateStr;
+    } catch (e) {
+      return dateStr;
+    }
   }
 
-  Widget _buildHaveAnAccountView() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text('Sudah punya akun?', style: smRegular),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-          },
-          child: Text(
-            ' Masuk',
-            style: smRegular.copyWith(color: primaryColor),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildOtherMethodLoginView() {
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    TextInputType? keyboardType,
+    int maxLines = 1,
+    String? Function(String?)? validator,
+  }) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ShadowedButton(
-          onPressed: () {
-            _registerCubit.registerWithGoogle();
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset('assets/images/ic_google.svg'),
-              const SizedBox(width: space150),
-              const Text('Continue With Google', style: mdMedium),
+        RichText(
+          text: TextSpan(
+            text: label,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Color(0xFF1F2937),
+              fontWeight: FontWeight.w500,
+            ),
+            children: const [
+              TextSpan(
+                text: ' *',
+                style: TextStyle(color: Colors.red),
+              ),
             ],
           ),
         ),
-        const SizedBox(height: space400),
-        Visibility(
-          visible: Platform.isIOS,
-          child: ShadowedButton(
-            onPressed: () {
-              _registerCubit.registerWithApple();
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset('assets/images/ic_apple.svg'),
-                const SizedBox(width: space150),
-                const Text('Continue With Apple', style: mdMedium),
-              ],
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          maxLines: maxLines,
+          validator: validator,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.red, width: 2),
             ),
           ),
         ),
@@ -327,25 +288,175 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildDividerView() {
-    return Row(
+  Widget _buildDateField({
+    required String label,
+    required TextEditingController controller,
+    required BuildContext context,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Container(
-            height: 1,
-            color: borderNeutralLight.withOpacity(0.10),
+        RichText(
+          text: TextSpan(
+            text: label,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Color(0xFF1F2937),
+              fontWeight: FontWeight.w500,
+            ),
+            children: const [
+              TextSpan(
+                text: ' *',
+                style: TextStyle(color: Colors.red),
+              ),
+            ],
           ),
         ),
-        const SizedBox(width: space150),
-        const Text('Atau', style: xsRegular),
-        const SizedBox(width: space150),
-        Expanded(
-          child: Container(
-            height: 1,
-            color: borderNeutralLight.withOpacity(0.10),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          readOnly: true,
+          validator: (val) => val?.isEmpty == true ? 'Tanggal lahir harus diisi' : null,
+          onTap: () async {
+            final date = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now().subtract(const Duration(days: 365 * 17)),
+              firstDate: DateTime(1900),
+              lastDate: DateTime.now(),
+            );
+            if (date != null) {
+              controller.text = '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+            }
+          },
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            suffixIcon: const Icon(Icons.calendar_today, size: 20, color: Color(0xFF9CA3AF)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.red),
+            ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildGenderSelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Gender',
+          style: TextStyle(
+            fontSize: 14,
+            color: Color(0xFF1F2937),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ValueListenableBuilder(
+          valueListenable: selectedGender,
+          builder: (context, gender, _) {
+            return Row(
+              children: [
+                Expanded(
+                  child: _buildGenderOption('Pria', gender == 'Pria'),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildGenderOption('Wanita', gender == 'Wanita'),
+                ),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGenderOption(String label, bool isSelected) {
+    return GestureDetector(
+      onTap: () => selectedGender.value = label,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF1E3A8A) : Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? const Color(0xFF1E3A8A) : const Color(0xFFE5E7EB),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? Colors.white : const Color(0xFFE5E7EB),
+              ),
+              child: Center(
+                child: Icon(
+                  label == 'Pria' ? Icons.male : Icons.female,
+                  size: 14,
+                  color: isSelected ? const Color(0xFF1E3A8A) : const Color(0xFF6B7280),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: isSelected ? Colors.white : const Color(0xFF1F2937),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTermsAndConditionView() {
+    return ValueListenableBuilder(
+      valueListenable: isAgreementChecked,
+      builder: (context, isChecked, _) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomCheckbox(
+              value: isChecked,
+              onChanged: (value) {
+                isAgreementChecked.value = value;
+              },
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Dengan mendaftar, Anda menyetujui Syarat & Ketentuan serta Kebijakan Privasi dari New Shantika',
+                style: smRegular.copyWith(color: textDarkPrimary),
+                textAlign: TextAlign.start,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

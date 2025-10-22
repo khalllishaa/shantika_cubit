@@ -6,11 +6,11 @@ part of 'api_service.dart';
 // RetrofitGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations
+// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter
 
 class _ApiService implements ApiService {
   _ApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'https://backoffice-garda.can.co.id/api/v1';
+    baseUrl ??= 'https://sandbox.newshantika.co.id/api/v1';
   }
 
   final Dio _dio;
@@ -18,6 +18,94 @@ class _ApiService implements ApiService {
   String? baseUrl;
 
   final ParseErrorLogger? errorLogger;
+
+  @override
+  Future<HttpResponse<AuthResponse>> registerr({
+    required String name,
+    required String email,
+    required String phone,
+    File? avatar,
+    required String birth,
+    required String birth_place,
+    required String gender,
+    String? uuid,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('name', name));
+    _data.fields.add(MapEntry('email', email));
+    _data.fields.add(MapEntry('phone', phone));
+    if (avatar != null) {
+      if (avatar != null) {
+        _data.files.add(
+          MapEntry(
+            'avatar',
+            MultipartFile.fromFileSync(
+              avatar.path,
+              filename: avatar.path.split(Platform.pathSeparator).last,
+            ),
+          ),
+        );
+      }
+    }
+    _data.fields.add(MapEntry('birth', birth));
+    _data.fields.add(MapEntry('birth_place', birth_place));
+    _data.fields.add(MapEntry('gender', gender));
+    if (uuid != null) {
+      _data.fields.add(MapEntry('uuid', uuid));
+    }
+    final _options = _setStreamType<HttpResponse<AuthResponse>>(
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            '/customer/registration',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AuthResponse _value;
+    try {
+      _value = AuthResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<dynamic>> loginByPhone({required String phone}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('phone', phone));
+    final _options = _setStreamType<HttpResponse<dynamic>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/customer/login/phone',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
 
   @override
   Future<HttpResponse<ApiResponse<AuthResponse>>> register({
@@ -315,10 +403,10 @@ class _ApiService implements ApiService {
         _result.data!,
         (json) => json is List<dynamic>
             ? json
-                .map<FaqModel>(
-                  (i) => FaqModel.fromJson(i as Map<String, dynamic>),
-                )
-                .toList()
+                  .map<FaqModel>(
+                    (i) => FaqModel.fromJson(i as Map<String, dynamic>),
+                  )
+                  .toList()
             : List.empty(),
       );
     } on Object catch (e, s) {
@@ -331,24 +419,24 @@ class _ApiService implements ApiService {
 
   @override
   Future<HttpResponse<ApiResponse<TermsConditionsModel>>>
-      termConditions() async {
+  termConditions() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =
         _setStreamType<HttpResponse<ApiResponse<TermsConditionsModel>>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/information/term-and-condition',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(
-            baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
-          ),
-    );
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/information/term-and-condition',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late ApiResponse<TermsConditionsModel> _value;
     try {
@@ -372,17 +460,17 @@ class _ApiService implements ApiService {
     const Map<String, dynamic>? _data = null;
     final _options =
         _setStreamType<HttpResponse<ApiResponse<PrivacyPolicyModel>>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/information/privacy-policy',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(
-            baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
-          ),
-    );
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/information/privacy-policy',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late ApiResponse<PrivacyPolicyModel> _value;
     try {
@@ -640,11 +728,11 @@ class _ApiService implements ApiService {
     _data.fields.add(MapEntry('email', email));
     final _options = _setStreamType<HttpResponse<ApiResponse<UserModel>>>(
       Options(
-        method: 'POST',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
           .compose(
             _dio.options,
             '/profile/update',
@@ -780,15 +868,17 @@ class _ApiService implements ApiService {
     const Map<String, dynamic>? _data = null;
     final _options =
         _setStreamType<HttpResponse<ApiResponse<ArticleDetailResponse>>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/article/${slug}',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/article/${slug}',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late ApiResponse<ArticleDetailResponse> _value;
     try {
@@ -1053,17 +1143,17 @@ class _ApiService implements ApiService {
     const Map<String, dynamic>? _data = null;
     final _options =
         _setStreamType<HttpResponse<ApiResponse<GuardTypeResponse>>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/guard-types/${guardTypeId}',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(
-            baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
-          ),
-    );
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/guard-types/${guardTypeId}',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late ApiResponse<GuardTypeResponse> _value;
     try {
@@ -1127,15 +1217,17 @@ class _ApiService implements ApiService {
     const Map<String, dynamic>? _data = null;
     final _options =
         _setStreamType<HttpResponse<ApiResponse<List<AddressModel>>>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/profile/address',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/profile/address',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late ApiResponse<List<AddressModel>> _value;
     try {
@@ -1143,10 +1235,10 @@ class _ApiService implements ApiService {
         _result.data!,
         (json) => json is List<dynamic>
             ? json
-                .map<AddressModel>(
-                  (i) => AddressModel.fromJson(i as Map<String, dynamic>),
-                )
-                .toList()
+                  .map<AddressModel>(
+                    (i) => AddressModel.fromJson(i as Map<String, dynamic>),
+                  )
+                  .toList()
             : List.empty(),
       );
     } on Object catch (e, s) {
@@ -1281,22 +1373,24 @@ class _ApiService implements ApiService {
 
   @override
   Future<HttpResponse<ApiResponse<PaymentMethodResponse>>>
-      paymentMethods() async {
+  paymentMethods() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =
         _setStreamType<HttpResponse<ApiResponse<PaymentMethodResponse>>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/payment_method',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/payment_method',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late ApiResponse<PaymentMethodResponse> _value;
     try {
@@ -1460,17 +1554,17 @@ class _ApiService implements ApiService {
     const Map<String, dynamic>? _data = null;
     final _options =
         _setStreamType<HttpResponse<ApiResponse<TransactionResponse>>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/transaction',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(
-            baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
-          ),
-    );
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/transaction',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late ApiResponse<TransactionResponse> _value;
     try {
@@ -1488,24 +1582,24 @@ class _ApiService implements ApiService {
 
   @override
   Future<HttpResponse<ApiResponse<TransactionDetailResponse>>>
-      detailTransaction({required String id}) async {
+  detailTransaction({required String id}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =
         _setStreamType<HttpResponse<ApiResponse<TransactionDetailResponse>>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/transaction/${id}',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(
-            baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
-          ),
-    );
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/transaction/${id}',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late ApiResponse<TransactionDetailResponse> _value;
     try {
@@ -1592,24 +1686,24 @@ class _ApiService implements ApiService {
 
   @override
   Future<HttpResponse<ApiResponse<ApplicationModel>>>
-      informationApplication() async {
+  informationApplication() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =
         _setStreamType<HttpResponse<ApiResponse<ApplicationModel>>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/information/application',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(
-            baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
-          ),
-    );
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/information/application',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late ApiResponse<ApplicationModel> _value;
     try {
@@ -1627,24 +1721,24 @@ class _ApiService implements ApiService {
 
   @override
   Future<HttpResponse<ApiResponse<List<EquipmentSupportModel>>>>
-      equipmentSupports() async {
+  equipmentSupports() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =
         _setStreamType<HttpResponse<ApiResponse<List<EquipmentSupportModel>>>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/guard-types/guard/security-equipment',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(
-            baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
-          ),
-    );
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/guard-types/guard/security-equipment',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late ApiResponse<List<EquipmentSupportModel>> _value;
     try {
@@ -1652,12 +1746,12 @@ class _ApiService implements ApiService {
         _result.data!,
         (json) => json is List<dynamic>
             ? json
-                .map<EquipmentSupportModel>(
-                  (i) => EquipmentSupportModel.fromJson(
-                    i as Map<String, dynamic>,
-                  ),
-                )
-                .toList()
+                  .map<EquipmentSupportModel>(
+                    (i) => EquipmentSupportModel.fromJson(
+                      i as Map<String, dynamic>,
+                    ),
+                  )
+                  .toList()
             : List.empty(),
       );
     } on Object catch (e, s) {
@@ -1670,7 +1764,7 @@ class _ApiService implements ApiService {
 
   @override
   Future<HttpResponse<ApiResponse<HistoryAssignmentResponse>>>
-      historyAssignment({String? status}) async {
+  historyAssignment({String? status}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'status': status};
     queryParameters.removeWhere((k, v) => v == null);
@@ -1678,15 +1772,17 @@ class _ApiService implements ApiService {
     const Map<String, dynamic>? _data = null;
     final _options =
         _setStreamType<HttpResponse<ApiResponse<HistoryAssignmentResponse>>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/guard-histories',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/guard-histories',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late ApiResponse<HistoryAssignmentResponse> _value;
     try {
@@ -1705,24 +1801,24 @@ class _ApiService implements ApiService {
 
   @override
   Future<HttpResponse<ApiResponse<DetailAssignmentHistoryModel>>>
-      detailHistoryAssignment({required String id}) async {
+  detailHistoryAssignment({required String id}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =
         _setStreamType<HttpResponse<ApiResponse<DetailAssignmentHistoryModel>>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/guard-histories/${id}',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(
-            baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
-          ),
-    );
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/guard-histories/${id}',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late ApiResponse<DetailAssignmentHistoryModel> _value;
     try {
@@ -1793,11 +1889,11 @@ class _ApiService implements ApiService {
     _data.fields.add(MapEntry('review', review));
     final _options = _setStreamType<HttpResponse<ApiResponse<dynamic>>>(
       Options(
-        method: 'POST',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
           .compose(
             _dio.options,
             '/guard-histories/${id}/review',
@@ -1840,11 +1936,11 @@ class _ApiService implements ApiService {
     _data.fields.add(MapEntry('review', review));
     final _options = _setStreamType<HttpResponse<ApiResponse<dynamic>>>(
       Options(
-        method: 'POST',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
           .compose(
             _dio.options,
             '/guard-histories/${id}/review/update',
@@ -1878,15 +1974,17 @@ class _ApiService implements ApiService {
     const Map<String, dynamic>? _data = null;
     final _options =
         _setStreamType<HttpResponse<ApiResponse<NotificationsResponse>>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/notification',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/notification',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late ApiResponse<NotificationsResponse> _value;
     try {
