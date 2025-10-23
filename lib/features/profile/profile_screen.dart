@@ -9,10 +9,13 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:with_space_between/with_space_between.dart';
 
 import '../../config/constant.dart';
+import '../../config/service_locator.dart';
+import '../../config/user_preference.dart';
 import '../../model/user_model.dart';
 import '../../ui/color.dart';
 import '../../ui/dimension.dart';
 import '../../ui/shared_widget/circle_image_view.dart';
+import '../../ui/shared_widget/custom_button.dart';
 import '../../ui/shared_widget/custom_card.dart';
 import '../../ui/shared_widget/error_view.dart';
 import '../../ui/shared_widget/reuse_menu_profile.dart';
@@ -39,101 +42,109 @@ class ProfileScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: space050),
-
-              // Profile Picture
+              SizedBox(height: space800),
               CircleAvatar(
                 radius: 50,
                 backgroundImage: AssetImage('assets/images/img_profil_default.jpg'),
                 backgroundColor: black500,
               ),
-              SizedBox(height: space050),
-
-              // Name
+              SizedBox(height: spacing5),
               Text(
                 "Anastasya Carolina",
-                style: xlSemiBold,
+                style: mdBold,
               ),
-              SizedBox(height: space050),
-
-              // Phone Number
+              SizedBox(height: space150),
               Text(
                 "087374543899",
-                style: xlSemiBold,
+                style: smMedium.copyWith(color: black400),
               ),
-              SizedBox(height: space050),
-
-              // Menu Items
+              SizedBox(height: spacing7),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: padding16),
+                padding: EdgeInsets.symmetric(horizontal: padding20),
                 child: Column(
                   children: [
                     _menuItem(
-                      svgIcon: 'assets/images/ic_calendar.svg',
+                      svgIcon: 'assets/icons/profile_outline.svg',
                       text: "Informasi Pribadi",
                       onTap: () {
                         // Get.to(() => InformasiPribadiPage());
                       },
                     ),
-                    SizedBox(height: space050),
+                    SizedBox(height: spacing4),
 
                     _menuItem(
-                      svgIcon: 'assets/images/ic_calendar.svg',
+                      svgIcon: 'assets/icons/notif.svg',
                       text: "Notifikasi",
                       onTap: () {
                         // Get.to(() => NotifikasiPage());
                       },
                     ),
-                    SizedBox(height: space050),
+                    SizedBox(height: spacing4),
 
                     _menuItem(
-                      svgIcon: 'assets/images/ic_calendar.svg',
+                      svgIcon: 'assets/icons/info.svg',
                       text: "Tentang Kami",
                       onTap: () {
                         // Get.to(() => TentangKamiPage());
                       },
                     ),
-                    SizedBox(height: space050),
+                    SizedBox(height: spacing4),
 
                     _menuItem(
-                      svgIcon: 'assets/images/ic_calendar.svg',
+                      svgIcon: 'assets/icons/check.svg',
                       text: "Kebijakan Privasi",
                       onTap: () {
                         // Get.to(() => KebijakanPrivasiPage());
                       },
                     ),
-                    SizedBox(height: space050),
+                    SizedBox(height: spacing4),
 
                     _menuItem(
-                      svgIcon: 'assets/images/ic_calendar.svg',
+                      svgIcon: 'assets/icons/note.svg',
                       text: "Syarat dan Ketentuan",
                       onTap: () {
                         // Get.to(() => SnkPage());
                       },
                     ),
-                    SizedBox(height: space050),
+                    SizedBox(height: spacing4),
 
                     _menuItem(
-                      svgIcon: 'assets/images/ic_calendar.svg',
+                      svgIcon: 'assets/icons/faq.svg',
                       text: "FAQ",
                       onTap: () {
                         // Get.to(() => FAQPage());
                       },
                     ),
-                    SizedBox(height: space050),
+                    SizedBox(height: spacing4),
 
                     _menuItem(
-                      svgIcon: 'assets/images/ic_calendar.svg',
+                      svgIcon: 'assets/icons/stars.svg',
                       text: "Beri Nilai App Kami",
                       trailing: Text(
                         "Versi 1.20.5",
-                        style: xlSemiBold,
+                        style: xxsMedium,
                       ),
                       onTap: () {
                         // Launch app store or play store
                       },
                     ),
-                    SizedBox(height: space050),
+                    SizedBox(height: spacing5),
+
+                    CustomButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        );
+                        // UserPreference userPreference = serviceLocator.get<UserPreference>();
+                            // userPreference.clearData();
+                            // _logoutCubit.logout();
+                      },
+                      child: Text('Keluar Akun'),
+                    ),
+                    SizedBox(height: spacing5),
 
                     // Logout Button
                     // ReuseButton(
@@ -164,7 +175,7 @@ class ProfileScreen extends StatelessWidget {
           color:black00,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: black950.withOpacity(0.08),
               blurRadius: 8,
               offset: Offset(0, 3),
             ),
@@ -172,10 +183,9 @@ class ProfileScreen extends StatelessWidget {
         ),
         child: AppBar(
           backgroundColor: Colors.transparent,
-          elevation: 0,
           title: Text(
             "Profil",
-            style: xlSemiBold,
+            style: xlBold,
           ),
           centerTitle: true,
         ),
@@ -191,40 +201,41 @@ class ProfileScreen extends StatelessWidget {
   }) {
     return CustomCard(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(borderRadius050),
-      color: black50,
+      color: navy200.withOpacity(0.6),
+      borderRadius: BorderRadius.circular(borderRadius300),
       padding: EdgeInsets.symmetric(
-        horizontal: paddingXL,
-        vertical: paddingXL,
+        horizontal: paddingM,
+        vertical: paddingM,
       ),
-      child: Row(
-        children: [
-          SvgPicture.asset(
-            svgIcon,
-            width: 24,
-            height: 24,
-            colorFilter: const ColorFilter.mode(
-              Colors.black,
-              BlendMode.srcIn,
+      child: ClipRRect(
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              svgIcon,
+              height: 24,
+              colorFilter: const ColorFilter.mode(
+                black950,
+                BlendMode.srcIn,
+              ),
             ),
-          ),
-          SizedBox(width: space050), // ⬅️ ini height diganti width
-          Expanded(
-            child: Text(
-              text,
-              style: xlSemiBold,
+            SizedBox(width: spacing4),
+            Expanded(
+              child: Text(
+                text,
+                style: smSemiBold,
+              ),
             ),
-          ),
-          if (trailing != null) ...[
-            trailing,
-            SizedBox(width: space050),
+            if (trailing != null) ...[
+              trailing,
+              SizedBox(width: space050),
+            ],
+            Icon(
+              Icons.chevron_right,
+              color: black800,
+              size: 24,
+            ),
           ],
-          Icon(
-            Icons.chevron_right,
-            color: black500,
-            size: 24,
-          ),
-        ],
+        ),
       ),
     );
   }
