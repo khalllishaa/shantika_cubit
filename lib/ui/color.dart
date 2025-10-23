@@ -19,13 +19,13 @@ const Color black100 = Color(0xFFF4F4F5);
 const Color black200 = Color(0xFFE4E4E7);
 const Color black300 = Color(0xFFD4D4D8);
 const Color black400 = Color(0xFFA1A1AA);
-const Color black500 = Color(0xFF71717A);
+const Color black500 = Color(0xFF9B9B9B);
 const Color black600 = Color(0xFF52525B);
 const Color black700_70 = Color(0xB2131415); // 70% opacity
 const Color black700_20 = Color(0xFF3F3F4633); // 20% opacity
 const Color black800 = Color(0xFF27272A);
 const Color black900 = Color(0xFF18181B);
-const Color black950 = Color(0xFF09090B);
+const Color black950 = Color(0xFF000000);
 const Color black950_80 = Color(0xFF09090BCC); // 80% opacity
 
 // Navy
@@ -138,7 +138,7 @@ const Color textInfoPressed = Color(0xFF2E54A1);
 const Color textButtonPrimary = Color(0xFFFFFFFF);
 const Color textButtonSecondaryDefault = Color(0xFF003284);
 const Color textButtonSecondaryHover = Color(0xFF002a6e);
-const Color textButtonSecondaryPressed = Color(0xFF002158);
+const Color textButtonSecondaryPressed = Color(0xFF292861);
 const Color textButtonOutlined = Color(0xFF09090B);
 const Color textButtonDanger = Color(0xFFFFFFFF);
 const Color textButtonSuccess = Color(0xFFFFFFFF);

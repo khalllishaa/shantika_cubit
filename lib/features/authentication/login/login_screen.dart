@@ -68,10 +68,10 @@ class LoginScreen extends StatelessWidget {
 
   Widget _buildBackgroundImage() {
     return Transform.rotate(
-      angle: -3.1416,
+      angle: 0,
       alignment: Alignment.center,
       child: Container(
-        height: 375,
+        height: 426,
         width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -91,7 +91,7 @@ class LoginScreen extends StatelessWidget {
     return Center(
       child: Image.asset(
         'assets/images/img_logo_shantika.png',
-        width: 200,
+        width: 280,
         height: 200,
         fit: BoxFit.contain,
       ),
@@ -105,46 +105,37 @@ class LoginScreen extends StatelessWidget {
       ) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: black00,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
+          topLeft: Radius.circular(borderRadius750),
+          topRight: Radius.circular(borderRadius750),
         ),
       ),
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(32),
+        padding: EdgeInsets.only(top: paddingXL, left: paddingL, right: paddingL, bottom: paddingM),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 20),
-
             Text(
               'Selamat Datang',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: navy800,
-              ),
+              style: lgBold,
             ),
             Text(
               'di Aplikasi Customer New Shantika',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[700],
-              ),
+              style: lgBold,
             ),
-            SizedBox(height: 32),
+            SizedBox(height: space500),
 
             CustomTextFormField(
               titleSection: 'Nomor Telepon',
               keyboardType: TextInputType.phone,
               maxLines: 1,
               controller: _phoneController,
-              placeholder: 'Masukan nomor telepon anda',
+              placeholder: '',
               validator: (input) =>
               input?.isEmpty == true ? "Nomor telepon tidak boleh kosong" : null,
             ),
-            SizedBox(height: 24),
+            SizedBox(height: space800),
 
             CustomButton(
               onPressed: () {
@@ -152,13 +143,12 @@ class LoginScreen extends StatelessWidget {
                   loginPhoneCubit.login(phone: _phoneController.text);
                 }
               },
-              child: const Text('Masuk'),
+              child: Text('Masuk'),
             ),
-            SizedBox(height: 24),
 
+            SizedBox(height: space400),
             _buildDivider(),
-            SizedBox(height: 24),
-
+            SizedBox(height: space500),
             ShadowedButton(
               onPressed: () {
                 // loginGoogleCubit.loginGoogle();
@@ -167,20 +157,20 @@ class LoginScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SvgPicture.asset('assets/images/ic_google.svg'),
-                  const SizedBox(width: space150),
-                  const Text('masuk dengan google', style: mdMedium),
+                  SizedBox(width: space250),
+                  Text('masuk dengan google', style: smSemiBold),
                 ],
               ),
             ),
-            SizedBox(height: 24),
-
+            SizedBox(height: space400),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   'belum punya akun? ',
-                  style: smRegular.copyWith(color: Colors.grey[600]),
+                  style: smMedium.copyWith(color: black500),
                 ),
+                SizedBox(width: space050),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -190,15 +180,15 @@ class LoginScreen extends StatelessWidget {
                   },
                   child: Text(
                     'Daftar',
-                    style: smRegular.copyWith(
+                    style: smSemiBold.copyWith(
                       color: primaryColor,
-                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
+                SizedBox(width: space050),
                 Text(
                   ' sekarang',
-                  style: smRegular.copyWith(color: Colors.grey[600]),
+                  style: smMedium.copyWith(color: black500),
                 ),
               ],
             ),
@@ -218,10 +208,10 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: padding16),
           child: Text(
             'atau masuk dengan google',
-            style: xsRegular.copyWith(color: Colors.grey[600]),
+            style: smMedium.copyWith(color: black500),
           ),
         ),
         Expanded(

@@ -5,6 +5,7 @@ import 'package:shantika_cubit/ui/shared_widget/custom_form_field.dart';
 import '../color.dart';
 import '../dimension.dart';
 import '../style.dart';
+import '../typography.dart';
 
 // ignore: must_be_immutable
 class CustomTextFormField extends StatelessWidget {
@@ -42,7 +43,6 @@ class CustomTextFormField extends StatelessWidget {
 
   final String? titleSection;
   final String? subtitleSection;
-
   final BoxConstraints? suffixIconConstraints;
   final TextEditingController controller;
   final TextInputType keyboardType;
@@ -73,9 +73,8 @@ class CustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const inputStyle = TextStyle(
-      color: black900,
-      fontSize: 14,
+    final inputStyle = smMedium.copyWith(
+      color: black700_70
     );
     if (defaultValue != null) {
       controller.text = defaultValue ?? "";

@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:shantika_cubit/utility/extensions/dio_exception_extensions.dart';
-import 'package:shantika_cubit/utility/extensions/user_extensions.dart';
+// ❌ HAPUS import extension
+// import 'package:shantika_cubit/utility/extensions/user_extensions.dart';
+
 import '../../../../config/service_locator.dart';
 import '../../../../config/user_preference.dart';
 import '../../../../model/response/auth_response.dart';
@@ -38,8 +40,7 @@ class LoginPhoneCubit extends Cubit<LoginPhoneState> {
       case DataStateSuccess<AuthResponse>():
         {
           _token = dataState.data?.token;
-
-          _user = dataState.data?.user?.toUsersModel();
+          _user = dataState.data?.user; // ✅ Langsung assign, sudah UsersModel!
 
           _userPreference.setToken(_token ?? "");
 

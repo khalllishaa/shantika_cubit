@@ -14,8 +14,61 @@ class AuthRepository extends BaseRepository {
 
   AuthRepository(this._apiService);
 
+  // /// ✅ Register baru (endpoint /customer/registration)
+  // /// Response: AuthResponse langsung tanpa wrapper ApiResponse
+  // Future<DataState<AuthResponse>> registerr({
+  //   required String name,
+  //   required String email,
+  //   required String phone,
+  //   File? avatar,
+  //   required String birth,
+  //   required String birthPlace,
+  //   required String gender,
+  //   String? uuid,
+  // }) async {
+  //   return await getStateOf<AuthResponse>(
+  //     request: () async {
+  //       final response = await _apiService.registerr(
+  //         name: name,
+  //         email: email,
+  //         phone: phone,
+  //         avatar: avatar,
+  //         birth: birth,
+  //         birth_place: birthPlace,
+  //         gender: gender,
+  //         uuid: uuid,
+  //       );
+  //
+  //       // ✅ Parse langsung dari response.data (bukan dari response.data['data'])
+  //       final authResponse = AuthResponse.fromJson(response.data as Map<String, dynamic>);
+  //
+  //       return HttpResponse<AuthResponse>(
+  //         authResponse,
+  //         response.response,
+  //       );
+  //     },
+  //   );
+  // }
+  //
+  Future<DataState<AuthResponse>> loginByPhone({
+    required String phone,
+  }) async {
+    return await getStateOf<AuthResponse>(
+      request: () async {
+        final response = await _apiService.loginByPhone(phone: phone);
+
+        // ✅ Parse langsung dari response.data
+        final authResponse = AuthResponse.fromJson(response.data as Map<String, dynamic>);
+
+        return HttpResponse<AuthResponse>(
+          authResponse,
+          response.response,
+        );
+      },
+    );
+  }
+
   /// ✅ Register baru (endpoint /customer/registration)
-  /// Response: AuthResponse langsung tanpa wrapper ApiResponse
   Future<DataState<AuthResponse>> registerr({
     required String name,
     required String email,
@@ -27,54 +80,28 @@ class AuthRepository extends BaseRepository {
     String? uuid,
   }) async {
     return await getStateOf<AuthResponse>(
-      request: () async {
-        // Response dari API adalah dynamic, kita parse manual jadi AuthResponse
-        final response = await _apiService.registerr(
-          name: name,
-          email: email,
-          phone: phone,
-          avatar: avatar,
-          birth: birth,
-          birth_place: birthPlace,
-          gender: gender,
-          uuid: uuid,
-        );
-
-        // Parse dynamic response data jadi AuthResponse
-        final authResponse = AuthResponse.fromJson(response.data as Map<String, dynamic>);
-
-        // Buat HttpResponse baru dengan data AuthResponse
-        return HttpResponse<AuthResponse>(
-          authResponse,
-          response.response,
-        );
-      },
+      request: () => _apiService.registerr(
+        name: name,
+        email: email,
+        phone: phone,
+        avatar: avatar,
+        birth: birth,
+        birth_place: birthPlace,
+        gender: gender,
+        uuid: uuid,
+      ),
     );
   }
 
-  Future<DataState<AuthResponse>> loginByPhone({
-    required String phone,
-  }) async {
-    return await getStateOf<AuthResponse>(
-      request: () async {
-        final response = await _apiService.loginByPhone(phone: phone);
+  // /// ✅ Login by phone
+  // Future<DataState<AuthResponse>> loginByPhone({
+  //   required String phone,
+  // }) async {
+  //   return await getStateOf<AuthResponse>(
+  //     request: () => _apiService.loginByPhone(phone: phone),
+  //   );
+  // }
 
-        // Parse response
-        final responseData = response.data as Map<String, dynamic>;
-
-        // Extract data dari response
-        final data = responseData['data'] as Map<String, dynamic>;
-
-        // Create AuthResponse dari data
-        final authResponse = AuthResponse.fromJson(data);
-
-        return HttpResponse<AuthResponse>(
-          authResponse,
-          response.response,
-        );
-      },
-    );
-  }
 
   /// Register lama (untuk compatibility)
   Future<DataState<ApiResponse<AuthResponse>>> register({
