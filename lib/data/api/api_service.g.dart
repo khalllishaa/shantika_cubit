@@ -101,7 +101,7 @@ class _ApiService implements ApiService {
           )
           .compose(
             _dio.options,
-            '/customer/login',
+            '/customer/login/phone',
             queryParameters: queryParameters,
             data: _data,
           )
