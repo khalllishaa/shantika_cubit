@@ -11,7 +11,8 @@ GuardTypeResponse _$GuardTypeResponseFromJson(Map<String, dynamic> json) =>
       application: json['application'] == null
           ? null
           : ApplicationModel.fromJson(
-              json['application'] as Map<String, dynamic>),
+              json['application'] as Map<String, dynamic>,
+            ),
       guardType: json['guardType'] == null
           ? null
           : GuardTypeModel.fromJson(json['guardType'] as Map<String, dynamic>),
@@ -27,11 +28,13 @@ GuardTypeResponse _$GuardTypeResponseFromJson(Map<String, dynamic> json) =>
       equipmentSupport: json['equipment_support'] == null
           ? null
           : EquipmentSupportResponse.fromJson(
-              json['equipment_support'] as Map<String, dynamic>),
+              json['equipment_support'] as Map<String, dynamic>,
+            ),
       termsCondition: json['term_and_conditions'] == null
           ? null
           : TermsConditionsModel.fromJson(
-              json['term_and_conditions'] as Map<String, dynamic>),
+              json['term_and_conditions'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$GuardTypeResponseToJson(GuardTypeResponse instance) =>

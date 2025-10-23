@@ -5,12 +5,50 @@ part 'auth_response.g.dart';
 
 @JsonSerializable()
 class AuthResponse {
-  UserModel? user;
-  String? token;
+  @JsonKey(name: "code")
+  int? code;
 
-  AuthResponse();
+  @JsonKey(name: "success")
+  bool? success;
 
-  factory AuthResponse.fromJson(Map<String, dynamic> json) => _$AuthResponseFromJson(json);
+  @JsonKey(name: "message")
+  String? message;
+
+  @JsonKey(name: "data")
+  AuthData? data;
+
+  AuthResponse({
+    this.code,
+    this.success,
+    this.message,
+    this.data,
+  });
+
+  factory AuthResponse.fromJson(Map<String, dynamic> json) =>
+      _$AuthResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$AuthResponseToJson(this);
+
+  // ✅ Helper getters untuk backward compatibility
+  String? get token => data?.token;
+  UserModel? get user => data?.user;
+}
+
+@JsonSerializable()
+class AuthData {
+  @JsonKey(name: "user")
+  UserModel? user;
+
+  @JsonKey(name: "token")
+  String? token;
+
+  AuthData({
+    this.user,
+    this.token,
+  });
+
+  factory AuthData.fromJson(Map<String, dynamic> json) =>
+      _$AuthDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AuthDataToJson(this);
 }

@@ -7,21 +7,19 @@ part of 'equipment_support_response.dart';
 // **************************************************************************
 
 EquipmentSupportResponse _$EquipmentSupportResponseFromJson(
-        Map<String, dynamic> json) =>
-    EquipmentSupportResponse(
-      SECURITY: (json['SECURITY'] as List<dynamic>?)
-          ?.map(
-              (e) => EquipmentSupportModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      EMERGENCY: (json['EMERGENCY'] as List<dynamic>?)
-          ?.map(
-              (e) => EquipmentSupportModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  Map<String, dynamic> json,
+) => EquipmentSupportResponse(
+  SECURITY: (json['SECURITY'] as List<dynamic>?)
+      ?.map((e) => EquipmentSupportModel.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  EMERGENCY: (json['EMERGENCY'] as List<dynamic>?)
+      ?.map((e) => EquipmentSupportModel.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$EquipmentSupportResponseToJson(
-        EquipmentSupportResponse instance) =>
-    <String, dynamic>{
-      'SECURITY': instance.SECURITY,
-      'EMERGENCY': instance.EMERGENCY,
-    };
+  EquipmentSupportResponse instance,
+) => <String, dynamic>{
+  'SECURITY': instance.SECURITY,
+  'EMERGENCY': instance.EMERGENCY,
+};

@@ -8,24 +8,24 @@ part of 'transaction_model.dart';
 
 TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) =>
     TransactionModel(
-      id: json['id'] as String?,
-      guardType: json['guard_type'] as String?,
-      createdAt: json['created_at'] == null
-          ? null
-          : DateTime.parse(json['created_at'] as String),
-      paymentCode: json['payment_code'] as String?,
-      status: transactionStatusFromString(json['status'] as String?),
-      translatedStatus: json['translated_status'] as String?,
-      address: json['address'] == null
-          ? null
-          : AddressModel.fromJson(json['address'] as Map<String, dynamic>),
-      startTime: json['start_time'] as String?,
-      endTime: json['end_time'] as String?,
-      payAmount: (json['pay_amount'] as num?)?.toInt(),
-      expiryTime: json['expiry_time'] == null
-          ? null
-          : DateTime.parse(json['expiry_time'] as String),
-    )
+        id: json['id'] as String?,
+        guardType: json['guard_type'] as String?,
+        createdAt: json['created_at'] == null
+            ? null
+            : DateTime.parse(json['created_at'] as String),
+        paymentCode: json['payment_code'] as String?,
+        status: transactionStatusFromString(json['status'] as String?),
+        translatedStatus: json['translated_status'] as String?,
+        address: json['address'] == null
+            ? null
+            : AddressModel.fromJson(json['address'] as Map<String, dynamic>),
+        startTime: json['start_time'] as String?,
+        endTime: json['end_time'] as String?,
+        payAmount: (json['pay_amount'] as num?)?.toInt(),
+        expiryTime: json['expiry_time'] == null
+            ? null
+            : DateTime.parse(json['expiry_time'] as String),
+      )
       ..userId = json['user_id'] as String?
       ..paymentMethodId = json['payment_method_id'] as String?
       ..offlinePaymentMethodId = json['offline_payment_method_id'] as String?
@@ -50,11 +50,13 @@ TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) =>
       ..paymentMethod = json['paymentMethod'] == null
           ? null
           : PaymentMethodModel.fromJson(
-              json['paymentMethod'] as Map<String, dynamic>)
+              json['paymentMethod'] as Map<String, dynamic>,
+            )
       ..offlinePaymentMethod = json['offline_payment_method'] == null
           ? null
           : OfflinePaymentMethodModel.fromJson(
-              json['offline_payment_method'] as Map<String, dynamic>)
+              json['offline_payment_method'] as Map<String, dynamic>,
+            )
       ..guardHistory = json['guard_history'] == null
           ? null
           : GuardModel.fromJson(json['guard_history'] as Map<String, dynamic>);

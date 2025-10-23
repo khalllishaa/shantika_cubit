@@ -6,15 +6,16 @@ part of 'promo_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PromoModel _$PromoModelFromJson(Map<String, dynamic> json) => PromoModel(
-      id: json['id'] as String?,
-      name: json['name'] as String?,
-      thumbnail: json['thumbnail'] as String?,
-      code: json['code'] as String?,
-      quota: (json['quota'] as num?)?.toInt(),
-      remainingQuota: (json['remaining_quota'] as num?)?.toInt(),
-      usedQuota: (json['used_quota'] as num?)?.toInt(),
-    )
+PromoModel _$PromoModelFromJson(Map<String, dynamic> json) =>
+    PromoModel(
+        id: json['id'] as String?,
+        name: json['name'] as String?,
+        thumbnail: json['thumbnail'] as String?,
+        code: json['code'] as String?,
+        quota: (json['quota'] as num?)?.toInt(),
+        remainingQuota: (json['remaining_quota'] as num?)?.toInt(),
+        usedQuota: (json['used_quota'] as num?)?.toInt(),
+      )
       ..description = json['description'] as String?
       ..startDate = json['start_date'] as String?
       ..expiryDate = json['expiry_date'] as String?

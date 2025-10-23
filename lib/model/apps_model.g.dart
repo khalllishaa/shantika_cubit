@@ -7,13 +7,13 @@ part of 'apps_model.dart';
 // **************************************************************************
 
 AppsModel _$AppsModelFromJson(Map<String, dynamic> json) => AppsModel(
-      phone: json['phone'] as String?,
-      whatsapp: json['whatsapp'] as String?,
-      email: json['email'] as String?,
-    );
+  phone: json['phone'] as String?,
+  whatsapp: json['whatsapp'] as String?,
+  email: json['email'] as String?,
+);
 
 Map<String, dynamic> _$AppsModelToJson(AppsModel instance) => <String, dynamic>{
-      'phone': instance.phone,
-      'whatsapp': instance.whatsapp,
-      'email': instance.email,
-    };
+  'phone': instance.phone,
+  'whatsapp': instance.whatsapp,
+  'email': instance.email,
+};

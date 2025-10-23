@@ -7,17 +7,18 @@ part of 'article_model.dart';
 // **************************************************************************
 
 ArticleModel _$ArticleModelFromJson(Map<String, dynamic> json) => ArticleModel(
-      title: json['title'] as String?,
-      slug: json['slug'] as String?,
-      thumbnail: json['thumbnail'] as String?,
-      content: json['content'] as String?,
-      createdAt: json['created_at'] as String?,
-      articleCategoryId: json['article_category_id'] as String?,
-      articleCategory: json['article_category'] == null
-          ? null
-          : ArticleCategoryModel.fromJson(
-              json['article_category'] as Map<String, dynamic>),
-    );
+  title: json['title'] as String?,
+  slug: json['slug'] as String?,
+  thumbnail: json['thumbnail'] as String?,
+  content: json['content'] as String?,
+  createdAt: json['created_at'] as String?,
+  articleCategoryId: json['article_category_id'] as String?,
+  articleCategory: json['article_category'] == null
+      ? null
+      : ArticleCategoryModel.fromJson(
+          json['article_category'] as Map<String, dynamic>,
+        ),
+);
 
 Map<String, dynamic> _$ArticleModelToJson(ArticleModel instance) =>
     <String, dynamic>{
@@ -31,15 +32,12 @@ Map<String, dynamic> _$ArticleModelToJson(ArticleModel instance) =>
     };
 
 ArticleCategoryModel _$ArticleCategoryModelFromJson(
-        Map<String, dynamic> json) =>
-    ArticleCategoryModel(
-      id: json['id'] as String?,
-      name: json['name'] as String?,
-    );
+  Map<String, dynamic> json,
+) => ArticleCategoryModel(
+  id: json['id'] as String?,
+  name: json['name'] as String?,
+);
 
 Map<String, dynamic> _$ArticleCategoryModelToJson(
-        ArticleCategoryModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
-    };
+  ArticleCategoryModel instance,
+) => <String, dynamic>{'id': instance.id, 'name': instance.name};

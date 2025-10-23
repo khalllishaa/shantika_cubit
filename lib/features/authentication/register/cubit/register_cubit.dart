@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -8,7 +9,6 @@ import '../../../../config/service_locator.dart';
 import '../../../../config/user_preference.dart';
 import '../../../../firebase/firebase_apple_auth.dart';
 import '../../../../firebase/firebase_google.auth.dart';
-import '../../../../model/response/api_response.dart';
 import '../../../../model/response/auth_response.dart';
 import '../../../../model/user_model.dart';
 import '../../../../repository/auth_repository.dart';
@@ -20,11 +20,9 @@ class RegisterCubit extends Cubit<RegisterState> {
   RegisterCubit() : super(RegisterInitial());
 
   late AuthRepository _repository;
-
   late UserPreference _userPreference;
 
   String? _token;
-
   UserModel? _user;
 
   FirebaseGoogleAuth _firebaseGoogleAuth = FirebaseGoogleAuth();
@@ -40,111 +38,44 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
   register({
-    required String firstName,
-    String? lastName,
+    required String name,
     required String email,
-    required String password,
-    required String confirmPassword,
-    String? appleId,
-    String? firebaseUid,
+    required String phone,
+    File? avatar,
+    required String birth,
+    required String birthPlace,
+    required String gender,
+    String? uuid,
   }) async {
     emit(RegisterStateLoading());
 
-    DataState<ApiResponse<AuthResponse>> dataState = await _repository.register(
-      firstName: firstName,
+    DataState<AuthResponse> dataState = await _repository.registerr(
+      name: name,
       email: email,
-      lastName: lastName,
-      password: password,
-      confirmPassword: confirmPassword,
-      appleId: appleId,
-      firebaseUid: firebaseUid,
+      phone: phone,
+      avatar: avatar,
+      birth: birth,
+      birthPlace: birthPlace,
+      gender: gender,
+      uuid: uuid,
     );
 
-    switch (dataState) {
-      case DataStateSuccess<ApiResponse<AuthResponse>>():
-        {
-          _token = dataState.data?.data?.token ?? null;
-          _user = dataState.data?.data?.user ?? UserModel();
-          _userPreference.setToken(_token ?? "");
-          _userPreference.setUser(_user ?? UserModel());
-          emit(RegisterStateSuccess());
-        }
-      case DataStateError<ApiResponse<AuthResponse>>():
-        {
-          emit(RegisterStateError(message: dataState.exception?.parseMessage() ?? ""));
-        }
+    if (dataState is DataStateSuccess<AuthResponse>) {
+      _token = dataState.data?.token; // ✅ Pakai getter
+      _user = dataState.data?.user; // ✅ Ini akan return UserModel
+
+      if (_token != null) {
+        _userPreference.setToken(_token!);
+      }
+      if (_user != null) {
+        _userPreference.setUser(_user!);
+      }
+
+      emit(RegisterStateSuccess(token: _token));
+    } else if (dataState is DataStateError<AuthResponse>) {
+      emit(RegisterStateError(
+          message: dataState.exception?.parseMessage() ?? "Terjadi kesalahan"
+      ));
     }
-  }
-
-  registerWithGoogle() async {
-    emit(RegisterStateLoading());
-    String? fcmToken = await _messaging.getToken();
-
-    _firebaseGoogleAuth.signInWithGoogle(
-      onSuccess: (uid, email, firstName, lastName) async {
-        DataState<ApiResponse<AuthResponse>> dataState = await _repository.registerWithGoogleOrApple(
-          appleId: null,
-          firebaseUid: uid,
-          firstName: firstName == "" ? "User" : firstName,
-          email: email,
-          lastName: lastName == "" ? "${_random.nextInt(99999)}" : lastName,
-          fcmToken: fcmToken,
-        );
-
-        switch (dataState) {
-          case DataStateSuccess<ApiResponse<AuthResponse>>():
-            {
-              _token = dataState.data?.data?.token ?? null;
-              _user = dataState.data?.data?.user ?? UserModel();
-              _userPreference.setToken(_token ?? "");
-              _userPreference.setUser(_user ?? UserModel());
-              emit(RegisterStateSuccess());
-            }
-          case DataStateError<ApiResponse<AuthResponse>>():
-            {
-              emit(RegisterStateError(message: dataState.exception?.parseMessage() ?? ""));
-            }
-        }
-      },
-      onError: (e) {
-        emit(RegisterStateError(message: e));
-      },
-    );
-  }
-
-  registerWithApple() async {
-    emit(RegisterStateLoading());
-    String? fcmToken = await _messaging.getToken();
-
-    _firebaseAppleAuthAuth.signInWithApple(
-      onSuccess: (uid, appleId, name, email) async {
-        DataState<ApiResponse<AuthResponse>> dataState = await _repository.registerWithGoogleOrApple(
-          appleId: appleId,
-          firebaseUid: null,
-          firstName: "User",
-          email: email,
-          lastName: "${_random.nextInt(9999)}",
-          fcmToken: fcmToken,
-        );
-
-        switch (dataState) {
-          case DataStateSuccess<ApiResponse<AuthResponse>>():
-            {
-              _token = dataState.data?.data?.token ?? null;
-              _user = dataState.data?.data?.user ?? UserModel();
-              _userPreference.setToken(_token ?? "");
-              _userPreference.setUser(_user ?? UserModel());
-              emit(RegisterStateSuccess());
-            }
-          case DataStateError<ApiResponse<AuthResponse>>():
-            {
-              emit(RegisterStateError(message: dataState.exception?.parseMessage() ?? ""));
-            }
-        }
-      },
-      onError: (e) {
-        emit(RegisterStateError(message: e));
-      },
-    );
   }
 }

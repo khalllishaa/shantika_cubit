@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shantika_cubit/config/service_locator.dart';
 import 'package:shantika_cubit/config/user_preference.dart';
+import 'package:shantika_cubit/features/authentication/login/login_screen.dart';
 import 'package:shantika_cubit/features/navigation/navigation_screen.dart';
 
 import 'features/onboarding/onboarding_screen.dart';
@@ -16,19 +17,19 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     Future.delayed(
       const Duration(seconds: 3),
-      () {
+          () {
         isLogin()
             ? Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationScreen(),
-                ),
+            context,
+            MaterialPageRoute(
+              builder: (context) => NavigationScreen(),
+            ),
                 (route) => false)
             : Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => OnboardingScreen(),
-                ),
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginScreen(),
+            ),
                 (route) => false);
       },
     );

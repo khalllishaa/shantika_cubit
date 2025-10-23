@@ -8,12 +8,13 @@ const String sandboxPackageName = "id.garda.mobile";
 const String appId = "6478091723";
 
 /// Network Config
-const String baseUrlProduction = "https://backoffice-garda.can.co.id";
-const String baseUrlSandbox = "https://backoffice-garda.can.co.id";
+const String baseUrlProduction = "https://sandbox.newshantika.co.id";
+const String baseUrlSandbox = "https://sandbox.newshantika.co.id";
 const String baseSocketProduction = 'https://socket.can.co.id';
 const String baseSocketSandbox = 'https://socket.can.co.id';
-const String baseUrl = isProduction ? baseUrlProduction : baseUrlSandbox;
-const String baseSocket = isProduction ? baseSocketProduction : baseSocketSandbox;
+const String baseUrl = 'https://sandbox.newshantika.co.id';
+// const String baseUrl = isProduction ? baseUrlProduction : baseUrlSandbox;
+// const String baseSocket = isProduction ? baseSocketProduction : baseSocketSandbox;
 const String baseApi = "$baseUrl/api/v1";
 const String baseImage = baseUrl;
 const String firebaseSecondaryApp = "secondary";

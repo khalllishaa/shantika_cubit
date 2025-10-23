@@ -1,9 +1,10 @@
 import 'dart:ui';
 
 /// Base color
-const Color primaryColor = Color(0xFFED1515);
+const Color primaryColor = Color(0xFF292861);
 const Color primaryColor700 = Color(0xFFC80D0D);
 const Color secondaryColor = Color(0xFFfd5812);
+const Color secondaryColor_60 = Color(0x99292861); //opacity 60
 const Color errorColor = Color(0xFFff4542);
 const Color successColor = Color(0xFF21742b);
 
@@ -20,7 +21,7 @@ const Color black300 = Color(0xFFD4D4D8);
 const Color black400 = Color(0xFFA1A1AA);
 const Color black500 = Color(0xFF71717A);
 const Color black600 = Color(0xFF52525B);
-const Color black700 = Color(0xFF3F3F46);
+const Color black700_70 = Color(0xB2131415); // 70% opacity
 const Color black700_20 = Color(0xFF3F3F4633); // 20% opacity
 const Color black800 = Color(0xFF27272A);
 const Color black900 = Color(0xFF18181B);

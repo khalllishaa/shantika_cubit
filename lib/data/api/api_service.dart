@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 
 import 'package:retrofit/http.dart';
@@ -35,6 +37,24 @@ part 'api_service.g.dart';
 @RestApi(baseUrl: baseApi, parser: Parser.JsonSerializable)
 abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
+
+  @POST("/customer/registration")
+  @MultiPart()
+  Future<HttpResponse<AuthResponse>> registerr({
+    @Part() required String name,
+    @Part() required String email,
+    @Part() required String phone,
+    @Part() File? avatar,
+    @Part() required String birth,
+    @Part() required String birth_place,
+    @Part() required String gender,
+    @Part() String? uuid,
+  });
+
+  @POST("/customer/login/phone")
+  Future<HttpResponse<dynamic>> loginByPhone({
+    @Part() required String phone,
+  });
 
   /// Register with email and password
   @POST("/auth/register")
