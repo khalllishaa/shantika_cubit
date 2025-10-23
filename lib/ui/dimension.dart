@@ -49,7 +49,7 @@ const double spacing4 = 12;
 const double spacing5 = 16;
 const double spacing6 = 20;
 const double spacing7 = 22;
-const double spacing8 = 32;
+const double spacing8 = 26;
 const double spacing9 = 40;
 const double spacing10 = 48;
 

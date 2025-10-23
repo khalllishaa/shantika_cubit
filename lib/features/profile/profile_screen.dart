@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shantika_cubit/features/profile/informasi_pribadi_screen.dart';
 import 'package:shantika_cubit/utility/extensions/date_time_extensions.dart';
 import 'package:shantika_cubit/utility/extensions/show_toast.dart';
 import 'package:shantika_cubit/utility/extensions/widget_extensions.dart';
@@ -67,7 +68,12 @@ class ProfileScreen extends StatelessWidget {
                       svgIcon: 'assets/icons/profile_outline.svg',
                       text: "Informasi Pribadi",
                       onTap: () {
-                        // Get.to(() => InformasiPribadiPage());
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => InformasiPribadiPage(),
+                          ),
+                        );
                       },
                     ),
                     SizedBox(height: spacing4),
