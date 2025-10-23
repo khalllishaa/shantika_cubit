@@ -8,12 +8,14 @@ class CustomFormField extends StatelessWidget {
   const CustomFormField({
     super.key,
     this.titleSection,
+    this.titleSectionWidget, // ✅ Tambahin ini
     required this.child,
     this.helperText,
     this.helper,
   });
 
   final String? titleSection;
+  final Widget? titleSectionWidget; // ✅ Tambahin ini
   final Widget? helper;
   final String? helperText;
   final Widget child;
@@ -23,14 +25,18 @@ class CustomFormField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (titleSection != '')
+        if (titleSectionWidget != null)
+          titleSectionWidget!
+        else if (titleSection != '')
           Text(
             titleSection ?? '',
             style: smMedium.copyWith(fontWeight: FontWeight.w500),
           ),
         SizedBox(height: space300),
         child,
-        helper != null || helperText != null ? const SizedBox(height: 6) : const SizedBox(),
+        helper != null || helperText != null
+            ? const SizedBox(height: 6)
+            : const SizedBox(),
         _generateHelper(),
       ],
     );
