@@ -92,14 +92,16 @@ class RegisterScreen extends StatelessWidget {
               children: [
                 CustomTextFormField(
                   titleSection: 'Nama Lengkap',
-                  maxLines: 1,
+                  isRequired: true,
                   controller: _nameController,
-                  validator: (val) => val?.isEmpty == true ? 'Nama lengkap harus diisi' : null,
+                  validator: (val) =>
+                  val?.isEmpty == true ? 'Nama lengkap harus diisi' : null,
                 ),
                 SizedBox(height: space400),
 
                 CustomTextFormField(
                   titleSection: 'Nomor Telepon',
+                  isRequired: true,
                   keyboardType: TextInputType.phone,
                   maxLines: 1,
                   controller: _phoneController,
@@ -109,6 +111,7 @@ class RegisterScreen extends StatelessWidget {
 
                 CustomTextFormField(
                   titleSection: 'Email',
+                  isRequired: true,
                   keyboardType: TextInputType.emailAddress,
                   maxLines: 1,
                   controller: _emailController,
@@ -118,7 +121,6 @@ class RegisterScreen extends StatelessWidget {
 
                 Row(
                   children: [
-                    // ✅ Tempat Lahir - pakai CustomTextFormField
                     Expanded(
                       child: CustomTextFormField(
                         titleSection: 'Tempat Lahir',
@@ -127,9 +129,8 @@ class RegisterScreen extends StatelessWidget {
                         validator: (val) => val?.isEmpty == true ? 'Tempat lahir harus diisi' : null,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: spacing4),
 
-                    // ✅ Tanggal Lahir - custom styled dengan SVG icon
                     Expanded(
                       child: _buildDateField(
                         label: 'Tanggal Lahir',
@@ -145,8 +146,8 @@ class RegisterScreen extends StatelessWidget {
                 _buildGenderSelector(),
                 SizedBox(height: space800),
 
-                CustomTextFormField(
-                  titleSection: 'Alamat Lengkap',
+                _buildTextField(
+                  title: "Alamat Lengkap",
                   controller: _addressController,
                   maxLines: 3,
                   validator: (val) => val?.isEmpty == true ? 'Alamat harus diisi' : null,
@@ -198,6 +199,49 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildTextField({
+    required String title,
+    required TextEditingController controller,
+    String? hintText,
+    int maxLines = 1,
+    String? Function(String?)? validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: smMedium.copyWith(fontWeight: FontWeight.w500),
+        ),
+        SizedBox(height: space100),
+        TextFormField(
+          controller: controller,
+          validator: validator,
+          maxLines: maxLines,
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: xsMedium.copyWith(color: black300),
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: maxLines > 1 ? 16 : 12,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade400, width: 1.2),
+            ),
+          ),
+          style: xsMedium.copyWith(color: black900),
+        ),
+      ],
+    );
+  }
+
   String _parseDateToApi(String dateStr) {
     try {
       final parts = dateStr.split('/');
@@ -221,18 +265,7 @@ class RegisterScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RichText(
-          text: TextSpan(
-            text: label,
-            style: smMedium.copyWith(color: textDarkPrimary),
-            children: [
-              TextSpan(
-                text: ' *',
-                style: TextStyle(color: primaryColor700),
-              ),
-            ],
-          ),
-        ),
+        Text('Tanggal Lahir', style: smMedium.copyWith(fontWeight: FontWeight.w500)),
         SizedBox(height: space200),
         TextFormField(
           controller: controller,

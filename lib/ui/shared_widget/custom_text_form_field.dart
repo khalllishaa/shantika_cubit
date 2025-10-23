@@ -11,37 +11,39 @@ import '../typography.dart';
 class CustomTextFormField extends StatelessWidget {
   CustomTextFormField(
       {super.key,
-      this.titleSection,
-      required this.controller,
-      this.keyboardType = TextInputType.text,
-      this.placeholder,
-      this.errorText,
-      this.prefixText,
-      this.focusNode,
-      this.obsecureText,
-      this.validator,
-      this.helper,
-      this.helperText,
-      this.onChanged,
-      this.onSubmit,
-      this.suffixIcon,
-      this.maxLines,
-      this.minLines,
-      this.defaultValue,
-      this.enabled,
-      this.hintColor,
-      this.onTap,
-      this.inputFormatters,
-      this.prefix,
-      this.textValidator,
-      this.prefixIcon,
-      this.textInputAction,
-      this.readOnly,
-      this.suffixIconConstraints,
-      this.subtitleSection,
-      this.verticalContentPadding});
+        this.titleSection,
+        this.isRequired = false,
+        required this.controller,
+        this.keyboardType = TextInputType.text,
+        this.placeholder,
+        this.errorText,
+        this.prefixText,
+        this.focusNode,
+        this.obsecureText,
+        this.validator,
+        this.helper,
+        this.helperText,
+        this.onChanged,
+        this.onSubmit,
+        this.suffixIcon,
+        this.maxLines,
+        this.minLines,
+        this.defaultValue,
+        this.enabled,
+        this.hintColor,
+        this.onTap,
+        this.inputFormatters,
+        this.prefix,
+        this.textValidator,
+        this.prefixIcon,
+        this.textInputAction,
+        this.readOnly,
+        this.suffixIconConstraints,
+        this.subtitleSection,
+        this.verticalContentPadding});
 
   final String? titleSection;
+  final bool isRequired;
   final String? subtitleSection;
   final BoxConstraints? suffixIconConstraints;
   final TextEditingController controller;
@@ -73,14 +75,28 @@ class CustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final inputStyle = smMedium.copyWith(
-      color: black700_70
-    );
+    final inputStyle = smMedium.copyWith(color: black700_70);
     if (defaultValue != null) {
       controller.text = defaultValue ?? "";
     }
+
     return CustomFormField(
-      titleSection: titleSection ?? '',
+      titleSectionWidget: titleSection != null
+          ? RichText(
+        text: TextSpan(
+          text: titleSection,
+          style: smMedium.copyWith(color: black700_70),
+          children: isRequired
+              ? [
+            TextSpan(
+              text: ' *',
+              style: smMedium.copyWith(color: textPrimary),
+            )
+          ]
+              : [],
+        ),
+      )
+          : null,
       helper: helper,
       helperText: helperText,
       child: TextFormField(
@@ -98,14 +114,17 @@ class CustomTextFormField extends StatelessWidget {
         onFieldSubmitted: onSubmit,
         inputFormatters: inputFormatters,
         decoration: inputDecoration().copyWith(
-          contentPadding: EdgeInsets.symmetric(horizontal: space400, vertical: verticalContentPadding ?? 0),
-          hintStyle: const TextStyle(color: textNeutralSecondary, fontWeight: FontWeight.w400),
+          contentPadding: EdgeInsets.symmetric(
+              horizontal: space400, vertical: verticalContentPadding ?? 0),
+          hintStyle: const TextStyle(
+              color: textNeutralSecondary, fontWeight: FontWeight.w400),
           suffixIcon: suffixIcon,
           prefixText: prefixText,
           prefixStyle: const TextStyle(color: textButtonOutlined),
           prefix: prefix,
           prefixIcon: prefixIcon,
-          prefixIconConstraints: const BoxConstraints(minHeight: 20, minWidth: 20),
+          prefixIconConstraints:
+          const BoxConstraints(minHeight: 20, minWidth: 20),
           hintText: placeholder,
           suffixIconConstraints: suffixIconConstraints,
           errorText: validator == null ? null : errorText,
@@ -119,9 +138,6 @@ class CustomTextFormField extends StatelessWidget {
         },
         onChanged: onChanged,
         onTapOutside: (event) {
-          // if (focusNode?.hasFocus ?? false) {
-          //   onSubmit?.call(controller.text);
-          // }
           FocusManager.instance.primaryFocus?.unfocus();
         },
       ),
