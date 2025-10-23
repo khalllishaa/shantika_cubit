@@ -10,9 +10,10 @@ AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) => AuthResponse(
   code: (json['code'] as num?)?.toInt(),
   success: json['success'] as bool?,
   message: json['message'] as String?,
-  data: json['data'] == null
+  user: json['user'] == null
       ? null
-      : AuthData.fromJson(json['data'] as Map<String, dynamic>),
+      : UsersModel.fromJson(json['user'] as Map<String, dynamic>),
+  token: json['token'] as String?,
 );
 
 Map<String, dynamic> _$AuthResponseToJson(AuthResponse instance) =>
@@ -20,17 +21,6 @@ Map<String, dynamic> _$AuthResponseToJson(AuthResponse instance) =>
       'code': instance.code,
       'success': instance.success,
       'message': instance.message,
-      'data': instance.data,
+      'user': instance.user,
+      'token': instance.token,
     };
-
-AuthData _$AuthDataFromJson(Map<String, dynamic> json) => AuthData(
-  user: json['user'] == null
-      ? null
-      : UserModel.fromJson(json['user'] as Map<String, dynamic>),
-  token: json['token'] as String?,
-);
-
-Map<String, dynamic> _$AuthDataToJson(AuthData instance) => <String, dynamic>{
-  'user': instance.user,
-  'token': instance.token,
-};

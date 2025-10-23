@@ -17,6 +17,7 @@ import 'features/authentication/password/cubit/validate_reset_token_cubit.dart';
 import 'features/authentication/register/cubit/register_cubit.dart';
 import 'features/home/cubit/detail_slider_cubit.dart';
 import 'features/home/cubit/home_cubit.dart';
+import 'features/navigation/cubit/update_fcm_token_cubit.dart';
 import 'features/profile/cubit/profile_cubit.dart';
 import 'features/profile/cubit/update_profile_cubit.dart';
 import 'features/terms_conditions/cubit/terms_conditions_cubit.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => ValidateResetTokenCubit()),
         BlocProvider(create: (context) => ChangePasswordCubit()),
         BlocProvider(create: (context) => LoginPhoneCubit()),
+        BlocProvider(create: (context) => RegisterCubit()),
         // BlocProvider(create: (context) => LoginAppleCubit()),
         // BlocProvider(create: (context) => LoginEmailCubit()),
         // BlocProvider(create: (context) => LoginGoogleCubit()),
@@ -65,6 +67,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => DetailSliderCubit()),
 
         BlocProvider(create: (context) => AssignmentReviewCubit()),
+        BlocProvider(create: (context) => UpdateFcmTokenCubit()),
+
 
       ],
       child: MaterialApp(

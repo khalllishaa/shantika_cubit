@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../color.dart';
+import '../dimension.dart';
 import '../typography.dart';
 
 class CustomFormField extends StatelessWidget {
@@ -25,9 +26,9 @@ class CustomFormField extends StatelessWidget {
         if (titleSection != '')
           Text(
             titleSection ?? '',
-            style: sRegular.copyWith(fontWeight: FontWeight.w500),
+            style: smMedium.copyWith(fontWeight: FontWeight.w500),
           ),
-        const SizedBox(height: 6),
+        SizedBox(height: space300),
         child,
         helper != null || helperText != null ? const SizedBox(height: 6) : const SizedBox(),
         _generateHelper(),

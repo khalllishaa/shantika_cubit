@@ -85,24 +85,36 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<dynamic>> loginByPhone({required String phone}) async {
+  Future<HttpResponse<AuthResponse>> loginByPhone({
+    required String phone,
+  }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('phone', phone));
-    final _options = _setStreamType<HttpResponse<dynamic>>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
+    final _data = {'phone': phone};
+    final _options = _setStreamType<HttpResponse<AuthResponse>>(
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'application/x-www-form-urlencoded',
+          )
           .compose(
             _dio.options,
-            '/customer/login/phone',
+            '/customer/login',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AuthResponse _value;
+    try {
+      _value = AuthResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     final httpResponse = HttpResponse(_value, _result);
     return httpResponse;
   }

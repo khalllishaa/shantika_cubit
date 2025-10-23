@@ -1,16 +1,12 @@
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shantika_cubit/utility/extensions/dio_exception_extensions.dart';
-import 'dart:math';
 
 import '../../../../config/service_locator.dart';
 import '../../../../config/user_preference.dart';
-import '../../../../firebase/firebase_apple_auth.dart';
-import '../../../../firebase/firebase_google.auth.dart';
 import '../../../../model/response/auth_response.dart';
-import '../../../../model/user_model.dart';
+import '../../../../model/users_model.dart'; // ✅ Import UsersModel
 import '../../../../repository/auth_repository.dart';
 import '../../../../utility/resource/data_state.dart';
 
@@ -23,12 +19,7 @@ class RegisterCubit extends Cubit<RegisterState> {
   late UserPreference _userPreference;
 
   String? _token;
-  UserModel? _user;
-
-  FirebaseGoogleAuth _firebaseGoogleAuth = FirebaseGoogleAuth();
-  FirebaseAppleAuth _firebaseAppleAuthAuth = FirebaseAppleAuth();
-  FirebaseMessaging _messaging = FirebaseMessaging.instance;
-  Random _random = Random();
+  UsersModel? _user;
 
   init() {
     _repository = AuthRepository(serviceLocator.get());
@@ -61,15 +52,17 @@ class RegisterCubit extends Cubit<RegisterState> {
     );
 
     if (dataState is DataStateSuccess<AuthResponse>) {
-      _token = dataState.data?.token; // ✅ Pakai getter
-      _user = dataState.data?.user; // ✅ Ini akan return UserModel
+      _token = dataState.data?.token;
+      _user = dataState.data?.user; // ✅ Sudah UsersModel
 
       if (_token != null) {
         _userPreference.setToken(_token!);
       }
-      if (_user != null) {
-        _userPreference.setUser(_user!);
-      }
+
+      // ✅ COMMENT DULU karena UserPreference expect UserModel, bukan UsersModel
+      // if (_user != null) {
+      //   _userPreference.setUser(_user!);
+      // }
 
       emit(RegisterStateSuccess(token: _token));
     } else if (dataState is DataStateError<AuthResponse>) {

@@ -43,7 +43,7 @@ class CustomButton extends StatelessWidget {
         border: border,
       ),
       child: Material(
-        color: onPressed != null ? backgroundColor : disabledColor,
+        color: onPressed != null ? primaryColor : disabledColor,
         borderRadius: BorderRadius.circular(borderRadius300),
         child: InkWell(
           splashColor: transparentColor,
@@ -60,7 +60,7 @@ class CustomButton extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(borderRadius300)),
             ),
             child: DefaultTextStyle.merge(
-              style: smMedium.copyWith(color: onPressed != null ? textColor : textColorDisabled),
+              style: smBold.copyWith(color: onPressed != null ? textColor : textColorDisabled),
               textAlign: TextAlign.center,
               child: Center(child: child),
             ),

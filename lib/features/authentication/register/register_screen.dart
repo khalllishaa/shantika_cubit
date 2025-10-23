@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // ✅ Import untuk SVG
+import 'package:shantika_cubit/ui/dimension.dart';
 import 'package:shantika_cubit/utility/extensions/email_validator_extension.dart';
 import 'package:shantika_cubit/utility/extensions/show_toast.dart';
 
@@ -7,6 +9,7 @@ import '../../../config/constant.dart';
 import '../../../ui/color.dart';
 import '../../../ui/shared_widget/custom_button.dart';
 import '../../../ui/shared_widget/custom_checkbox.dart';
+import '../../../ui/shared_widget/custom_text_form_field.dart';
 import '../../../ui/typography.dart';
 import '../../../utility/loading_overlay.dart';
 import '../../navigation/navigation_screen.dart';
@@ -43,22 +46,18 @@ class RegisterScreen extends StatelessWidget {
         elevation: 0,
         leadingWidth: 60.5,
         leading: Padding(
-          padding: const EdgeInsets.only(left: 27.5),
+          padding: EdgeInsets.only(left: padding16),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black, size: 20),
+            icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.black, size: 20),
             onPressed: () => Navigator.pop(context),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
           ),
         ),
-        titleSpacing: 33,
-        title: const Text(
+        titleSpacing: space500,
+        title: Text(
           'Daftar',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+          style: xlBold,
         ),
       ),
       body: Form(
@@ -87,47 +86,50 @@ class RegisterScreen extends StatelessWidget {
             }
           },
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            padding: EdgeInsets.symmetric(horizontal: paddingL, vertical: space500),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Nama Lengkap
-                _buildTextField(
-                  label: 'Nama Lengkap',
+                CustomTextFormField(
+                  titleSection: 'Nama Lengkap',
+                  maxLines: 1,
                   controller: _nameController,
                   validator: (val) => val?.isEmpty == true ? 'Nama lengkap harus diisi' : null,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: space400),
 
-                // Nomor Telepon
-                _buildTextField(
-                  label: 'Nomor Telepon',
-                  controller: _phoneController,
+                CustomTextFormField(
+                  titleSection: 'Nomor Telepon',
                   keyboardType: TextInputType.phone,
+                  maxLines: 1,
+                  controller: _phoneController,
                   validator: (val) => val?.isEmpty == true ? 'Nomor telepon harus diisi' : null,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: space400),
 
-                // Email
-                _buildTextField(
-                  label: 'Email',
-                  controller: _emailController,
+                CustomTextFormField(
+                  titleSection: 'Email',
                   keyboardType: TextInputType.emailAddress,
+                  maxLines: 1,
+                  controller: _emailController,
                   validator: (val) => val?.isValidEmail() == false ? 'Email tidak valid' : null,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: space400),
 
-                // Tempat & Tanggal Lahir
                 Row(
                   children: [
+                    // ✅ Tempat Lahir - pakai CustomTextFormField
                     Expanded(
-                      child: _buildTextField(
-                        label: 'Tempat Lahir',
+                      child: CustomTextFormField(
+                        titleSection: 'Tempat Lahir',
+                        maxLines: 1,
                         controller: _birthPlaceController,
                         validator: (val) => val?.isEmpty == true ? 'Tempat lahir harus diisi' : null,
                       ),
                     ),
                     const SizedBox(width: 12),
+
+                    // ✅ Tanggal Lahir - custom styled dengan SVG icon
                     Expanded(
                       child: _buildDateField(
                         label: 'Tanggal Lahir',
@@ -137,71 +139,57 @@ class RegisterScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: space400),
 
                 // Gender
                 _buildGenderSelector(),
-                const SizedBox(height: 16),
+                SizedBox(height: space800),
 
-                // Alamat Lengkap
-                _buildTextField(
-                  label: 'Alamat Lengkap',
+                CustomTextFormField(
+                  titleSection: 'Alamat Lengkap',
                   controller: _addressController,
                   maxLines: 3,
                   validator: (val) => val?.isEmpty == true ? 'Alamat harus diisi' : null,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: space400),
 
-                // Jenis Kartu Identitas
-                _buildTextField(
-                  label: 'Jenis Kartu Identitas',
+                CustomTextFormField(
+                  titleSection: 'Jenis Kartu Identitas',
+                  maxLines: 1,
                   controller: _idTypeController,
                   validator: (val) => val?.isEmpty == true ? 'Jenis kartu identitas harus diisi' : null,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: space400),
 
-                // Nomor Kartu Identitas
-                _buildTextField(
-                  label: 'Nomor Kartu Identitas',
-                  controller: _idNumberController,
+                CustomTextFormField(
+                  titleSection: 'Nomor Kartu Identitas',
                   keyboardType: TextInputType.number,
+                  maxLines: 1,
+                  controller: _idNumberController,
                   validator: (val) => val?.isEmpty == true ? 'Nomor kartu identitas harus diisi' : null,
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: space800),
 
-                // Terms & Conditions Checkbox
-                _buildTermsAndConditionView(),
-                const SizedBox(height: 24),
+                CustomButton(
+                  onPressed: () {
+                    if (_key.currentState?.validate() == true) {
+                      final birthDate = _parseDateToApi(_birthDateController.text);
+                      final uuid = const Uuid().v4();
 
-                // Register Button
-                ValueListenableBuilder(
-                  valueListenable: isAgreementChecked,
-                  builder: (context, isChecked, _) {
-                    return CustomButton(
-                        onPressed: isChecked
-                            ? () {
-                          if (_key.currentState?.validate() == true) {
-                            final birthDate = _parseDateToApi(_birthDateController.text);
-
-                            // 🔹 Generate UUID unik
-                            final uuid = const Uuid().v4();
-
-                            registerCubit.register(
-                              uuid: uuid,
-                              name: _nameController.text,
-                              email: _emailController.text,
-                              phone: _phoneController.text,
-                              birth: birthDate,
-                              birthPlace: _birthPlaceController.text,
-                              gender: selectedGender.value == 'Pria' ? 'Male' : 'Female',
-                            );
-                          }
-                        }
-                        : null,
-                      child: const Text('Daftar'),
-                    );
+                      registerCubit.register(
+                        uuid: uuid,
+                        name: _nameController.text,
+                        email: _emailController.text,
+                        phone: _phoneController.text,
+                        birth: birthDate,
+                        birthPlace: _birthPlaceController.text,
+                        gender: selectedGender.value == 'Pria' ? 'Male' : 'Female',
+                      );
+                    }
                   },
+                  child: Text('Daftar'),
                 ),
+                SizedBox(height: space800),
               ],
             ),
           ),
@@ -210,7 +198,6 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  // Helper function untuk convert tanggal dari DD/MM/YYYY ke YYYY-MM-DD
   String _parseDateToApi(String dateStr) {
     try {
       final parts = dateStr.split('/');
@@ -218,74 +205,12 @@ class RegisterScreen extends StatelessWidget {
         final day = parts[0].padLeft(2, '0');
         final month = parts[1].padLeft(2, '0');
         final year = parts[2];
-        return '$year-$month-$day'; // Format: YYYY-MM-DD
+        return '$year-$month-$day';
       }
       return dateStr;
     } catch (e) {
       return dateStr;
     }
-  }
-
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    TextInputType? keyboardType,
-    int maxLines = 1,
-    String? Function(String?)? validator,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        RichText(
-          text: TextSpan(
-            text: label,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF1F2937),
-              fontWeight: FontWeight.w500,
-            ),
-            children: const [
-              TextSpan(
-                text: ' *',
-                style: TextStyle(color: Colors.red),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          maxLines: maxLines,
-          validator: validator,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.red),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.red, width: 2),
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildDateField({
@@ -299,20 +224,16 @@ class RegisterScreen extends StatelessWidget {
         RichText(
           text: TextSpan(
             text: label,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF1F2937),
-              fontWeight: FontWeight.w500,
-            ),
-            children: const [
+            style: smMedium.copyWith(color: textDarkPrimary),
+            children: [
               TextSpan(
                 text: ' *',
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(color: primaryColor700),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: space200),
         TextFormField(
           controller: controller,
           readOnly: true,
@@ -328,26 +249,38 @@ class RegisterScreen extends StatelessWidget {
               controller.text = '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
             }
           },
+          style: smRegular,
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            suffixIcon: const Icon(Icons.calendar_today, size: 20, color: Color(0xFF9CA3AF)),
+            fillColor: shimmerHighlightColor,
+            contentPadding: EdgeInsets.symmetric(horizontal: padding16, vertical: spacing4),
+            suffixIcon: Padding(
+              padding: EdgeInsets.all(spacing4),
+              child: SvgPicture.asset(
+                'assets/images/ic_calendar.svg',
+                width: iconM,
+                colorFilter: ColorFilter.mode(black500, BlendMode.srcIn),
+              ),
+            ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderRadius: BorderRadius.circular(borderRadius200),
+              borderSide: BorderSide(color: borderNeutralLight),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderRadius: BorderRadius.circular(borderRadius200),
+              borderSide: BorderSide(color: borderNeutralLight),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+              borderRadius: BorderRadius.circular(borderRadius200),
+              borderSide: BorderSide(color: primaryColor, width: 2),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.red),
+              borderRadius: BorderRadius.circular(borderRadius200),
+              borderSide: BorderSide(color: primaryColor700),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(borderRadius200),
+              borderSide: BorderSide(color: primaryColor700, width: 2),
             ),
           ),
         ),
@@ -359,28 +292,28 @@ class RegisterScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Gender',
-          style: TextStyle(
-            fontSize: 14,
-            color: Color(0xFF1F2937),
-            fontWeight: FontWeight.w500,
-          ),
+          style: smMedium.copyWith(color: textDarkPrimary),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: space300),
         ValueListenableBuilder(
           valueListenable: selectedGender,
           builder: (context, gender, _) {
-            return Row(
-              children: [
-                Expanded(
-                  child: _buildGenderOption('Pria', gender == 'Pria'),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildGenderOption('Wanita', gender == 'Wanita'),
-                ),
-              ],
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: paddingS, vertical: paddingS),
+              decoration: BoxDecoration(
+                color: shimmerHighlightColor,
+                borderRadius: BorderRadius.circular(borderRadius200),
+                border: Border.all(color: borderNeutralLight),
+              ),
+              child: Row(
+                children: [
+                  _buildGenderOption('Pria', gender == 'Pria'),
+                  SizedBox(width: space800),
+                  _buildGenderOption('Wanita', gender == 'Wanita'),
+                ],
+              ),
             );
           },
         ),
@@ -391,72 +324,32 @@ class RegisterScreen extends StatelessWidget {
   Widget _buildGenderOption(String label, bool isSelected) {
     return GestureDetector(
       onTap: () => selectedGender.value = label,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF1E3A8A) : Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected ? const Color(0xFF1E3A8A) : const Color(0xFFE5E7EB),
+      child: Row(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected ? textButtonSecondaryPressed : black500,
+            ),
+            child: Center(
+              child: Icon(
+                label == 'Pria' ? Icons.male : Icons.female,
+                size: 18,
+                color: Colors.white,
+              ),
+            ),
           ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected ? Colors.white : const Color(0xFFE5E7EB),
-              ),
-              child: Center(
-                child: Icon(
-                  label == 'Pria' ? Icons.male : Icons.female,
-                  size: 14,
-                  color: isSelected ? const Color(0xFF1E3A8A) : const Color(0xFF6B7280),
-                ),
-              ),
+          SizedBox(width: space250),
+          Text(
+            label,
+            style: smMedium.copyWith(
+              color: isSelected ? textButtonSecondaryPressed : black500,
             ),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: isSelected ? Colors.white : const Color(0xFF1F2937),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildTermsAndConditionView() {
-    return ValueListenableBuilder(
-      valueListenable: isAgreementChecked,
-      builder: (context, isChecked, _) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomCheckbox(
-              value: isChecked,
-              onChanged: (value) {
-                isAgreementChecked.value = value;
-              },
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                'Dengan mendaftar, Anda menyetujui Syarat & Ketentuan serta Kebijakan Privasi dari New Shantika',
-                style: smRegular.copyWith(color: textDarkPrimary),
-                textAlign: TextAlign.start,
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }

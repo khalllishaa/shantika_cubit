@@ -51,10 +51,29 @@ abstract class ApiService {
     @Part() String? uuid,
   });
 
-  @POST("/customer/login/phone")
-  Future<HttpResponse<dynamic>> loginByPhone({
-    @Part() required String phone,
+  @POST("/customer/login")
+  @FormUrlEncoded()
+  Future<HttpResponse<AuthResponse>> loginByPhone({
+    @Field("phone") required String phone,
   });
+
+  // @POST("/customer/registration")
+  // @MultiPart()
+  // Future<HttpResponse<AuthResponse>> registerr({
+  //   @Part() required String name,
+  //   @Part() required String email,
+  //   @Part() required String phone,
+  //   @Part() File? avatar,
+  //   @Part() required String birth,
+  //   @Part() required String birth_place,
+  //   @Part() required String gender,
+  //   @Part() String? uuid,
+  // });
+  //
+  // @POST("/customer/login/phone")
+  // Future<HttpResponse<dynamic>> loginByPhone({
+  //   @Part() required String phone,
+  // });
 
   /// Register with email and password
   @POST("/auth/register")
