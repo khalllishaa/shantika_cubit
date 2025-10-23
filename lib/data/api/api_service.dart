@@ -51,7 +51,7 @@ abstract class ApiService {
     @Part() String? uuid,
   });
 
-  @POST("/customer/login")
+  @POST("/customer/login/phone")
   @FormUrlEncoded()
   Future<HttpResponse<AuthResponse>> loginByPhone({
     @Field("phone") required String phone,

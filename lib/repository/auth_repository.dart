@@ -50,23 +50,24 @@ class AuthRepository extends BaseRepository {
   //   );
   // }
   //
-  Future<DataState<AuthResponse>> loginByPhone({
-    required String phone,
-  }) async {
-    return await getStateOf<AuthResponse>(
-      request: () async {
-        final response = await _apiService.loginByPhone(phone: phone);
 
-        // ✅ Parse langsung dari response.data
-        final authResponse = AuthResponse.fromJson(response.data as Map<String, dynamic>);
-
-        return HttpResponse<AuthResponse>(
-          authResponse,
-          response.response,
-        );
-      },
-    );
-  }
+  // Future<DataState<AuthResponse>> loginByPhone({
+  //   required String phone,
+  // }) async {
+  //   return await getStateOf<AuthResponse>(
+  //     request: () async {
+  //       final response = await _apiService.loginByPhone(phone: phone);
+  //
+  //       // ✅ Parse langsung dari response.data
+  //       final authResponse = AuthResponse.fromJson(response.data as Map<String, dynamic>);
+  //
+  //       return HttpResponse<AuthResponse>(
+  //         authResponse,
+  //         response.response,
+  //       );
+  //     },
+  //   );
+  // }
 
   /// ✅ Register baru (endpoint /customer/registration)
   Future<DataState<AuthResponse>> registerr({
@@ -93,15 +94,14 @@ class AuthRepository extends BaseRepository {
     );
   }
 
-  // /// ✅ Login by phone
-  // Future<DataState<AuthResponse>> loginByPhone({
-  //   required String phone,
-  // }) async {
-  //   return await getStateOf<AuthResponse>(
-  //     request: () => _apiService.loginByPhone(phone: phone),
-  //   );
-  // }
-
+  /// ✅ Login by phone
+  Future<DataState<AuthResponse>> loginByPhone({
+    required String phone,
+  }) async {
+    return await getStateOf<AuthResponse>(
+      request: () => _apiService.loginByPhone(phone: phone),
+    );
+  }
 
   /// Register lama (untuk compatibility)
   Future<DataState<ApiResponse<AuthResponse>>> register({
