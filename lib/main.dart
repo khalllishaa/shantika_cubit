@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:shantika_cubit/features/assignment/cubit/history_assignment_cubit.dart';
 import 'package:shantika_cubit/features/authentication/login/cubit/login_phone_cubit.dart';
 import 'package:shantika_cubit/splash_screen.dart';
 import 'package:shantika_cubit/ui/theme.dart';
@@ -18,6 +19,7 @@ import 'features/authentication/register/cubit/register_cubit.dart';
 import 'features/home/cubit/detail_slider_cubit.dart';
 import 'features/home/cubit/home_cubit.dart';
 import 'features/navigation/cubit/update_fcm_token_cubit.dart';
+import 'features/profile/cubit/logout_cubit.dart';
 import 'features/profile/cubit/profile_cubit.dart';
 import 'features/profile/cubit/update_profile_cubit.dart';
 import 'features/terms_conditions/cubit/terms_conditions_cubit.dart';
@@ -52,11 +54,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => ChangePasswordCubit()),
         BlocProvider(create: (context) => LoginPhoneCubit()),
         BlocProvider(create: (context) => RegisterCubit()),
-        // BlocProvider(create: (context) => LoginAppleCubit()),
-        // BlocProvider(create: (context) => LoginEmailCubit()),
-        // BlocProvider(create: (context) => LoginGoogleCubit()),
 
         BlocProvider(create: (context) => TermsConditionsCubit()),
+        BlocProvider(create: (context) => HistoryAssignmentCubit()),
         BlocProvider(create: (context) => HistoryTransactionCubit()),
 
         BlocProvider(create: (context) => ProfileCubit()),
@@ -65,10 +65,9 @@ class MyApp extends StatelessWidget {
         /// HOME
         BlocProvider(create: (context) => HomeCubit()),
         BlocProvider(create: (context) => DetailSliderCubit()),
+        BlocProvider(create: (context) => LogoutCubit()),
 
-        BlocProvider(create: (context) => AssignmentReviewCubit()),
         BlocProvider(create: (context) => UpdateFcmTokenCubit()),
-
 
       ],
       child: MaterialApp(
