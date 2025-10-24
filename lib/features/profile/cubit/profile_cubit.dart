@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:shantika_cubit/model/users_model.dart';
 import 'package:shantika_cubit/utility/extensions/dio_exception_extensions.dart';
 
 import '../../../config/service_locator.dart';
 import '../../../model/response/api_response.dart';
-import '../../../model/user_model.dart';
 import '../../../repository/profile_repository.dart';
 import '../../../utility/resource/data_state.dart';
 
@@ -14,7 +14,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileInitial());
 
   late ProfileRepository _repository;
-  UserModel? _user;
+  UsersModel? _user;
 
   init() {
     _repository = ProfileRepository(serviceLocator.get());
@@ -24,15 +24,15 @@ class ProfileCubit extends Cubit<ProfileState> {
   profile() async {
     emit(ProfileStateLoading());
 
-    DataState<ApiResponse<UserModel>> dataState = await _repository.profile();
+    DataState<UsersModel> dataState = await _repository.profile();
 
     switch (dataState) {
-      case DataStateSuccess<ApiResponse<UserModel>>():
+      case DataStateSuccess<UsersModel>():
         {
-          _user = dataState.data?.data;
-          emit(ProfileStateSuccess(user: _user ?? UserModel()));
+          _user = dataState.data;
+          emit(ProfileStateSuccess(user: _user ?? UsersModel()));
         }
-      case DataStateError<ApiResponse<UserModel>>():
+      case DataStateError<UsersModel>():
         {
           emit(ProfileStateError(message: dataState.exception?.parseMessage() ?? ""));
         }

@@ -270,7 +270,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       ],
                     ),
                     SizedBox(height: space800),
-                    _buildButtonView(),
+                    // _buildButtonView(),
                     SizedBox(height: space400),
                   ],
                 ),
@@ -282,37 +282,37 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     );
   }
 
-  Widget _buildButtonView() {
-    return SizedBox(
-      height: 50,
-      child: CustomButton(
-        child: Padding(
-          padding: const EdgeInsets.all(space300),
-          child: Text(
-            "Simpan",
-            style: mdMedium.copyWith(color: textLightPrimary),
-          ),
-        ),
-        onPressed: _key.currentState?.validate() == true &&
-                _datePickerController.dateTime != null &&
-                selectedGender != null
-            ? () {
-                if (_key.currentState!.validate() && _datePickerController.dateTime != null && selectedGender != null) {
-                  _updateProfileCubit.updateProfile(
-                    firstName: _firstNameController.text,
-                    lastName: _lastNameController.text,
-                    birthDate: _datePickerController.dateTime,
-                    avatar: pickedImage != null ? File(pickedImage?.path ?? "") : null,
-                    phone: _phoneController.text,
-                    gender: selectedGender!.value,
-                    email: _emailController.text,
-                  );
-                } else {}
-              }
-            : null,
-      ),
-    );
-  }
+  // Widget _buildButtonView() {
+  //   return SizedBox(
+  //     height: 50,
+  //     child: CustomButton(
+  //       child: Padding(
+  //         padding: const EdgeInsets.all(space300),
+  //         child: Text(
+  //           "Simpan",
+  //           style: mdMedium.copyWith(color: textLightPrimary),
+  //         ),
+  //       ),
+  //       onPressed: _key.currentState?.validate() == true &&
+  //               _datePickerController.dateTime != null &&
+  //               selectedGender != null
+  //           ? () {
+  //               if (_key.currentState!.validate() && _datePickerController.dateTime != null && selectedGender != null) {
+  //                 _updateProfileCubit.updateProfile(
+  //                   firstName: _firstNameController.text,
+  //                   lastName: _lastNameController.text,
+  //                   birthDate: _datePickerController.dateTime,
+  //                   avatar: pickedImage != null ? File(pickedImage?.path ?? "") : null,
+  //                   phone: _phoneController.text,
+  //                   gender: selectedGender!.value,
+  //                   email: _emailController.text,
+  //                 );
+  //               } else {}
+  //             }
+  //           : null,
+  //     ),
+  //   );
+  // }
 
   Future<dynamic> showMediaSourceSheet(BuildContext context) {
     return showMaterialModalBottomSheet(
