@@ -26,46 +26,46 @@ class UpdateProfileCubit extends Cubit<UpdateProfileState> {
     _repository = ProfileRepository(serviceLocator.get());
   }
 
-  updateProfile({
-    required String firstName,
-    String? lastName,
-    required String gender,
-    required String email,
-    File? avatar,
-    DateTime? birthDate,
-    String? phone,
-  }) async {
-    emit(UpdateProfileStateLoading());
-
-    MultipartFile? multipart;
-
-    if (avatar != null) {
-      multipart = await MultipartFile.fromFile(
-        avatar.path,
-        filename: avatar.path.split('/').last,
-      );
-    }
-
-    DataState<ApiResponse<UserModel>> dataState = await _repository.updateProfile(
-      firstName: firstName,
-      gender: gender,
-      email: email,
-      avatar: multipart != null ? [multipart] : null,
-      birthDate: birthDate,
-      lastName: lastName,
-      phone: phone,
-    );
-
-    switch (dataState) {
-      case DataStateSuccess<ApiResponse<UserModel>>():
-        {
-          _preference.setUser(dataState.data?.data ?? UserModel());
-          emit(UpdateProfileStateSuccess(user: dataState.data?.data ?? UserModel()));
-        }
-      case DataStateError<ApiResponse<UserModel>>():
-        {
-          emit(UpdateProfileStateError(message: dataState.exception?.parseMessage() ?? ""));
-        }
-    }
-  }
+  // updateProfile({
+  //   required String firstName,
+  //   String? lastName,
+  //   required String gender,
+  //   required String email,
+  //   File? avatar,
+  //   DateTime? birthDate,
+  //   String? phone,
+  // }) async {
+  //   emit(UpdateProfileStateLoading());
+  //
+  //   MultipartFile? multipart;
+  //
+  //   if (avatar != null) {
+  //     multipart = await MultipartFile.fromFile(
+  //       avatar.path,
+  //       filename: avatar.path.split('/').last,
+  //     );
+  //   }
+  //
+  //   DataState<ApiResponse<UserModel>> dataState = await _repository.updateProfile(
+  //     firstName: firstName,
+  //     gender: gender,
+  //     email: email,
+  //     avatar: multipart != null ? [multipart] : null,
+  //     birthDate: birthDate,
+  //     lastName: lastName,
+  //     phone: phone,
+  //   );
+  //
+  //   switch (dataState) {
+  //     case DataStateSuccess<ApiResponse<UserModel>>():
+  //       {
+  //         _preference.setUser(dataState.data?.data ?? UserModel());
+  //         emit(UpdateProfileStateSuccess(user: dataState.data?.data ?? UserModel()));
+  //       }
+  //     case DataStateError<ApiResponse<UserModel>>():
+  //       {
+  //         emit(UpdateProfileStateError(message: dataState.exception?.parseMessage() ?? ""));
+  //       }
+  //   }
+  // }
 }

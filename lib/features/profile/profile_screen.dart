@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shantika_cubit/features/profile/informasi_pribadi_screen.dart';
@@ -16,6 +17,7 @@ import '../../ui/shared_widget/custom_card.dart';
 import '../../ui/typography.dart';
 import '../../utility/loading_overlay.dart';
 import '../authentication/login/login_screen.dart';
+import 'cubit/profile_cubit.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
@@ -24,90 +26,127 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileCubit = context.read<ProfileCubit>();
+    profileCubit.init();
+    profileCubit.profile();
+
     return Scaffold(
       backgroundColor: black00,
       appBar: _header(),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: spacing4),
-              CircleAvatar(
-                radius: 50,
-                backgroundImage:
-                AssetImage('assets/images/img_profil_default.jpg'),
-                backgroundColor: black500,
+        child: BlocConsumer<ProfileCubit, ProfileState>(
+          listener: (context, state) {
+            if (state is ProfileStateLoading) {
+              loadingOverlay.show(context);
+            } else {
+              loadingOverlay.hide();
+            }
+
+            if (state is ProfileStateError) {
+              context.showCustomToast(
+                position: SnackBarPosition.top,
+                title: "Error",
+                message: state.message,
+                isSuccess: false,
+              );
+            }
+          },
+          builder: (context, state) {
+            // ✅ Default value jika data belum ada
+            String name = "User";
+            String phone = "-";
+            String? avatarUrl;
+
+            // ✅ Update data jika berhasil load
+            if (state is ProfileStateSuccess) {
+              name = state.user.name ?? "User";
+              phone = state.user.phone ?? "-";
+              avatarUrl = state.user.avatarUrl;
+            }
+
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(height: spacing4),
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: avatarUrl != null && avatarUrl.isNotEmpty
+                        ? NetworkImage(avatarUrl)
+                        : AssetImage('assets/images/img_profil_default.jpg')
+                    as ImageProvider,
+                    backgroundColor: black500,
+                  ),
+                  SizedBox(height: spacing5),
+                  Text(name, style: mdBold),
+                  SizedBox(height: space150),
+                  Text(phone, style: smMedium.copyWith(color: black400)),
+                  SizedBox(height: spacing7),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding20),
+                    child: Column(
+                      children: [
+                        _menuItem(
+                          svgIcon: 'assets/icons/profile_outline.svg',
+                          text: "Informasi Pribadi",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => InformasiPribadiPage(),
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(height: spacing4),
+                        _menuItem(
+                          svgIcon: 'assets/icons/notif.svg',
+                          text: "Notifikasi",
+                          onTap: () {},
+                        ),
+                        SizedBox(height: spacing4),
+                        _menuItem(
+                          svgIcon: 'assets/icons/info.svg',
+                          text: "Tentang Kami",
+                          onTap: () {},
+                        ),
+                        SizedBox(height: spacing4),
+                        _menuItem(
+                          svgIcon: 'assets/icons/check.svg',
+                          text: "Kebijakan Privasi",
+                          onTap: () {},
+                        ),
+                        SizedBox(height: spacing4),
+                        _menuItem(
+                          svgIcon: 'assets/icons/note.svg',
+                          text: "Syarat dan Ketentuan",
+                          onTap: () {},
+                        ),
+                        SizedBox(height: spacing4),
+                        _menuItem(
+                          svgIcon: 'assets/icons/faq.svg',
+                          text: "FAQ",
+                          onTap: () {},
+                        ),
+                        SizedBox(height: spacing4),
+                        _menuItem(
+                          svgIcon: 'assets/icons/stars.svg',
+                          text: "Beri Nilai App Kami",
+                          trailing: Text("Versi 1.20.5", style: xxsMedium),
+                          onTap: () {},
+                        ),
+                        SizedBox(height: spacing5),
+                        CustomButton(
+                          onPressed: () => _showLogoutDialog(context),
+                          child: Text('Keluar Akun'),
+                        ),
+                        SizedBox(height: spacing5),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: spacing5),
-              Text("Anastasya Carolina", style: mdBold),
-              SizedBox(height: space150),
-              Text("087374543899",
-                  style: smMedium.copyWith(color: black400)),
-              SizedBox(height: spacing7),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: padding20),
-                child: Column(
-                  children: [
-                    _menuItem(
-                      svgIcon: 'assets/icons/profile_outline.svg',
-                      text: "Informasi Pribadi",
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => InformasiPribadiPage(),
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: spacing4),
-                    _menuItem(
-                      svgIcon: 'assets/icons/notif.svg',
-                      text: "Notifikasi",
-                      onTap: () {},
-                    ),
-                    SizedBox(height: spacing4),
-                    _menuItem(
-                      svgIcon: 'assets/icons/info.svg',
-                      text: "Tentang Kami",
-                      onTap: () {},
-                    ),
-                    SizedBox(height: spacing4),
-                    _menuItem(
-                      svgIcon: 'assets/icons/check.svg',
-                      text: "Kebijakan Privasi",
-                      onTap: () {},
-                    ),
-                    SizedBox(height: spacing4),
-                    _menuItem(
-                      svgIcon: 'assets/icons/note.svg',
-                      text: "Syarat dan Ketentuan",
-                      onTap: () {},
-                    ),
-                    SizedBox(height: spacing4),
-                    _menuItem(
-                      svgIcon: 'assets/icons/faq.svg',
-                      text: "FAQ",
-                      onTap: () {},
-                    ),
-                    SizedBox(height: spacing4),
-                    _menuItem(
-                      svgIcon: 'assets/icons/stars.svg',
-                      text: "Beri Nilai App Kami",
-                      trailing: Text("Versi 1.20.5", style: xxsMedium),
-                      onTap: () {},
-                    ),
-                    SizedBox(height: spacing5),
-                    CustomButton(
-                      onPressed: () => _showLogoutDialog(context),
-                      child: Text('Keluar Akun'),
-                    ),
-                    SizedBox(height: spacing5),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -168,14 +207,21 @@ class ProfileScreen extends StatelessWidget {
             trailing,
             SizedBox(width: space050),
           ],
-          Icon(Icons.arrow_forward_ios_rounded,
-              color: black800, size: iconL),
+          Icon(Icons.arrow_forward_ios_rounded, color: black800, size: iconL),
         ],
       ),
     );
   }
 
   void _showLogoutDialog(BuildContext context) {
+    // ✅ Get nama user dari Cubit state
+    final state = context.read<ProfileCubit>().state;
+    String userName = "User";
+
+    if (state is ProfileStateSuccess) {
+      userName = state.user.name ?? "User";
+    }
+
     showDialog(
       context: context,
       builder: (context) {
@@ -209,7 +255,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  "Yakin Anda akan keluar dari akun Anastasya Carolina?",
+                  "Yakin Anda akan keluar dari akun $userName?",
                   style: TextStyle(color: Colors.grey[700], fontSize: 14),
                 ),
                 SizedBox(height: 20),

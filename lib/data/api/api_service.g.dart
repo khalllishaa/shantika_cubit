@@ -678,27 +678,27 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<ApiResponse<UserModel>>> profile() async {
+  Future<HttpResponse<ApiResponse<UsersModel>>> profile() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<HttpResponse<ApiResponse<UserModel>>>(
+    final _options = _setStreamType<HttpResponse<ApiResponse<UsersModel>>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/profile',
+            '/customer/membership',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late ApiResponse<UserModel> _value;
+    late ApiResponse<UsersModel> _value;
     try {
-      _value = ApiResponse<UserModel>.fromJson(
+      _value = ApiResponse<UsersModel>.fromJson(
         _result.data!,
-        (json) => UserModel.fromJson(json as Map<String, dynamic>),
+        (json) => UsersModel.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
@@ -709,36 +709,46 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<ApiResponse<UserModel>>> updateProfile({
-    List<MultipartFile>? avatar,
-    required String first_name,
-    String? last_name,
-    String? birth_date,
-    required String gender,
-    String? phone,
+  Future<HttpResponse<ApiResponse<UsersModel>>> updateProfile({
+    required String name,
     required String email,
+    required String phone,
+    File? avatar,
+    required String birth,
+    required String birth_place,
+    required String address,
+    required String gender,
+    String? uuid,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    if (avatar != null) {
-      _data.files.addAll(avatar.map((i) => MapEntry('avatar', i)));
-    }
-    _data.fields.add(MapEntry('first_name', first_name));
-    if (last_name != null) {
-      _data.fields.add(MapEntry('last_name', last_name));
-    }
-    if (birth_date != null) {
-      _data.fields.add(MapEntry('birth_date', birth_date));
-    }
-    _data.fields.add(MapEntry('gender', gender));
-    if (phone != null) {
-      _data.fields.add(MapEntry('phone', phone));
-    }
+    _data.fields.add(MapEntry('name', name));
     _data.fields.add(MapEntry('email', email));
-    final _options = _setStreamType<HttpResponse<ApiResponse<UserModel>>>(
+    _data.fields.add(MapEntry('phone', phone));
+    if (avatar != null) {
+      if (avatar != null) {
+        _data.files.add(
+          MapEntry(
+            'avatar',
+            MultipartFile.fromFileSync(
+              avatar.path,
+              filename: avatar.path.split(Platform.pathSeparator).last,
+            ),
+          ),
+        );
+      }
+    }
+    _data.fields.add(MapEntry('birth', birth));
+    _data.fields.add(MapEntry('birth_place', birth_place));
+    _data.fields.add(MapEntry('address', address));
+    _data.fields.add(MapEntry('gender', gender));
+    if (uuid != null) {
+      _data.fields.add(MapEntry('uuid', uuid));
+    }
+    final _options = _setStreamType<HttpResponse<ApiResponse<UsersModel>>>(
       Options(
             method: 'POST',
             headers: _headers,
@@ -747,18 +757,18 @@ class _ApiService implements ApiService {
           )
           .compose(
             _dio.options,
-            '/profile/update',
+            '/customer/update',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late ApiResponse<UserModel> _value;
+    late ApiResponse<UsersModel> _value;
     try {
-      _value = ApiResponse<UserModel>.fromJson(
+      _value = ApiResponse<UsersModel>.fromJson(
         _result.data!,
-        (json) => UserModel.fromJson(json as Map<String, dynamic>),
+        (json) => UsersModel.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);

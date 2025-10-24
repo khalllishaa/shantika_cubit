@@ -1,8 +1,9 @@
-import 'package:dio/dio.dart';
-import 'package:shantika_cubit/utility/extensions/date_time_extensions.dart';
+// File: profile_repository.dart
+
+import 'dart:io';
+import 'package:retrofit/retrofit.dart';
 import '../data/api/api_service.dart';
-import '../model/response/api_response.dart';
-import '../model/user_model.dart';
+import '../model/users_model.dart';
 import '../utility/resource/data_state.dart';
 import 'base/base_repository.dart';
 
@@ -11,44 +12,58 @@ class ProfileRepository extends BaseRepository {
 
   ProfileRepository(this._apiService);
 
-  Future<DataState<ApiResponse<UserModel>>> profile() async {
-    DataState<ApiResponse<UserModel>> dataStateAuthResponse = await getStateOf<ApiResponse<UserModel>>(
-      request: () => _apiService.profile(),
-    );
+  /// ✅ Get Profile
+  Future<DataState<UsersModel>> profile() async {
+    return await getStateOf<UsersModel>(
+      request: () async {
+        final response = await _apiService.profile();
 
-    if (dataStateAuthResponse is DataStateSuccess) {
-      return DataStateSuccess(dataStateAuthResponse.data!);
-    } else {
-      return DataStateError(dataStateAuthResponse.exception!);
-    }
+        final apiResponse = response.data;
+
+        final user = apiResponse.data;
+
+        return HttpResponse<UsersModel>(
+          user!,
+          response.response,
+        );
+      },
+    );
   }
 
-  Future<DataState<ApiResponse<UserModel>>> updateProfile({
-    required String firstName,
-    String? lastName,
-    required String gender,
+  /// ✅ Update Profile
+  Future<DataState<UsersModel>> updateProfile({
+    required String name,
     required String email,
-    List<MultipartFile>? avatar,
-    DateTime? birthDate,
-    String? phone,
+    required String phone,
+    File? avatar,
+    String? birth,
+    String? birthPlace,
+    String? address,
+    String? gender,
+    String? uuid,
   }) async {
-    String? numberWithoutPrefix = phone?.replaceFirst(RegExp(r'^\+62'), '');
-    DataState<ApiResponse<UserModel>> dataStateAuthResponse = await getStateOf<ApiResponse<UserModel>>(
-      request: () => _apiService.updateProfile(
-        first_name: firstName,
-        gender: gender,
-        email: email,
-        last_name: lastName,
-        avatar: avatar,
-        birth_date: birthDate?.convert(format: "yyyy-MM-dd"),
-        phone: '+62${numberWithoutPrefix}',
-      ),
-    );
+    return await getStateOf<UsersModel>(
+      request: () async {
+        final response = await _apiService.updateProfile(
+          name: name,
+          email: email,
+          phone: phone,
+          avatar: avatar,
+          birth: birth ?? "",
+          birth_place: birthPlace ?? "",
+          address: address ?? "",
+          gender: gender ?? "",
+          uuid: uuid ?? "",
+        );
 
-    if (dataStateAuthResponse is DataStateSuccess) {
-      return DataStateSuccess(dataStateAuthResponse.data!);
-    } else {
-      return DataStateError(dataStateAuthResponse.exception!);
-    }
+        final apiResponse = response.data;
+        final user = apiResponse.data;
+
+        return HttpResponse<UsersModel>(
+          user!,
+          response.response,
+        );
+      },
+    );
   }
 }

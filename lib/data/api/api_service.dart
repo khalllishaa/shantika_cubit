@@ -31,6 +31,7 @@ import '../../model/response/transaction_response.dart';
 import '../../model/slider_model.dart';
 import '../../model/terms_conditions_model.dart';
 import '../../model/user_model.dart';
+import '../../model/users_model.dart';
 
 part 'api_service.g.dart';
 
@@ -174,21 +175,36 @@ abstract class ApiService {
     @Part() required String confirm_password,
   });
 
-  @GET("/profile")
-  Future<HttpResponse<ApiResponse<UserModel>>> profile();
+  @GET("/customer/membership")
+  Future<HttpResponse<ApiResponse<UsersModel>>> profile();
 
   /// Update Profile
-  @POST("/profile/update")
+  @POST("/customer/update")
   @MultiPart()
-  Future<HttpResponse<ApiResponse<UserModel>>> updateProfile({
-    @Part() List<MultipartFile>? avatar,
-    @Part() required String first_name,
-    @Part() String? last_name,
-    @Part() String? birth_date,
-    @Part() required String gender,
-    @Part() String? phone,
+  Future<HttpResponse<ApiResponse<UsersModel>>> updateProfile({
+    @Part() required String name,
     @Part() required String email,
+    @Part() required String phone,
+    @Part() File? avatar,
+    @Part() required String birth,
+    @Part() required String birth_place,
+    @Part() required String address,
+    @Part() required String gender,
+    @Part() String? uuid,
   });
+
+  /// Update Profile
+  // @POST("/profile/update")
+  // @MultiPart()
+  // Future<HttpResponse<ApiResponse<UserModel>>> updateProfile({
+  //   @Part() List<MultipartFile>? avatar,
+  //   @Part() required String first_name,
+  //   @Part() String? last_name,
+  //   @Part() String? birth_date,
+  //   @Part() required String gender,
+  //   @Part() String? phone,
+  //   @Part() required String email,
+  // });
 
   /// Home
   @GET("/home")
