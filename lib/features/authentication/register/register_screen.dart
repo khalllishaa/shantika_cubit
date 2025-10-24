@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart'; // ✅ Import untuk SVG
+import 'package:shantika_cubit/features/authentication/login/login_screen.dart';
 import 'package:shantika_cubit/ui/dimension.dart';
 import 'package:shantika_cubit/utility/extensions/email_validator_extension.dart';
 import 'package:shantika_cubit/utility/extensions/show_toast.dart';
@@ -71,7 +72,7 @@ class RegisterScreen extends StatelessWidget {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationScreen(),
+                  builder: (context) => LoginScreen(),
                 ),
                     (route) => false,
               );

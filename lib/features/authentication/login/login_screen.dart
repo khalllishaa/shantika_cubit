@@ -68,7 +68,7 @@ class LoginScreen extends StatelessWidget {
 
   Widget _buildBackgroundImage() {
     return Transform.rotate(
-      angle: 0,
+      angle: 3.1416,
       alignment: Alignment.center,
       child: Container(
         height: 426,

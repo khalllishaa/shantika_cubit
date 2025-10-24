@@ -8,6 +8,7 @@ const double paddingXL = 35;
 const double paddingGoogle1 = 72;
 const double padding16 = 16;
 const double padding12 = 12;
+const double padding20 = 20;
 
 /// Border Radius
 const double borderRadius0 = 0;
@@ -47,10 +48,11 @@ const double spacing3 = 8;
 const double spacing4 = 12;
 const double spacing5 = 16;
 const double spacing6 = 20;
-const double spacing7 = 24;
-const double spacing8 = 32;
+const double spacing7 = 22;
+const double spacing8 = 26;
 const double spacing9 = 40;
 const double spacing10 = 48;
 
 /// Size Images & Icons
 const double iconM = 20;
+const double iconL = 24;

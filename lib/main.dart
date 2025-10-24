@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
         /// HOME
         BlocProvider(create: (context) => HomeCubit()),
         BlocProvider(create: (context) => DetailSliderCubit()),
-        BlocProvider(create: (context) => LogoutCubit()),
+        BlocProvider(create: (context) => LogoutCubit()..init()),
 
         BlocProvider(create: (context) => UpdateFcmTokenCubit()),
 
