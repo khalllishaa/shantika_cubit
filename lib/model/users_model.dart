@@ -28,6 +28,9 @@ class UsersModel {
   @JsonKey(name: "gender")
   String? gender;
 
+  @JsonKey(name: "address")
+  String? address;
+
   @JsonKey(name: "avatar")
   dynamic avatar;
 
@@ -55,6 +58,7 @@ class UsersModel {
     this.birth,
     this.birthPlace,
     this.gender,
+    this.address,
     this.avatar,
     this.avatarUrl,
     this.nameAgent,
@@ -63,7 +67,6 @@ class UsersModel {
     this.updatedAt,
   });
 
-  // ✅ FIXED: Harus UsersModel bukan UserModel
   factory UsersModel.fromJson(Map<String, dynamic> json) =>
       _$UsersModelFromJson(json);
 
