@@ -52,12 +52,10 @@ class ProfileScreen extends StatelessWidget {
             }
           },
           builder: (context, state) {
-            // ✅ Default value jika data belum ada
             String name = "User";
             String phone = "-";
             String? avatarUrl;
 
-            // ✅ Update data jika berhasil load
             if (state is ProfileStateSuccess) {
               name = state.user.name ?? "User";
               phone = state.user.phone ?? "-";
