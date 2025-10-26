@@ -39,4 +39,16 @@ class DetailHistoryTransactionCubit extends Cubit<DetailHistoryTransactionState>
         }
     }
   }
+  void loadPesanan(Map<String, dynamic> pesananData) {
+    emit(DetailPesananLoaded(pesananData));
+  }
+
+  void markAsReviewed() {
+    if (state is DetailPesananLoaded) {
+      final current = state as DetailPesananLoaded;
+      final updated = Map<String, dynamic>.from(current.pesananData);
+      updated["status"] = "Sudah Review";
+      emit(DetailPesananLoaded(updated));
+    }
+  }
 }
