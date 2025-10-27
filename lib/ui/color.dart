@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/material.dart';
 
 /// Base color
 const Color primaryColor = Color(0xFF292861);
@@ -7,6 +8,16 @@ const Color secondaryColor = Color(0xFFfd5812);
 const Color secondaryColor_60 = Color(0x99292861); //opacity 60
 const Color errorColor = Color(0xFFff4542);
 const Color successColor = Color(0xFF21742b);
+const gradientMenu = LinearGradient(
+  colors: [Color(0xFF292861), Color(0xFF67717A)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+const gradientPromo = LinearGradient(
+  colors: [Color(0xFF2D3C8A), Color(0xFF3A4BA4)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
 
 const Color shimmerColor = Color(0xFFB4B4B4);
 const Color shimmerHighlightColor = Color(0xFFFFFFFF);

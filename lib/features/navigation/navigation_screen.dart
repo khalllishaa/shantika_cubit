@@ -5,10 +5,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../ui/color.dart';
 import '../../ui/dimension.dart';
 import '../../ui/typography.dart';
-import '../assignment/assignment_screen.dart';
+import '../assignment/chat_screen.dart';
 import '../home/home_screen.dart';
 import '../profile/profile_screen.dart';
-import '../transaction/transaction_screen.dart';
+import '../transaction/order_screen.dart';
 import 'cubit/update_fcm_token_cubit.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -26,8 +26,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   final List<Widget> screens = [
     HomeScreen(),
-    AssignmentScreen(),
-    TransactionScreen(),
+    ChatScreen(),
+    PesananScreen(),
     ProfileScreen(),
   ];
 
