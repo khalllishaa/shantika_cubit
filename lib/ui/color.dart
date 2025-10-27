@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 /// Base color
 const Color primaryColor = Color(0xFF292861);
 const Color primaryColor700 = Color(0xFFC80D0D);
-const Color secondaryColor = Color(0xFFfd5812);
+const Color secondaryColor = Color(0xff292860);
 const Color secondaryColor_60 = Color(0x99292861); //opacity 60
 const Color errorColor = Color(0xFFff4542);
 const Color successColor = Color(0xFF21742b);
@@ -37,18 +37,18 @@ const Color black700_20 = Color(0xFF3F3F4633); // 20% opacity
 const Color black800 = Color(0xFF111827);
 const Color black900 = Color(0xFF18181B);
 const Color black950 = Color(0xFF000000);
-const Color black950_80 = Color(0xFF09090BCC); // 80% opacity
+const Color black950_10 = Color(0xFF030712); // 10% opacity
 
 // Navy
 const Color navy50 = Color(0xFFE4E9F2);
 const Color navy100 = Color(0xFFCCD6E6);
 const Color navy200 = Color(0xFFF2F5FD);
 const Color navy200_20 = Color(0xFFAABBD633); // 20% opacity
-const Color navy300 = Color(0xFF8099C2);
-const Color navy400 = Color(0xFF2462B7);
-const Color navy500 = Color(0xFF2A5499);
+const Color navy300 = Color(0xFFCCE9FF);
+const Color navy400 = Color(0xFF0C44FF);
+const Color navy500 = Color(0xFF4176E3);
 const Color navy500_20 = Color(0xFF2A549933); // 20% opacity
-const Color navy600 = Color(0xFF003284);
+const Color navy600 = Color(0xFF292860);
 const Color navy700 = Color(0xFF002A6E);
 const Color navy800 = Color(0xFF002158);
 const Color navy900 = Color(0xFF001942);
@@ -87,7 +87,7 @@ const Color green100 = Color(0xFFDEF6D1);
 const Color green200 = Color(0xFFC0EEA8);
 const Color green200_20 = Color(0xFFC0EEA833); // 20% opacity
 const Color green300 = Color(0xFF97E076);
-const Color green400 = Color(0xFF73D04B);
+const Color green400 = Color(0xFF8FC907);
 const Color green500 = Color(0xFF58BF2F);
 const Color green500_20 = Color(0xFF58BF2F33); // 20% opacity
 const Color green600 = Color(0xFF3E9020);
@@ -102,7 +102,7 @@ const Color yellow200 = Color(0xFFFEB88);
 const Color yellow200_20 = Color(0xFFFEB8833); // 20% opacity
 const Color yellow300 = Color(0xFFFD744);
 const Color yellow400 = Color(0xFFFEC111);
-const Color yellow500 = Color(0xFFF4AC04);
+const Color yellow500 = Color(0xFFF8BA2C);
 const Color yellow500_20 = Color(0xFFF4AC0433); // 20% opacity
 const Color yellow600 = Color(0xFFCE7F00);
 const Color yellow700 = Color(0xFFA45A04);
@@ -246,6 +246,7 @@ const Color bgModal = Color(0xFFFFFFFF);
 const Color bgBackdrop = Color(0x333F3F46);
 const Color bgSwitch = Color(0xFFD4D4D8);
 const Color bgButtonSwitch = Color(0xFFFFFFFF);
+const Color iconBlack = Color(0xFF6B7280);
 
 // Border
 const Color borderNeutral = Color(0xFFE4E4E7);

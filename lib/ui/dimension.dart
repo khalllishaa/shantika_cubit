@@ -34,25 +34,27 @@ const double space400 = 15;
 const double space500 = 21;
 const double space600 = 24;
 const double space800 = 30;
-const double space1000 = 40;
+const double space1000 = 28;
 const double space1200 = 48;
 const double space1600 = 64;
 const double space2000 = 80;
 const double space2400 = 96;
-const double space3200 = 128;
+const double space3200 = 200;
 
 /// Spacing
 const double spacing1 = 2;
-const double spacing2 = 4;
+const double spacing2 = 5;
 const double spacing3 = 8;
 const double spacing4 = 12;
 const double spacing5 = 16;
 const double spacing6 = 20;
 const double spacing7 = 22;
 const double spacing8 = 26;
-const double spacing9 = 40;
+const double spacing9 = 36;
 const double spacing10 = 48;
 
 /// Size Images & Icons
+const double iconS = 16;
 const double iconM = 20;
 const double iconL = 24;
+const double iconXL = 36;

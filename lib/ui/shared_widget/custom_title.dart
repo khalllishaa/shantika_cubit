@@ -25,14 +25,14 @@ class SectionTitle extends StatelessWidget {
             width: 4,
             height: 24,
             decoration: BoxDecoration(
-              color: lineColor ?? primaryColor,
+              color: lineColor ?? navy400,
               borderRadius: BorderRadius.circular(0),
             ),
           ),
           SizedBox(width: space150),
           Text(
             title,
-            style: smMedium,
+            style: smSemiBold,
           ),
         ],
       ),

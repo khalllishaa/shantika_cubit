@@ -16,6 +16,8 @@ class CustomButton extends StatelessWidget {
   final Size? minimumSize;
   final Border? border;
   final double? width;
+  final EdgeInsetsGeometry? padding;
+  final double borderRadius;
 
   const CustomButton({
     Key? key,
@@ -31,38 +33,50 @@ class CustomButton extends StatelessWidget {
     this.border,
     this.disabledColor = bgDisabled,
     this.width,
+    this.padding,
+    this.borderRadius = borderRadius300, // <-- default biar tetep aman
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 46,
-      width: width,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        border: border,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: 32,
+        minWidth: 0,
       ),
-      child: Material(
-        color: onPressed != null ? primaryColor : disabledColor,
-        borderRadius: BorderRadius.circular(borderRadius300),
-        child: InkWell(
-          splashColor: transparentColor,
-          borderRadius: BorderRadius.circular(borderRadius300),
-          onTap: onPressed != null
-              ? () {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                  onPressed!();
-                }
-              : null,
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.all(Radius.circular(borderRadius300)),
-            ),
-            child: DefaultTextStyle.merge(
-              style: smBold.copyWith(color: onPressed != null ? textColor : textColorDisabled),
-              textAlign: TextAlign.center,
-              child: Center(child: child),
+      child: Container(
+        width: width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(borderRadius),
+          border: border,
+        ),
+        child: Material(
+          color: onPressed != null ? backgroundColor : disabledColor,
+          borderRadius: BorderRadius.circular(borderRadius),
+          child: InkWell(
+            splashColor: transparentColor,
+            borderRadius: BorderRadius.circular(borderRadius),
+            onTap: onPressed != null
+                ? () {
+              FocusManager.instance.primaryFocus?.unfocus();
+              onPressed!();
+            }
+                : null,
+            child: Center(
+              child: Padding(
+                padding: padding ??
+                    const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                child: DefaultTextStyle.merge(
+                  style: smBold.copyWith(
+                    color: onPressed != null ? textColor : textColorDisabled,
+                  ),
+                  textAlign: TextAlign.center,
+                  child: child,
+                ),
+              ),
             ),
           ),
         ),
