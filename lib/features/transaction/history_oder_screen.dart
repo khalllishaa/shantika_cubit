@@ -1,53 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:shantika_cubit/features/transaction/history_oder_screen.dart';
 import 'package:shantika_cubit/features/transaction/order_detail_screen.dart';
-import '../../ui/color.dart';
+import 'package:shantika_cubit/ui/color.dart';
+import 'package:shantika_cubit/ui/typography.dart';
+
 import '../../ui/dimension.dart';
 import '../../ui/shared_widget/custom_button.dart';
 import '../../ui/shared_widget/custom_card_container.dart';
-import '../../ui/typography.dart';
-import 'cubit/history_transaction_cubit.dart';
 
-// ignore: must_be_immutable
-class PesananScreen extends StatelessWidget {
-  PesananScreen({super.key});
-
-  late HistoryTransactionCubit _historyTransactionCubit;
+class HistoryOderScreen extends StatelessWidget {
+  const HistoryOderScreen({super.key});
 
   @override
-  // Widget build(BuildContext context) {
-  //   _historyTransactionCubit = context.read();
-  //   _historyTransactionCubit.init();
-  //   _historyTransactionCubit.historyTransaction();
-  //
-  //   return DefaultTabController(
-  //     length: 3,
-  //     child: Scaffold(
-  //       appBar: CustomAppBar(
-  //         leading: false,
-  //         title: "Transaksi",
-  //         img: 'assets/images/ic_transaction_nav.svg',
-  //       ),
-  //       body: Column(
-  //         children: [
-  //           // _buildTabBar(),
-  //           // Expanded(
-  //           //   child: TabBarView(
-  //           //     children: [
-  //           //       _buildActiveInvoice(),
-  //           //       _buildSuccessInvoice(),
-  //           //       _buildCancelledInvoice(),
-  //           //     ],
-  //           //   ),
-  //           // )
-  //         ],
-  //             // .withSpaceBetween(height: space300),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: black00,
@@ -68,7 +32,7 @@ class PesananScreen extends StatelessWidget {
           color: black00,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: black950.withOpacity(0.08),
               blurRadius: 8,
               offset: Offset(0, 3),
             ),
@@ -77,31 +41,18 @@ class PesananScreen extends StatelessWidget {
         child: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: black950),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            // onPressed: () => Get.back(),
+          ),
           title: Text(
-            "Pesanan",
+            "Riwayat",
             style: xlSemiBold,
           ),
           centerTitle: true,
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(right: paddingL),
-              child: IconButton(
-                icon: Icon(
-                  Icons.history_outlined,
-                  color: black600,
-                  size: iconL,
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HistoryOderScreen(),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -263,4 +214,5 @@ class PesananScreen extends StatelessWidget {
       ),
     );
   }
+
 }

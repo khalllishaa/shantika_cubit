@@ -11,17 +11,37 @@ class ChatScreen extends StatelessWidget {
 
   final List<Map<String, dynamic>> contacts = [
     {
-      "title": "Customer Service",
-      "iconPath": "assets/icons/whatsapp.svg",
+      "title": "Chat CS Pusat New Shantika",
+      "iconPath": "assets/icons/call.svg",
       "link": "https://wa.me/6281234567890",
     },
     {
-      "title": "Driver Support",
+      "title": "Whatsapp Agen Semarang",
       "iconPath": "assets/icons/whatsapp.svg",
       "link": "https://wa.me/6289876543210",
     },
     {
-      "title": "Admin",
+      "title": "Whatsapp Agen Jepara",
+      "iconPath": "assets/icons/whatsapp.svg",
+      "link": "https://wa.me/6289876543210",
+    },
+    {
+      "title": "Whatsapp Agen Kudus",
+      "iconPath": "assets/icons/whatsapp.svg",
+      "link": "https://wa.me/6289876543210",
+    },
+    {
+      "title": "Facebook Agen Semarang",
+      "iconPath": "assets/icons/facebook.svg",
+      "link": "https://wa.me/6281111111111",
+    },
+    {
+      "title": "Facebook Agen Jepara",
+      "iconPath": "assets/icons/facebook.svg",
+      "link": "https://wa.me/6281111111111",
+    },
+    {
+      "title": "Facebook Agen Kudus",
       "iconPath": "assets/icons/facebook.svg",
       "link": "https://wa.me/6281111111111",
     },
@@ -38,19 +58,17 @@ class ChatScreen extends StatelessWidget {
       backgroundColor: black00,
       appBar: _header(),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(paddingL),
-          child: RefreshIndicator(
-            onRefresh: _onRefresh,
-            child: ListView.separated(
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: contacts.length,
-              separatorBuilder: (_, __) => SizedBox(height: space600),
-              itemBuilder: (context, index) {
-                final item = contacts[index];
-                return _chatCard(item);
-              },
-            ),
+        child: RefreshIndicator(
+          onRefresh: _onRefresh,
+          child: ListView.separated(
+            padding: EdgeInsets.all(paddingL),
+            physics: AlwaysScrollableScrollPhysics(),
+            itemCount: contacts.length,
+            separatorBuilder: (_, __) => SizedBox(height: spacing6),
+            itemBuilder: (context, index) {
+              final item = contacts[index];
+              return _chatCard(item);
+            },
           ),
         ),
       ),
@@ -67,7 +85,7 @@ class ChatScreen extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
               blurRadius: 8,
-              offset: const Offset(0, 3),
+              offset: Offset(0, 3),
             ),
           ],
         ),
@@ -76,7 +94,7 @@ class ChatScreen extends StatelessWidget {
           elevation: 0,
           title: Text(
             "Chat",
-            style: xlMedium,
+            style: xlSemiBold,
           ),
           centerTitle: true,
         ),
@@ -92,24 +110,24 @@ class ChatScreen extends StatelessWidget {
       },
       child: CustomCardContainer(
         padding: EdgeInsets.symmetric(
-          horizontal: paddingL,
-          vertical: paddingM,
+          horizontal: padding16,
+          vertical: padding12,
         ),
+        borderRadius: borderRadius300,
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(paddingS),
+              padding: EdgeInsets.all(space200),
               child: SvgPicture.asset(
                 item["iconPath"],
-                width: iconL,
-                height: iconL,
+                width: iconXL,
               ),
             ),
-            SizedBox(width: space600),
+            SizedBox(width: spacing4),
             Expanded(
               child: Text(
                 item["title"],
-                style: smMedium,
+                style: mdRegular,
               ),
             ),
           ],

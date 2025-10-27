@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../ui/color.dart';
 import '../../ui/dimension.dart';
 import '../../ui/shared_widget/custom_button.dart';
+import '../../ui/shared_widget/custom_card_container.dart';
 import '../../ui/typography.dart';
 
 class DetailPesananScreen extends StatelessWidget {
@@ -39,7 +40,7 @@ class DetailPesananScreen extends StatelessWidget {
 
   PreferredSizeWidget _header(BuildContext context) {
     return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight + 4),
+      preferredSize: Size.fromHeight(kToolbarHeight + 4),
       child: Container(
         decoration: BoxDecoration(
           color: black00,
@@ -47,7 +48,7 @@ class DetailPesananScreen extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
               blurRadius: 8,
-              offset: const Offset(0, 3),
+              offset: Offset(0, 3),
             ),
           ],
         ),
@@ -71,180 +72,154 @@ class DetailPesananScreen extends StatelessWidget {
     bool isSudahReview = pesananData["status"]?.toLowerCase() == "sudah review";
 
     return Padding(
-      padding: EdgeInsets.all(paddingL),
+      padding: EdgeInsets.all(paddingXS),
       child: Column(
         children: [
-          // Informasi Bus
-          Card(
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            elevation: 2,
-            child: Padding(
-              padding: EdgeInsets.all(paddingM),
-              child: Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(12),
-                    child: SvgPicture.asset(
-                      'images/icons/bus.svg',
-                      width: 32,
-                      height: 32,
-                      colorFilter: ColorFilter.mode(
-                        primaryColor700,
-                        BlendMode.srcIn,
-                      ),
-                    ),
+          CustomCardContainer(
+            borderRadius: 12,
+            padding: EdgeInsets.all(paddingM),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(12),
+                  child: SvgPicture.asset(
+                    'assets/icons/bus.svg',
+                    width: 32,
+                    height: 32,
                   ),
-                  SizedBox(width: space600),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          pesananData["title"]?.split("•")[0].trim() ?? "Bus 10",
-                          style: xlMedium.copyWith(fontSize: 18),
-                        ),
-                        Text(
-                          pesananData["title"]?.split("•").length > 1
-                              ? pesananData["title"].split("•")[1].trim()
-                              : "Executive",
-                          style: xlMedium.copyWith(fontSize: 13),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: primaryColor700.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SvgPicture.asset(
-                          'images/icons/car_seat.svg',
-                          width: 14,
-                          height: 14,
-                          colorFilter: ColorFilter.mode(
-                            primaryColor700,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          "${pesananData["jumlah_penumpang"] ?? 2} Penumpang",
-                          style: smMedium.copyWith(
-                            color: primaryColor700,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: spacing4),
-
-          // Informasi Perjalanan
-          Card(
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            elevation: 2,
-            child: Padding(
-              padding: EdgeInsets.all(paddingM),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Informasi Perjalanan",
-                      style: xlMedium.copyWith(fontSize: 16)),
-                  SizedBox(height: spacing4),
-                  _infoRow(Icons.location_on, "Agen Keberangkatan",
-                      pesananData["from"] ?? "Krapyak - Semarang",
-                      pesananData["depart_time"] ?? "07:30", black700_70),
-                  SizedBox(height: spacing4),
-                  _infoRow(Icons.flag, "Agen Tujuan",
-                      pesananData["to"] ?? "Gejayan - Sleman",
-                      pesananData["arrive_time"] ?? "15:30",
-                      primaryColor700),
-                  SizedBox(height: spacing4),
-                  Row(
+                ),
+                SizedBox(width: spacing6),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.calendar_month, color: black600),
-                      SizedBox(height: spacing4),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Tanggal Keberangkatan",
-                              style: smMedium),
-                          Text(
-                            "${pesananData["date"] ?? "12 Mei 2025"} ${pesananData["depart_time"] ?? "07:30"}",
-                            style: smMedium.copyWith(fontWeight: FontWeight.w600),
-                          ),
-                        ],
+                      Text(
+                        pesananData["title"]?.split("•")[0].trim() ?? "Bus 10",
+                        style: smMedium,
+                      ),
+                      SizedBox(height: space150),
+                      Text(
+                        "Executive",
+                        style: xsRegular,
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: navy300,
+                    borderRadius: BorderRadius.circular(borderRadius200),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/car_seat.svg',
+                        width: 14,
+                        height: 14,
+                      ),
+                      SizedBox(width: space050),
+                      Text(
+                        "${pesananData["jumlah_penumpang"] ?? 2} Penumpang",
+                        style: xxsMedium.copyWith(color: navy400),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          SizedBox(height: spacing4),
+          SizedBox(height: spacing3),
 
+          // Informasi Perjalanan
+          CustomCardContainer(
+            borderRadius: borderRadius300,
+            padding: EdgeInsets.all(paddingM),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Informasi Perjalanan",
+                    style: smSemiBold),
+                SizedBox(height: spacing5),
+                _infoRow(Icons.location_pin, "Agen Keberangkatan",
+                    pesananData["from"] ?? "Krapyak - Semarang",
+                    pesananData["depart_time"] ?? "07:30", black700_70),
+                SizedBox(height: spacing5),
+                _infoRow(Icons.location_pin, "Agen Tujuan",
+                    pesananData["to"] ?? "Gejayan - Sleman",
+                    pesananData["arrive_time"] ?? "15:30", black700_70),
+                SizedBox(height: spacing5),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.calendar_today_outlined, color: black600, size: iconS),
+                        SizedBox(width: spacing4),
+                        Text("Tanggal Keberangkatan", style: xsRegular),
+                      ],
+                    ),
+                    SizedBox(height: space100),
+                    Text(
+                      "${pesananData["date"] ?? "12 Mei 2025"} ${pesananData["depart_time"] ?? "07:30"}",
+                      style: smMedium,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: spacing3),
           if (isSudahReview) ...[
             _reviewCard(),
             SizedBox(height: spacing4),
           ],
 
           // Informasi Pembayaran
-          Card(
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            elevation: 2,
-            child: Padding(
-              padding: EdgeInsets.all(paddingM),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Informasi Pembayaran",
-                      style: xlMedium.copyWith(fontSize: 16)),
-                  SizedBox(height: spacing4),
-                  _paymentRow(Icons.confirmation_num, "Total Harga Tiket",
-                      "Rp${pesananData["price"] ?? "400.000"}"),
-                  SizedBox(height: spacing4),
-                  _paymentRow(Icons.person, "ID Membership",
-                      pesananData["id_membership"] ?? "SHNTK00127"),
-                  SizedBox(height: spacing4),
-                  _paymentRow(Icons.discount, "Potongan Membership 5%",
-                      "Rp${pesananData["potongan"] ?? "20.000"}"),
-                  SizedBox(height: spacing4),
-                  _paymentRow(Icons.wallet, "Metode Pembayaran",
-                      pesananData["metode_pembayaran"] ?? "Pembayaran Instant"),
-                  SizedBox(height: spacing4),
-                  Row(
-                    children: [
-                      Icon(Icons.info, color: black600),
-                      SizedBox(height: spacing4),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Status", style: smMedium),
-                          Text(
-                            _getStatusText(pesananData["status"]),
-                            style: smMedium.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: _getStatusColor(pesananData["status"]),
-                            ),
-                          ),
-                        ],
+          CustomCardContainer(
+            borderRadius: borderRadius300,
+            padding: EdgeInsets.all(paddingM),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Informasi Pembayaran",
+                    style: smMedium),
+                SizedBox(height: spacing5),
+                _paymentRow(Icons.confirmation_num, "Total Harga Tiket",
+                    "Rp${pesananData["price"] ?? "400.000"}"),
+                SizedBox(height: spacing5),
+                _paymentRow(Icons.person, "ID Membership",
+                    pesananData["id_membership"] ?? "SHNTK00127"),
+                SizedBox(height: spacing5),
+                _paymentRow(Icons.discount, "Potongan Membership 5%",
+                    "Rp${pesananData["potongan"] ?? "20.000"}"),
+                SizedBox(height: spacing5),
+                _paymentRow(Icons.wallet, "Metode Pembayaran",
+                    pesananData["metode_pembayaran"] ?? "Pembayaran Instant"),
+                SizedBox(height: spacing5),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.info, color: black600),
+                        SizedBox(width: space100),
+                        Text("Status", style: smMedium),
+                      ],
+                    ),
+                    SizedBox(height: space100),
+                    Text(
+                      _getStatusText(pesananData["status"]),
+                      style: smMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: _getStatusColor(pesananData["status"]),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ],
@@ -254,113 +229,106 @@ class DetailPesananScreen extends StatelessWidget {
 
   Widget _infoRow(
       IconData icon, String label, String title, String time, Color color) {
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: color, size: 20),
-        SizedBox(height: spacing4),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: smMedium),
-              Text("$title • $time",
-                  style: smMedium.copyWith(fontWeight: FontWeight.w600)),
-            ],
-          ),
+        Row(
+          children: [
+            Icon(icon, color: color, size: iconM),
+            SizedBox(width: space100),
+            Text(label, style: xsRegular),
+            Text(label, style: xsRegular),
+          ],
         ),
+        SizedBox(height: space100),
+        Text("$title • $time",
+            style: smMedium),
       ],
     );
   }
 
   Widget _paymentRow(IconData icon, String label, String value) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: black600, size: 20),
-        SizedBox(height: spacing4),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: smMedium),
-              Text(value,
-                  style: smMedium.copyWith(fontWeight: FontWeight.w600)),
-            ],
-          ),
+        Row(
+          children: [
+            Icon(icon, color: black700_70, size: iconM),
+            SizedBox(width: space100),
+            Text(label, style: xsRegular.copyWith(color: black700_70)),
+          ],
         ),
+        SizedBox(height: space100),
+        Text(value,
+            style: smMedium),
       ],
     );
   }
 
   Widget _reviewCard() {
-    return Card(
-      shape:
-      RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
-      child: Padding(
-        padding: EdgeInsets.all(paddingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Review", style: xlMedium.copyWith(fontSize: 16)),
-            SizedBox(height: spacing4),
-            Row(
-              children: List.generate(5, (index) {
-                return Icon(Icons.star, color: primaryColor700, size: 20);
-              }),
-            ),
-            SizedBox(height: spacing4),
-            Text(
-              pesananData["review_text"] ??
-                  "Perjalanan sangat nyaman, supir ramah, AC dingin!",
-              style: smMedium.copyWith(fontSize: 13, height: 1.5),
-            ),
-          ],
-        ),
+    return CustomCardContainer(
+      borderRadius: 12,
+      padding: EdgeInsets.all(paddingM),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Review", style: xlMedium.copyWith(fontSize: 16)),
+          SizedBox(height: spacing4),
+          Row(
+            children: List.generate(5, (index) {
+              return Icon(Icons.star, color: primaryColor700, size: 20);
+            }),
+          ),
+          SizedBox(height: spacing4),
+          Text(
+            pesananData["review_text"] ??
+                "Perjalanan sangat nyaman, supir ramah, AC dingin!",
+            style: smMedium.copyWith(fontSize: 13, height: 1.5),
+          ),
+        ],
       ),
     );
   }
 
   Widget _bottomSection() {
-    bool isSudahReview = pesananData["status"]?.toLowerCase() == "sudah review";
+    final status = pesananData["status"]?.toLowerCase() ?? "";
+    final bool showButton = status != "sudah review";
 
     return Container(
-      padding: EdgeInsets.all(paddingL),
+      padding: EdgeInsets.all(padding16),
       decoration: BoxDecoration(
         color: black00,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: black950.withOpacity(0.08),
             blurRadius: 8,
             offset: Offset(0, -3),
           ),
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Total Pembayaran", style: smMedium),
+              Text("Total Pembayaran", style: xsRegular),
               Text("Rp${pesananData["price"] ?? "400.000"}",
-                  style: xlMedium.copyWith(fontSize: 18)),
+                  style: mdSemiBold),
             ],
           ),
-          if (!isSudahReview) ...[
+          if (showButton) ...[
             SizedBox(height: spacing4),
-            // ReuseButton(
-            //   text: "Lihat Tiket",
-            //   height: 50,
-            //   fontSize: 16,
-            //   radius: 12,
-            //   backgroundColor: AppStyles.primary,
-            //   textColor: AppStyles.light,
-            //   onPressed: () {},
-            // ),
-            CustomButton(
-              onPressed: () {},
-              child: Text('Lihat Tiket'),
-            )
+            SizedBox(
+              height: iconXL, // tinggi button
+              width: double.infinity, // biar button full width
+              child: CustomButton(
+                child: Text("Lihat Tiket"),
+                onPressed: () {
+                  // aksi button
+                },
+              ),
+            ),
           ],
         ],
       ),
@@ -374,7 +342,7 @@ class DetailPesananScreen extends StatelessWidget {
       case "sudah ditukarkan":
         return "Sudah Ditukarkan";
       case "sudah review":
-        return "Sudah Review";
+        return "Sudah Direview";
       default:
         return "Lunas";
     }
@@ -383,9 +351,9 @@ class DetailPesananScreen extends StatelessWidget {
   Color _getStatusColor(String? status) {
     switch (status?.toLowerCase()) {
       case "lunas":
-        return primaryColor700;
+        return green400;
       case "sudah ditukarkan":
-        return primaryColor;
+        return secondaryColor;
       case "sudah review":
         return secondaryColor;
       default:
