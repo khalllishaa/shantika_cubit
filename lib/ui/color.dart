@@ -63,7 +63,7 @@ const Color orange400 = Color(0xFFE7F3E);
 const Color orange500 = Color(0xFFD5812);
 const Color orange500_20 = Color(0xFFD581233); // 20% opacity
 const Color orange600 = Color(0xFFED3E09);
-const Color orange700 = Color(0xFFC52B09);
+const Color orange700 = Color(0xFFFF3800);
 const Color orange800 = Color(0xFF9C2310);
 const Color orange900 = Color(0xFF7E2010);
 

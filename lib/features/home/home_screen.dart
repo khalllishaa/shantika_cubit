@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shantika_cubit/features/home/artikel_screen.dart';
+import 'package:shantika_cubit/features/home/cubit/artikel_cubit.dart';
 import '../../config/constant.dart';
 import '../../config/service_locator.dart';
 import '../../config/user_preference.dart';
@@ -1040,7 +1042,17 @@ class _HomeScreenState extends State<HomeScreen> {
               SectionTitle(title: "Artikel"),
               Spacer(),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (context) => ArtikelCubit(),
+                        child: ArtikelScreen(),
+                      ),
+                    ),
+                  );
+                },
                 child: Text("Lihat Semua", style: smMedium.copyWith(color: navy400)),
               ),
             ],
