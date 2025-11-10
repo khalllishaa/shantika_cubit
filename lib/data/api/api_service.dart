@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 
 import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:shantika_cubit/model/about_us_model.dart';
 
 import '../../config/constant.dart';
 import '../../model/address_model.dart';
@@ -132,6 +133,10 @@ abstract class ApiService {
   /// FAQ
   @GET("/information/faq")
   Future<HttpResponse<ApiResponse<List<FaqModel>>>> faq();
+
+  /// About Us
+  @GET("/about_us")
+  Future<HttpResponse<AboutUsModel>> about();
 
   /// Terms and Contions
   @GET("/information/term-and-condition")
