@@ -10,15 +10,26 @@ class FAQCubit extends Cubit<FAQState> {
 
   FAQCubit(this.repository) : super(FAQInitial());
 
-  // Future<void> fetchFAQs() async {
-  //   emit(FAQLoading());
-  //   final result = await repository.faq();
-  //
-  //   if (result is DataStateSuccess<List<FaqModel>>) {
-  //     emit(FAQLoaded(result.data));
-  //   } else if (result is DataStateError<List<FaqModel>>) {
-  //     emit(FAQError(result.exception ?? "Unknown error"));
-  //   }
-  //
-  // }
+  Future<void> fetchFAQs() async {
+    emit(FAQLoading());
+
+    try {
+      final result = await repository.faq();
+
+      if (result is DataStateSuccess<List<FaqModel>>) {
+        if (result.data != null && result.data!.isNotEmpty) {
+          emit(FAQLoaded(result.data!));
+        } else {
+          emit(const FAQError("Tidak ada data FAQ"));
+        }
+      } else if (result is DataStateError) {
+        final errorMessage = result.exception?.response?.data['message']
+            ?? result.exception?.message
+            ?? "Terjadi kesalahan saat mengambil data FAQ";
+        emit(FAQError(errorMessage));
+      }
+    } catch (e) {
+      emit(FAQError("Error tidak terduga: ${e.toString()}"));
+    }
+  }
 }

@@ -1,34 +1,30 @@
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:shantika_cubit/utility/extensions/dio_exception_extensions.dart';
-
-import '../../../config/service_locator.dart';
-import '../../../model/terms_conditions_model.dart';
-import '../../../repository/app_settings_repository.dart';
-import '../../../utility/resource/data_state.dart';
-
-part 'terms_conditions_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shantika_cubit/features/terms_conditions/cubit/terms_conditions_state.dart';
+import 'package:shantika_cubit/model/terms_conditions_model.dart';
+import 'package:shantika_cubit/repository/app_settings_repository.dart';
+import 'package:shantika_cubit/utility/resource/data_state.dart';
 
 class TermsConditionsCubit extends Cubit<TermsConditionsState> {
-  late AppSettingsRepository _AppSettingsRepository;
-  TermsConditionsCubit() : super(TermsConditionsInitial());
+  final AppSettingsRepository repository;
 
-  init() {
-    _AppSettingsRepository = AppSettingsRepository(serviceLocator.get());
-  }
+  TermsConditionsCubit(this.repository) : super(TermsConditionsInitial());
 
-  termsConditions() async {
+  Future<void> fetchTermsConditions() async {
     emit(TermsConditionsLoading());
-    final DataState<TermsConditionsModel> dataState = await _AppSettingsRepository.termsConditions();
-    switch (dataState) {
-      case DataStateSuccess<TermsConditionsModel>():
-        {
-          emit(TermsConditionStateData(termsConditionModel: dataState.data ?? TermsConditionsModel()));
-        }
-      case DataStateError<TermsConditionsModel>():
-        {
-          emit(TermsConditionsError(message: dataState.exception?.parseMessage() ?? ""));
-        }
+
+    try {
+      final result = await repository.termsConditions();
+
+      if (result is DataStateSuccess<TermsConditionsModel>) {
+        emit(TermsConditionsLoaded(result.data!));
+      } else if (result is DataStateError) {
+        final errorMessage = result.exception?.response?.data['message']
+            ?? result.exception?.message
+            ?? "Terjadi kesalahan saat mengambil data";
+        emit(TermsConditionsError(errorMessage));
+      }
+    } catch (e) {
+      emit(TermsConditionsError("Error tidak terduga: ${e.toString()}"));
     }
   }
 }

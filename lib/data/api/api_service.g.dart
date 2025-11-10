@@ -393,34 +393,25 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<ApiResponse<List<FaqModel>>>> faq() async {
+  Future<HttpResponse<FAQResponse>> faq() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<HttpResponse<ApiResponse<List<FaqModel>>>>(
+    final _options = _setStreamType<HttpResponse<FAQResponse>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/information/faq',
+            '/faq',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late ApiResponse<List<FaqModel>> _value;
+    late FAQResponse _value;
     try {
-      _value = ApiResponse<List<FaqModel>>.fromJson(
-        _result.data!,
-        (json) => json is List<dynamic>
-            ? json
-                  .map<FaqModel>(
-                    (i) => FaqModel.fromJson(i as Map<String, dynamic>),
-                  )
-                  .toList()
-            : List.empty(),
-      );
+      _value = FAQResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -458,32 +449,25 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<ApiResponse<TermsConditionsModel>>>
-  termConditions() async {
+  Future<HttpResponse<TermsConditionsResponse>> termConditions() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options =
-        _setStreamType<HttpResponse<ApiResponse<TermsConditionsModel>>>(
-          Options(method: 'GET', headers: _headers, extra: _extra)
-              .compose(
-                _dio.options,
-                '/information/term-and-condition',
-                queryParameters: queryParameters,
-                data: _data,
-              )
-              .copyWith(
-                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
-              ),
-        );
+    final _options = _setStreamType<HttpResponse<TermsConditionsResponse>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/term_and_condition',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late ApiResponse<TermsConditionsModel> _value;
+    late TermsConditionsResponse _value;
     try {
-      _value = ApiResponse<TermsConditionsModel>.fromJson(
-        _result.data!,
-        (json) => TermsConditionsModel.fromJson(json as Map<String, dynamic>),
-      );
+      _value = TermsConditionsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
