@@ -175,7 +175,9 @@ class ProfileScreen extends StatelessWidget {
                         SizedBox(height: spacing5),
                         CustomButton(
                           onPressed: () => _showLogoutDialog(context),
+                          padding: EdgeInsets.symmetric(vertical: padding16),
                           child: Text('Keluar Akun'),
+                          backgroundColor: red600,
                         ),
                         SizedBox(height: spacing5),
                       ],

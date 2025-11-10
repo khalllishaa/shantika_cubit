@@ -83,7 +83,7 @@ class ChatScreen extends StatelessWidget {
           color: black00,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: black950.withOpacity(0.08),
               blurRadius: 8,
               offset: Offset(0, 3),
             ),

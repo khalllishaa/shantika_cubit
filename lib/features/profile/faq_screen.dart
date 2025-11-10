@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shantika_cubit/features/profile/cubit/faq_cubit.dart';
 import 'package:shantika_cubit/features/profile/cubit/faq_state.dart';
+import 'package:shantika_cubit/ui/color.dart';
+import 'package:shantika_cubit/ui/dimension.dart';
+import 'package:shantika_cubit/ui/shared_widget/custom_card_container.dart';
+import 'package:shantika_cubit/ui/typography.dart';
 
 class FaqScreen extends StatefulWidget {
   const FaqScreen({super.key});
@@ -14,16 +18,13 @@ class _FaqScreenState extends State<FaqScreen> {
   @override
   void initState() {
     super.initState();
-    // Load FAQ saat screen dibuka
     context.read<FAQCubit>().fetchFAQs();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('FAQ'),
-      ),
+      appBar: _header(),
       body: BlocBuilder<FAQCubit, FAQState>(
         builder: (context, state) {
           if (state is FAQLoading) {
@@ -38,12 +39,12 @@ class _FaqScreenState extends State<FaqScreen> {
                   Text(
                     state.message,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.red),
+                    style: smMedium,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: space600),
                   ElevatedButton(
                     onPressed: () => context.read<FAQCubit>().fetchFAQs(),
-                    child: const Text('Coba Lagi'),
+                    child: Text('Coba Lagi'),
                   ),
                 ],
               ),
@@ -52,7 +53,7 @@ class _FaqScreenState extends State<FaqScreen> {
 
           if (state is FAQLoaded) {
             if (state.faqs.isEmpty) {
-              return const Center(
+              return Center(
                 child: Text('Belum ada data FAQ'),
               );
             }
@@ -60,35 +61,15 @@ class _FaqScreenState extends State<FaqScreen> {
             return RefreshIndicator(
               onRefresh: () => context.read<FAQCubit>().fetchFAQs(),
               child: ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(padding16),
                 itemCount: state.faqs.length,
                 itemBuilder: (context, index) {
                   final item = state.faqs[index];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF5F7FA),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ExpansionTile(
-                      title: Text(
-                        item.question,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      childrenPadding: const EdgeInsets.all(16),
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            item.answer,
-                            style: TextStyle(
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ),
-                      ],
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: padding12),
+                    child: _faqItem(
+                      question: item.question,
+                      answer: item.answer,
                     ),
                   );
                 },
@@ -101,4 +82,101 @@ class _FaqScreenState extends State<FaqScreen> {
       ),
     );
   }
+
+  PreferredSizeWidget _header() {
+    return PreferredSize(
+      preferredSize: Size.fromHeight(kToolbarHeight + 4),
+      child: Container(
+        decoration: BoxDecoration(
+          color: black00,
+          boxShadow: [
+            BoxShadow(
+              color: black950.withOpacity(0.08),
+              blurRadius: 8,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: black950),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text("FAQ", style: xlMedium),
+        ),
+      ),
+    );
+  }
+
+  Widget _faqItem({
+    required String question,
+    required String answer,
+  }) {
+    final isExpanded = ValueNotifier<bool>(false);
+
+    return ValueListenableBuilder<bool>(
+      valueListenable: isExpanded,
+      builder: (context, expanded, _) {
+        return CustomCardContainer(
+          backgroundColor: navy300.withOpacity(0.1),
+          boxShadow: [],
+          borderRadius: borderRadius750,
+          padding: EdgeInsets.zero,
+          child: Column(
+            children: [
+              InkWell(
+                onTap: () => isExpanded.value = !expanded,
+                borderRadius: BorderRadius.circular(borderRadius750),
+                child: Padding(
+                  padding: EdgeInsets.all(padding16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          question,
+                          style: smMedium,
+                        ),
+                      ),
+                      SizedBox(width: spacing4),
+                      AnimatedRotation(
+                        turns: expanded ? 0.5 : 0,
+                        duration: Duration(milliseconds: 300),
+                        child: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: black950,
+                          size: 24,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              AnimatedCrossFade(
+                firstChild: SizedBox.shrink(),
+                secondChild: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.fromLTRB(
+                    padding16,
+                    0,
+                    padding16,
+                    padding16,
+                  ),
+                  child: Text(
+                    answer,
+                    style: smMedium.copyWith(color: black700_70),
+                  ),
+                ),
+                crossFadeState:
+                expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                duration: Duration(milliseconds: 300),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 }

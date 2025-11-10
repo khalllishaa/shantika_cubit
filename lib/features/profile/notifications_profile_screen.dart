@@ -43,9 +43,9 @@ class NotifikasiPageView extends StatelessWidget {
           color: black00,
           boxShadow: [
             BoxShadow(
-              color: black950,
+              color: black950.withOpacity(0.08),
               blurRadius: 8,
-              offset: const Offset(0, 3),
+              offset: Offset(0, 3),
             ),
           ],
         ),
@@ -69,7 +69,7 @@ class NotifikasiPageView extends StatelessWidget {
     return BlocBuilder<NotificationCubit, NotificationState>(
       builder: (context, state) {
         return Padding(
-          padding: EdgeInsets.all(padding16),
+          padding: EdgeInsets.all(padding20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -127,7 +127,7 @@ class NotifikasiPageView extends StatelessWidget {
         SizedBox(height: spacing4),
         Text(
           description,
-          style: smMedium,
+          style: smRegular,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -33,11 +33,7 @@ class _TermsConditionsScreenState extends State<TermsConditionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Syarat & Ketentuan'),
-        backgroundColor: const Color(0xFF1A3A6E),
-        foregroundColor: Colors.white,
-      ),
+      appBar:_header(),
       body: BlocBuilder<TermsConditionsCubit, TermsConditionsState>(
         builder: (context, state) {
           if (state is TermsConditionsLoading) {
@@ -47,34 +43,31 @@ class _TermsConditionsScreenState extends State<TermsConditionsScreen> {
           if (state is TermsConditionsError) {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(padding16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(
                       Icons.error_outline,
-                      color: Colors.red,
-                      size: 60,
+                      color: red50,
+                      size: iconXL,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: spacing4),
                     Text(
                       state.message,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 16,
-                      ),
+                      style:smMedium,
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: space600),
                     ElevatedButton.icon(
                       onPressed: () {
                         context.read<TermsConditionsCubit>().fetchTermsConditions();
                       },
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('Coba Lagi'),
+                      icon: Icon(Icons.refresh),
+                      label: Text('Coba Lagi'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1A3A6E),
-                        foregroundColor: Colors.white,
+                        backgroundColor: Color(0xFF1A3A6E),
+                        foregroundColor: black00,
                       ),
                     ),
                   ],
@@ -90,45 +83,45 @@ class _TermsConditionsScreenState extends State<TermsConditionsScreen> {
               onRefresh: () =>
                   context.read<TermsConditionsCubit>().fetchTermsConditions(),
               child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16),
+                physics: AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.all(padding16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Render HTML content menggunakan flutter_widget_from_html
+                    SizedBox(height: space600),
                     HtmlWidget(
                       data.content,
-                      textStyle: const TextStyle(
-                        fontSize: 14,
-                        height: 1.6,
-                      ),
+                      customStylesBuilder: (element) {
+                        if (element.localName == 'h1') {
+                          return {
+                            'color': '#000000',
+                            'font-size': '14px',
+                            'border-bottom': 'none',
+                            'padding-bottom': '0',
+                          };
+                        }
+                        return null;
+                      },
+                      textStyle: smMedium,
                     ),
-                    const SizedBox(height: 24),
-                    // Footer info
+                    SizedBox(height: space600),
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: EdgeInsets.all(padding12),
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(0),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Terakhir diperbarui:',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: xsMedium,
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: space200),
                           Text(
                             _formatDate(data.updatedAt),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[800],
-                            ),
+                            style: xsRegular,
                           ),
                         ],
                       ),
@@ -139,11 +132,39 @@ class _TermsConditionsScreenState extends State<TermsConditionsScreen> {
             );
           }
 
-          return const SizedBox();
+          return SizedBox();
         },
       ),
     );
   }
+
+  PreferredSizeWidget _header() {
+    return PreferredSize(
+      preferredSize: Size.fromHeight(kToolbarHeight + 4),
+      child: Container(
+        decoration: BoxDecoration(
+          color: black00,
+          boxShadow: [
+            BoxShadow(
+              color: black950.withOpacity(0.08),
+              blurRadius: 8,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: black950),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text("Syarat dan Ketentuan", style: xlMedium),
+        ),
+      ),
+    );
+  }
+
 
   String _formatDate(DateTime date) {
     final months = [

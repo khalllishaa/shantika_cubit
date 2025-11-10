@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:shantika_cubit/features/profile/cubit/privacy_policy_cubit.dart';
 import 'package:shantika_cubit/features/profile/cubit/privacy_policy_state.dart';
+import 'package:shantika_cubit/ui/color.dart';
+import 'package:shantika_cubit/ui/dimension.dart';
+import 'package:shantika_cubit/ui/typography.dart';
 
 class PrivacyPolicyScreen extends StatefulWidget {
   const PrivacyPolicyScreen({super.key});
@@ -21,11 +24,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Kebijakan Privasi'),
-        backgroundColor: const Color(0xFF1A3A6E),
-        foregroundColor: Colors.white,
-      ),
+      appBar: _header(),
       body: BlocBuilder<PrivacyPolicyCubit, PrivacyPolicyState>(
         builder: (context, state) {
           if (state is PrivacyPolicyLoading) {
@@ -35,34 +34,31 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
           if (state is PrivacyPolicyError) {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.symmetric(vertical: padding16, horizontal: padding20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.error_outline,
-                      color: Colors.red,
-                      size: 60,
+                      color: red50,
+                      size: iconXL,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: spacing4),
                     Text(
                       state.message,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 16,
-                      ),
+                      style: smMedium,
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: space600),
                     ElevatedButton.icon(
                       onPressed: () {
                         context.read<PrivacyPolicyCubit>().fetchPrivacyPolicy();
                       },
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('Coba Lagi'),
+                      icon: Icon(Icons.refresh),
+                      label: Text('Coba Lagi'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1A3A6E),
-                        foregroundColor: Colors.white,
+                        backgroundColor: Color(0xFF1A3A6E),
+                        foregroundColor: black00,
                       ),
                     ),
                   ],
@@ -78,45 +74,34 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
               onRefresh: () =>
                   context.read<PrivacyPolicyCubit>().fetchPrivacyPolicy(),
               child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16),
+                physics: AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.symmetric(horizontal: padding20, vertical: padding16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Render HTML content
                     HtmlWidget(
                       data.content,
-                      textStyle: const TextStyle(
-                        fontSize: 14,
-                        height: 1.6,
-                      ),
+                      textStyle: smMedium.copyWith(color: black750),
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: space600),
                     // Footer info
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: EdgeInsets.all(paddingS),
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(0),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Terakhir diperbarui:',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: xsMedium,
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: space200),
                           Text(
                             _formatDate(data.updatedAt),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[800],
-                            ),
+                            style: xsRegular,
                           ),
                         ],
                       ),
@@ -127,8 +112,35 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
             );
           }
 
-          return const SizedBox();
+          return SizedBox();
         },
+      ),
+    );
+  }
+
+  PreferredSizeWidget _header() {
+    return PreferredSize(
+      preferredSize: Size.fromHeight(kToolbarHeight + 4),
+      child: Container(
+        decoration: BoxDecoration(
+          color: black00,
+          boxShadow: [
+            BoxShadow(
+              color: black950.withOpacity(0.08),
+              blurRadius: 8,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: black950),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text("Kebijakan Privasi", style: xlMedium),
+        ),
       ),
     );
   }

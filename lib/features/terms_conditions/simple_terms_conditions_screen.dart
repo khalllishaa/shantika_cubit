@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shantika_cubit/features/terms_conditions/cubit/terms_conditions_cubit.dart';
 import 'package:shantika_cubit/features/terms_conditions/cubit/terms_conditions_state.dart';
+import 'package:shantika_cubit/ui/dimension.dart';
+import 'package:shantika_cubit/ui/typography.dart';
 
 class SimpleTermsConditionsScreen extends StatefulWidget {
   const SimpleTermsConditionsScreen({super.key});
@@ -24,7 +26,7 @@ class _SimpleTermsConditionsScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Syarat & Ketentuan'),
+        title: Text('Syarat & Ketentuan'),
       ),
       body: BlocBuilder<TermsConditionsCubit, TermsConditionsState>(
         builder: (context, state) {
@@ -38,22 +40,18 @@ class _SimpleTermsConditionsScreenState
 
           if (state is TermsConditionsLoaded) {
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(padding16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     state.termsConditions.name,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: smMedium,
                   ),
-                  const SizedBox(height: 16),
-                  // Tampilkan HTML sebagai text biasa
+                  SizedBox(height: spacing4),
                   Text(
                     _stripHtmlTags(state.termsConditions.content),
-                    style: const TextStyle(height: 1.6),
+                    style: mdMedium,
                   ),
                 ],
               ),
