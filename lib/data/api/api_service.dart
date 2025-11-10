@@ -6,6 +6,7 @@ import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:shantika_cubit/model/about_us_model.dart';
 import 'package:shantika_cubit/model/response/faq_response.dart';
+import 'package:shantika_cubit/model/response/privacy_policy_response.dart';
 import 'package:shantika_cubit/model/response/terms_and_condition_response.dart';
 
 import '../../config/constant.dart';
@@ -146,7 +147,7 @@ abstract class ApiService {
 
   // Privacy Policy
   @GET("/privacy_policy")
-  Future<HttpResponse<ApiResponse<PrivacyPolicyModel>>> privacyPolicy();
+  Future<HttpResponse<PrivacyPolicyResponse>> privacyPolicy();
 
   // Contact Us
   @POST("/information/contact-us")

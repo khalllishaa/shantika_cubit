@@ -76,14 +76,30 @@
     }
 
     Future<DataState<PrivacyPolicyModel>> privacyPolicy() async {
-      DataState<ApiResponse<PrivacyPolicyModel>> dataState = await getStateOf(request: () {
-        return _apiService.privacyPolicy();
-      });
+      try {
+        final response = await _apiService.privacyPolicy();
 
-      if (dataState is DataStateSuccess) {
-        return DataStateSuccess(dataState.data!.data!);
-      } else {
-        return DataStateError(dataState.exception!);
+        if (response.response.statusCode == 200) {
+          return DataStateSuccess(response.data.privacyPolicy);
+        } else {
+          return DataStateError(
+            DioException(
+              requestOptions: response.response.requestOptions,
+              response: response.response,
+              type: DioExceptionType.badResponse,
+            ),
+          );
+        }
+      } on DioException catch (e) {
+        return DataStateError(e);
+      } catch (e) {
+        return DataStateError(
+          DioException(
+            requestOptions: RequestOptions(path: '/privacy_policy'),
+            error: e,
+            type: DioExceptionType.unknown,
+          ),
+        );
       }
     }
 
