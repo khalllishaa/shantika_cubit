@@ -1,3 +1,6 @@
+import 'package:dio/dio.dart';
+import 'package:shantika_cubit/model/about_us_model.dart';
+
 import '../data/api/api_service.dart';
 import '../model/application_model.dart';
 import '../model/faq_model.dart';
@@ -76,4 +79,17 @@ class AppSettingsRepository extends BaseRepository {
       return DataStateError(dataState.exception!);
     }
   }
+
+  Future<DataState<About>> about() async {
+    try {
+      final response = await _apiService.about();
+
+      // response.data adalah AboutUsModel
+      return DataStateSuccess(response.data.about);
+
+    } catch (e) {
+      return DataStateError(e as DioException);
+    }
+  }
+
 }

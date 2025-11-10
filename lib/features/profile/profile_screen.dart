@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shantika_cubit/features/profile/about_us_screen.dart';
 import 'package:shantika_cubit/features/profile/informasi_pribadi_screen.dart';
 import 'package:shantika_cubit/utility/extensions/show_toast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -105,7 +106,14 @@ class ProfileScreen extends StatelessWidget {
                         _menuItem(
                           svgIcon: 'assets/icons/info.svg',
                           text: "Tentang Kami",
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TentangKamiPage(),
+                              ),
+                            );
+                          },
                         ),
                         SizedBox(height: spacing4),
                         _menuItem(
