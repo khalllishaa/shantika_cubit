@@ -4,26 +4,22 @@ part 'terms_conditions_model.g.dart';
 
 @JsonSerializable()
 class TermsConditionsModel {
-  @JsonKey(name: "id")
-  String? id;
-  @JsonKey(name: "type")
-  String? type;
-  @JsonKey(name: "content")
-  String? content;
-  @JsonKey(name: "created_at")
-  DateTime? createdAt;
-  @JsonKey(name: "updated_at")
-  DateTime? updatedAt;
-  @JsonKey(name: "deleted_at")
-  dynamic deletedAt;
+  final int id;
+  final String name;
+  final String content;
+
+  @JsonKey(name: 'created_at')
+  final DateTime createdAt;
+
+  @JsonKey(name: 'updated_at')
+  final DateTime updatedAt;
 
   TermsConditionsModel({
-    this.id,
-    this.type,
-    this.content,
-    this.createdAt,
-    this.updatedAt,
-    this.deletedAt,
+    required this.id,
+    required this.name,
+    required this.content,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory TermsConditionsModel.fromJson(Map<String, dynamic> json) =>

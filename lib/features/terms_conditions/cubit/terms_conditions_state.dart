@@ -1,24 +1,31 @@
-part of 'terms_conditions_cubit.dart';
+import 'package:equatable/equatable.dart';
+import 'package:shantika_cubit/model/terms_conditions_model.dart';
 
-sealed class TermsConditionsState extends Equatable {
+abstract class TermsConditionsState extends Equatable {
   const TermsConditionsState();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
-final class TermsConditionsInitial extends TermsConditionsState {}
+class TermsConditionsInitial extends TermsConditionsState {}
 
-final class TermsConditionsLoading extends TermsConditionsState {}
+class TermsConditionsLoading extends TermsConditionsState {}
 
-final class TermsCondionsEmpty extends TermsConditionsState{}
+class TermsConditionsLoaded extends TermsConditionsState {
+  final TermsConditionsModel termsConditions;
 
-final class TermsConditionsError extends TermsConditionsState {
+  const TermsConditionsLoaded(this.termsConditions);
+
+  @override
+  List<Object?> get props => [termsConditions];
+}
+
+class TermsConditionsError extends TermsConditionsState {
   final String message;
-  TermsConditionsError({required this.message});
-}
 
-final class TermsConditionStateData extends TermsConditionsState {
-  final TermsConditionsModel termsConditionModel;
-  TermsConditionStateData({required this.termsConditionModel});
+  const TermsConditionsError(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }

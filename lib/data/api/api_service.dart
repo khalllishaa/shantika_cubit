@@ -5,6 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:shantika_cubit/model/about_us_model.dart';
+import 'package:shantika_cubit/model/response/faq_response.dart';
+import 'package:shantika_cubit/model/response/terms_and_condition_response.dart';
 
 import '../../config/constant.dart';
 import '../../model/address_model.dart';
@@ -131,19 +133,19 @@ abstract class ApiService {
   });
 
   /// FAQ
-  @GET("/information/faq")
-  Future<HttpResponse<ApiResponse<List<FaqModel>>>> faq();
+  @GET("/faq")
+  Future<HttpResponse<FAQResponse>> faq();
 
   /// About Us
   @GET("/about_us")
   Future<HttpResponse<AboutUsModel>> about();
 
   /// Terms and Contions
-  @GET("/information/term-and-condition")
-  Future<HttpResponse<ApiResponse<TermsConditionsModel>>> termConditions();
+  @GET("/term_and_condition")
+  Future<HttpResponse<TermsConditionsResponse>> termConditions();
 
   // Privacy Policy
-  @GET("/information/privacy-policy")
+  @GET("/privacy_policy")
   Future<HttpResponse<ApiResponse<PrivacyPolicyModel>>> privacyPolicy();
 
   // Contact Us
