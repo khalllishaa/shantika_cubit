@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shantika_cubit/features/profile/about_us_screen.dart';
 import 'package:shantika_cubit/features/profile/faq_screen.dart';
 import 'package:shantika_cubit/features/profile/informasi_pribadi_screen.dart';
+import 'package:shantika_cubit/features/profile/privacy_policy_screen.dart';
 import 'package:shantika_cubit/features/terms_conditions/terms_conditions_screen.dart';
 import 'package:shantika_cubit/utility/extensions/show_toast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -121,7 +122,14 @@ class ProfileScreen extends StatelessWidget {
                         _menuItem(
                           svgIcon: 'assets/icons/check.svg',
                           text: "Kebijakan Privasi",
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PrivacyPolicyScreen(),
+                              ),
+                            );
+                          },
                         ),
                         SizedBox(height: spacing4),
                         _menuItem(
