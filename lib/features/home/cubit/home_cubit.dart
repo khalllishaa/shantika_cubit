@@ -33,6 +33,9 @@ class HomeCubit extends Cubit<HomeState> {
         {
           emit(HomeStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse<HomeResponse>>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

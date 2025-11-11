@@ -69,35 +69,80 @@ class DetailArtikelScreen extends StatelessWidget {
     );
   }
 
+  // PreferredSizeWidget _header(BuildContext context) {
+  //   return AppBar(
+  //     leadingWidth: spacing10,
+  //     backgroundColor: black00,
+  //     leading: IconButton(
+  //       icon: Icon(
+  //         Icons.arrow_back_rounded,
+  //         size: iconL,
+  //         color: black950,
+  //       ),
+  //       onPressed: () => Navigator.pop(context),
+  //     ),
+  //     title: Text("Detail Artikel", style: xlMedium),
+  //     actions: [
+  //       Padding(
+  //         padding: EdgeInsets.only(right: paddingL),
+  //         child: IconButton(
+  //           icon: Icon(Icons.share, color: black950, size: iconL),
+  //           onPressed: () {
+  //             context.read<ArtikelCubit>().shareArticle(title);
+  //             ScaffoldMessenger.of(context).showSnackBar(
+  //               SnackBar(content: Text('Berbagi artikel: $title')),
+  //             );
+  //           },
+  //         ),
+  //       )
+  //     ],
+  //   );
+  // }
+
   PreferredSizeWidget _header(BuildContext context) {
-    return AppBar(
-      leadingWidth: spacing10,
-      backgroundColor: black00,
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_rounded,
-          size: iconL,
-          color: black950,
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(kToolbarHeight + 4),
+      child: Container(
+        decoration: BoxDecoration(
+          color: black00,
+          boxShadow: [
+            BoxShadow(
+              color: black950.withOpacity(0.08),
+              blurRadius: 8,
+              offset: Offset(0, 3),
+            ),
+          ],
         ),
-        onPressed: () => Navigator.pop(context),
-      ),
-      title: Text("Detail Artikel", style: xlMedium),
-      actions: [
-        Padding(
-          padding: EdgeInsets.only(right: paddingL),
-          child: IconButton(
-            icon: Icon(Icons.share, color: black950, size: iconL),
-            onPressed: () {
-              context.read<ArtikelCubit>().shareArticle(title);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Berbagi artikel: $title')),
-              );
-            },
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: black950),
+            onPressed: () => Navigator.pop(context),
           ),
-        )
-      ],
+          title: Text(
+            "Detail Artikel",
+            style: xlMedium,
+          ),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(right: paddingL),
+              child: IconButton(
+                icon: Icon(Icons.share, color: black950, size: iconL),
+                onPressed: () {
+                  context.read<ArtikelCubit>().shareArticle(title);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Berbagi artikel: $title')),
+                  );
+                },
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
+
 
   Widget _protokol(String image, String title) {
     return Column(

@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shantika_cubit/features/profile/about_us_screen.dart';
 import 'package:shantika_cubit/features/profile/faq_screen.dart';
 import 'package:shantika_cubit/features/profile/informasi_pribadi_screen.dart';
+import 'package:shantika_cubit/features/profile/notifications_profile_screen.dart';
 import 'package:shantika_cubit/features/profile/privacy_policy_screen.dart';
 import 'package:shantika_cubit/features/terms_conditions/terms_conditions_screen.dart';
 import 'package:shantika_cubit/utility/extensions/show_toast.dart';
@@ -103,7 +104,14 @@ class ProfileScreen extends StatelessWidget {
                         _menuItem(
                           svgIcon: 'assets/icons/notif.svg',
                           text: "Notifikasi",
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NotifikasiPage(),
+                              ),
+                            );
+                          },
                         ),
                         SizedBox(height: spacing4),
                         _menuItem(
@@ -167,7 +175,9 @@ class ProfileScreen extends StatelessWidget {
                         SizedBox(height: spacing5),
                         CustomButton(
                           onPressed: () => _showLogoutDialog(context),
+                          padding: EdgeInsets.symmetric(vertical: padding16),
                           child: Text('Keluar Akun'),
+                          backgroundColor: red600,
                         ),
                         SizedBox(height: spacing5),
                       ],

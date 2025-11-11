@@ -5,6 +5,7 @@ import 'package:shantika_cubit/features/profile/cubit/about_us_state.dart';
 import 'package:shantika_cubit/ui/color.dart';
 import 'package:shantika_cubit/ui/dimension.dart';
 import 'package:shantika_cubit/ui/typography.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TentangKamiPage extends StatefulWidget {
   const TentangKamiPage({super.key});
@@ -17,7 +18,7 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
   @override
   void initState() {
     super.initState();
-    context.read<AboutCubit>().fetchAbout(); // panggil sekali di awal
+    context.read<AboutCubit>().fetchAbout();
   }
 
   @override
@@ -38,27 +39,60 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
           if (state is AboutLoaded) {
             final about = state.data;
 
+            const title = "New Shantika";
+
+            final description = (about.description.isNotEmpty)
+                ? about.description
+                : "New Shantika berkomitmen memberikan perjalanan yang aman, nyaman, dan terpercaya. Kami terus berkembang untuk meningkatkan layanan bagi seluruh penumpang.";
+
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(padding20),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  SizedBox(height: space600),
+                  Text(
+                    title,
+                    style: xlSemiBold,
+                  ),
+                  SizedBox(height: space600),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(borderRadius300),
                     child: Image.network(
                       about.image,
                       width: double.infinity,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: space600),
                   Text(
                     about.description.isNotEmpty ? about.description : '-',
-                    style: const TextStyle(fontSize: 14),
+                    style: smMedium,
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: space600),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _socialMediaButton(
+                        icon: Icons.facebook,
+                        onTap: () => _launchUrl('https://instagram.com'),
+                      ),
+                      SizedBox(width: space1200),
+                      _socialMediaButton(
+                        icon: Icons.email_outlined,
+                        onTap: () => _launchUrl('mailto:info@newshantika.com'),
+                      ),
+                      SizedBox(width: space1200),
+                      _socialMediaButton(
+                        icon: Icons.facebook,
+                        onTap: () => _launchUrl('https://newshantika.com'),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: space600),
                   Text(
                     about.address,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    style: mdMedium.copyWith(color: black750),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -79,7 +113,7 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
           color: black00,
           boxShadow: [
             BoxShadow(
-              color: black700_70,
+              color: black950.withOpacity(0.08),
               blurRadius: 8,
               offset: Offset(0, 3),
             ),
@@ -96,5 +130,38 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
         ),
       ),
     );
+  }
+
+  Widget _socialMediaButton({required IconData icon, required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(borderRadius300),
+      child: Container(
+        width: 45,
+        height: 45,
+        decoration: BoxDecoration(
+          color: primaryColor,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: black950.withOpacity(0.1),
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Icon(
+          icon,
+          color: black00,
+          size: iconL,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _launchUrl(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    if (!await launchUrl(url)) {
+    }
   }
 }

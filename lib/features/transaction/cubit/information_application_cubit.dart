@@ -33,6 +33,9 @@ class InformationApplicationCubit extends Cubit<InformationApplicationState> {
         {
           emit(InformationApplicationStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse<ApplicationModel>>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

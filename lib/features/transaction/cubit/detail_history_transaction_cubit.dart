@@ -37,6 +37,9 @@ class DetailHistoryTransactionCubit extends Cubit<DetailHistoryTransactionState>
         {
           emit(DetailHistoryTransactionStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse<TransactionDetailResponse>>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
   void loadPesanan(Map<String, dynamic> pesananData) {

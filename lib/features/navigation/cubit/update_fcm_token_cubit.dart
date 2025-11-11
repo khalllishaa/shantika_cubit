@@ -37,6 +37,9 @@ class UpdateFcmTokenCubit extends Cubit<UpdateFcmTokenState> {
             UpdateFcmTokenStateError(message: dataState.exception?.parseMessage() ?? ""),
           );
         }
+      case DataStateLoading<ApiResponse>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

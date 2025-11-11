@@ -7,6 +7,10 @@ sealed class DataState<T> {
   const DataState({this.data, this.exception});
 }
 
+class DataStateLoading<T> extends DataState<T> {
+  const DataStateLoading();
+}
+
 class DataStateSuccess<T> extends DataState<T> {
   const DataStateSuccess(T data) : super(data: data);
 }
@@ -14,3 +18,4 @@ class DataStateSuccess<T> extends DataState<T> {
 class DataStateError<T> extends DataState<T> {
   const DataStateError(DioException message) : super(exception: message);
 }
+

@@ -32,6 +32,9 @@ class ComplaintCubit extends Cubit<ComplaintState> {
         {
           emit(ComplaintStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

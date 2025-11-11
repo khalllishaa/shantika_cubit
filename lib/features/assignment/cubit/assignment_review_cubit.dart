@@ -53,6 +53,9 @@ class AssignmentReviewCubit extends Cubit<AssignmentReviewState> {
         {
           emit(AssignmentReviewStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

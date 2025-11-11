@@ -37,6 +37,9 @@ class GuardCheckAvailibilityCubit extends Cubit<GuardCheckAvailibilityState> {
         {
           emit(GuardCheckAvailibilityStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

@@ -8,34 +8,45 @@ part of 'notification_model.dart';
 
 NotificationModel _$NotificationModelFromJson(Map<String, dynamic> json) =>
     NotificationModel(
-      id: json['id'] as String?,
-      userParentableType: json['user_parentable_type'] as String?,
-      userParentableId: json['user_parentable_id'] as String?,
-      title: json['title'] as String?,
-      body: json['body'] as String?,
-      type: json['type'] as String?,
-      referenceId: json['reference_id'] as String?,
-      createdAt: json['created_at'] == null
-          ? null
-          : DateTime.parse(json['created_at'] as String),
-      updatedAt: json['updated_at'] == null
-          ? null
-          : DateTime.parse(json['updated_at'] as String),
-      payload: json['payload'] as String?,
-      isSeen: json['is_seen'] as bool?,
+      code: (json['code'] as num).toInt(),
+      success: json['success'] as bool,
+      message: json['message'] as String,
+      notifications: (json['notifications'] as List<dynamic>)
+          .map((e) => Notification.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$NotificationModelToJson(NotificationModel instance) =>
     <String, dynamic>{
+      'code': instance.code,
+      'success': instance.success,
+      'message': instance.message,
+      'notifications': instance.notifications.map((e) => e.toJson()).toList(),
+    };
+
+Notification _$NotificationFromJson(Map<String, dynamic> json) => Notification(
+  id: (json['id'] as num).toInt(),
+  userId: (json['user_id'] as num).toInt(),
+  referenceId: (json['reference_id'] as num).toInt(),
+  title: json['title'] as String,
+  message: json['message'] as String,
+  type: json['type'] as String,
+  isSeen: json['is_seen'] as bool,
+  createdAt: DateTime.parse(json['created_at'] as String),
+  updatedAt: DateTime.parse(json['updated_at'] as String),
+  deletedAt: json['deleted_at'],
+);
+
+Map<String, dynamic> _$NotificationToJson(Notification instance) =>
+    <String, dynamic>{
       'id': instance.id,
-      'user_parentable_type': instance.userParentableType,
-      'user_parentable_id': instance.userParentableId,
-      'title': instance.title,
-      'body': instance.body,
-      'type': instance.type,
+      'user_id': instance.userId,
       'reference_id': instance.referenceId,
-      'created_at': instance.createdAt?.toIso8601String(),
-      'updated_at': instance.updatedAt?.toIso8601String(),
-      'payload': instance.payload,
+      'title': instance.title,
+      'message': instance.message,
+      'type': instance.type,
       'is_seen': instance.isSeen,
+      'created_at': instance.createdAt.toIso8601String(),
+      'updated_at': instance.updatedAt.toIso8601String(),
+      'deleted_at': instance.deletedAt,
     };

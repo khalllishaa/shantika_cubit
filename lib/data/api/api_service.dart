@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:shantika_cubit/model/about_us_model.dart';
+import 'package:shantika_cubit/model/notification_model.dart';
 import 'package:shantika_cubit/model/response/faq_response.dart';
 import 'package:shantika_cubit/model/response/privacy_policy_response.dart';
 import 'package:shantika_cubit/model/response/terms_and_condition_response.dart';
@@ -428,18 +429,32 @@ abstract class ApiService {
   });
 
   /// NOTIFICATION
+  // In your api_service.dart
   @GET("/notification")
-  Future<HttpResponse<ApiResponse<NotificationsResponse>>> notifications({
-    @Query("page") required int page,
+  Future<HttpResponse<NotificationModel>> notifications({
+    @Query('page') required int page,
   });
 
-  /// NOTIFICATION READ
-  @POST("/notification/see")
+  @POST("/notification/read")
   Future<HttpResponse<ApiResponse>> readNotification({
-    @Part(name: "notification_id") required String id,
+    @Path('id') required String id,
   });
 
-  /// NOTIFICATION READ ALL
-  @POST("/notification/see-all")
+  @POST('/notification/read/all')
   Future<HttpResponse<ApiResponse>> readAllNotification();
+
+  // @GET("/notification")
+  // Future<HttpResponse<ApiResponse<NotificationsResponse>>> notifications({
+  //   @Query("page") required int page,
+  // });
+  //
+  // /// NOTIFICATION READ
+  // @POST("/notification/see")
+  // Future<HttpResponse<ApiResponse>> readNotification({
+  //   @Part(name: "notification_id") required String id,
+  // });
+  //
+  // /// NOTIFICATION READ ALL
+  // @POST("/notification/see-all")
+  // Future<HttpResponse<ApiResponse>> readAllNotification();
 }

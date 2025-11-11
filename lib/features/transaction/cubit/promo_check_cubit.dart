@@ -34,6 +34,9 @@ class PromoCheckCubit extends Cubit<PromoCheckState> {
         {
           emit(PromoCheckStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

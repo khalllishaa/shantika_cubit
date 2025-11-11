@@ -34,6 +34,9 @@ class CancelTransactionCubit extends Cubit<CancelTransactionState> {
             CancelTransactionStateError(message: dataState.exception?.parseMessage() ?? ""),
           );
         }
+      case DataStateLoading<ApiResponse>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }
