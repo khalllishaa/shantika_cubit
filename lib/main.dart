@@ -12,6 +12,7 @@ import 'package:shantika_cubit/features/profile/cubit/faq_cubit.dart';
 import 'package:shantika_cubit/features/profile/cubit/privacy_policy_cubit.dart';
 import 'package:shantika_cubit/repository/app_settings_repository.dart';
 import 'package:shantika_cubit/repository/chat_repository.dart';
+import 'package:shantika_cubit/repository/home_repository.dart';
 import 'package:shantika_cubit/repository/notification_repository.dart';
 import 'package:shantika_cubit/splash_screen.dart';
 import 'package:shantika_cubit/ui/theme.dart';
@@ -76,7 +77,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => PrivacyPolicyCubit(serviceLocator<AppSettingsRepository>())),
 
         /// HOME
-        BlocProvider(create: (context) => HomeCubit()),
+        BlocProvider(create: (context) => HomeCubit(serviceLocator<HomeRepository>()),),
         BlocProvider(create: (context) => NotificationListCubit(serviceLocator<NotificationRepository>())),
         BlocProvider(create: (context) => DetailSliderCubit()),
         BlocProvider(create: (context) => ChatCubit(serviceLocator<ChatRepository>())),
