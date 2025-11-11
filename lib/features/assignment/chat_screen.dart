@@ -79,7 +79,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     Icon(
                       Icons.error_outline,
                       size: 64,
-                      color: Colors.red.shade300,
+                      color: red100,
                     ),
                     SizedBox(height: spacing4),
                     Text(
@@ -115,13 +115,13 @@ class _ChatScreenState extends State<ChatScreen> {
                       Icon(
                         Icons.chat_bubble_outline,
                         size: 64,
-                        color: Colors.grey.shade400,
+                        color: black700_70,
                       ),
                       SizedBox(height: spacing4),
                       Text(
                         'No chat contacts available',
                         style: mdRegular.copyWith(
-                          color: Colors.grey.shade600,
+                          color: black700_70,
                         ),
                       ),
                     ],
@@ -133,7 +133,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 onRefresh: _onRefresh,
                 child: ListView.separated(
                   padding: EdgeInsets.all(paddingL),
-                  physics: const AlwaysScrollableScrollPhysics(),
+                  physics: AlwaysScrollableScrollPhysics(),
                   itemCount: state.chats.length,
                   separatorBuilder: (_, __) => SizedBox(height: spacing6),
                   itemBuilder: (context, index) {
@@ -144,7 +144,7 @@ class _ChatScreenState extends State<ChatScreen> {
               );
             }
 
-            return const SizedBox.shrink();
+            return SizedBox.shrink();
           },
         ),
       ),
@@ -192,7 +192,6 @@ class _ChatScreenState extends State<ChatScreen> {
             Container(
               padding: EdgeInsets.all(space200),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(borderRadius200),
               ),
               child: _buildIcon(chat.icon),
@@ -207,22 +206,17 @@ class _ChatScreenState extends State<ChatScreen> {
                     style: mdRegular,
                   ),
                   if (chat.type.isNotEmpty) ...[
-                    SizedBox(height: spacing1),
+                    SizedBox(height: spacing2),
                     Text(
                       chat.type.toUpperCase(),
                       style: smRegular.copyWith(
-                        color: Colors.grey.shade600,
+                        color: black700_70,
                         fontSize: 11,
                       ),
                     ),
                   ],
                 ],
               ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: Colors.grey.shade400,
             ),
           ],
         ),
@@ -231,7 +225,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildIcon(String iconUrl) {
-    // Jika icon adalah URL
     if (iconUrl.startsWith('http')) {
       return Image.network(
         iconUrl,
@@ -240,12 +233,11 @@ class _ChatScreenState extends State<ChatScreen> {
         errorBuilder: (_, __, ___) => Icon(
           Icons.chat_bubble,
           size: iconXL,
-          color: Colors.grey.shade400,
+          color: black700_70,
         ),
       );
     }
 
-    // Jika icon adalah asset SVG
     if (iconUrl.endsWith('.svg')) {
       return SvgPicture.asset(
         iconUrl,
@@ -254,7 +246,6 @@ class _ChatScreenState extends State<ChatScreen> {
       );
     }
 
-    // Jika icon adalah asset biasa
     return Image.asset(
       iconUrl,
       width: iconXL,
@@ -262,7 +253,7 @@ class _ChatScreenState extends State<ChatScreen> {
       errorBuilder: (_, __, ___) => Icon(
         Icons.chat_bubble,
         size: iconXL,
-        color: Colors.grey.shade400,
+        color: black700_70,
       ),
     );
   }
