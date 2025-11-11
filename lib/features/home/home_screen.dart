@@ -1,22 +1,17 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shantika_cubit/features/home/artikel_screen.dart';
-import 'package:shantika_cubit/features/home/cubit/artikel_cubit.dart';
-import 'package:shantika_cubit/features/home/notification_screen.dart';
-import '../../config/constant.dart';
-import '../../config/service_locator.dart';
-import '../../config/user_preference.dart';
-import '../../model/user_model.dart';
+import 'package:shantika_cubit/features/home/cubit/home_cubit.dart';
+import 'package:shantika_cubit/features/home/cubit/home_state.dart';
+import 'package:shantika_cubit/model/home_model.dart';
 import '../../ui/color.dart';
 import '../../ui/dimension.dart';
-import '../../ui/shared_widget/circle_image_view.dart';
 import '../../ui/shared_widget/custom_button.dart';
 import '../../ui/shared_widget/custom_card_container.dart';
 import '../../ui/shared_widget/custom_title.dart';
 import '../../ui/typography.dart';
-import 'cubit/home_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,89 +21,172 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  ValueNotifier<int> initialIndexSlider = ValueNotifier(0);
-
-  late HomeCubit _homeCubit;
+  @override
+  void initState() {
+    super.initState();
+    context.read<HomeCubit>().fetchHomeData();
+  }
 
   @override
   Widget build(BuildContext context) {
-    _homeCubit = context.read();
-    _homeCubit.init();
-    _homeCubit.home();
-    return _buildMainView(context);
-  }
-
-  Widget _buildMainView(BuildContext context) {
     return Scaffold(
       backgroundColor: black00,
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            await Future.delayed(Duration(seconds: 1));
-            // controller.fetchHomeData(); // kalo nanti udah pakai controller
+        child: BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, state) {
+            if (state is HomeLoading) {
+              return Center(
+                child: CircularProgressIndicator(color: primaryColor),
+              );
+            }
+
+            if (state is HomeError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, size: 60, color: red100),
+                    SizedBox(height: spacing4),
+                    Text('Terjadi Kesalahan', style: lgSemiBold),
+                    SizedBox(height: space200),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: paddingL),
+                      child: Text(
+                        state.message,
+                        style: smRegular,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(height: space600),
+                    ElevatedButton(
+                      onPressed: () => context.read<HomeCubit>().fetchHomeData(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        padding: EdgeInsets.symmetric(horizontal: paddingL, vertical: padding12),
+                      ),
+                      child: Text('Coba Lagi'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            if (state is HomeLoaded) {
+              return _buildMainView(context, state.data);
+            }
+
+            return Center(child: Text('Memuat data...'));
           },
-          child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            child: Column(
-              children: [
-                _headerWithSearch(),
-                SizedBox(height: space3200),
-                imageSlider(),
-                SizedBox(height: spacing6),
-                menuFavorit(),
-                SizedBox(height: space600),
-                _promoCard(),
-                SizedBox(height: space600),
-                _riwayats(),
-                _promoSection(),
-                _artikelSection(),
-                SizedBox(height: spacing6),
-                _buildTestimoniView(context),
-                SizedBox(height: space600),
-              ],
-            ),
-          ),
         ),
       ),
     );
   }
 
-  Widget _buildAppBarView() {
-    UserModel userPreference = serviceLocator.get<UserPreference>().getUser();
-
-    return Row(
-      children: [
-        SizedBox(
-          width: 42,
-          height: 42,
-          child: CircleImageView(
-            url: userPreference.avatar != null
-                ? '${baseImage}/${userPreference.avatar}'
-                : 'https://avatar.iran.liara.run/public',
-            fit: BoxFit.cover,
-          ),
-        ),
-        const SizedBox(width: space400),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildMainView(BuildContext context, HomeModel data) {
+    return RefreshIndicator(
+      onRefresh: () => context.read<HomeCubit>().refreshHomeData(),
+      color: primaryColor,
+      child: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Column(
           children: [
-            Text('Selamat Datang!', style: xsMedium.copyWith(color: textDarkSecondary)),
-            Text(userPreference.name ?? "", style: lgSemiBold),
+            _headerWithSearch(),
+            SizedBox(height: space3200),
+            _imageSlider(data.slider),
+            SizedBox(height: spacing5),
+            _menuFavorit(data.customerMenu),
+            SizedBox(height: space600),
+
+            if (data.pendingReviews.isNotEmpty) ...[
+              _promoCard(),
+              SizedBox(height: space600),
+              _riwayats(data.pendingReviews),
+              SizedBox(height: spacing4),
+            ],
+
+            if (data.artikel.isNotEmpty) ...[
+              _artikelSection(data.artikel),
+              SizedBox(height: spacing4),
+            ],
+
+            // if (data.testimonials.isNotEmpty) ...[
+            //   _buildTestimoniView(context, data.testimonials),
+            //   SizedBox(height: space600),
+            // ],
+
+            SizedBox(height: space600),
           ],
         ),
-        // const Spacer(),
-        // IconButton(
-        //   onPressed: () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(builder: (context) => NotificationScreen()),
-        //     );
-        //   },
-        //   icon: SvgPicture.asset('assets/images/ic_notification.svg'),
-        // ),
-      ],
+      ),
     );
   }
+
+//   Widget _buildTestimoniView(BuildContext context, List<Testimonials> testimonies) {
+//     return Padding(
+//       padding: EdgeInsets.symmetric(horizontal: paddingL),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Row(
+//             children: [
+//               SectionTitle(title: "Testimoni"),
+//               Spacer(),
+//               GestureDetector(
+//                 onTap: () {},
+//                 child: Text("Lihat Semua", style: smMedium.copyWith(color: navy400)),
+//               ),
+//             ],
+//           ),
+//           SizedBox(height: spacing6),
+//           ListView.builder(
+//             shrinkWrap: true,
+//             physics: NeverScrollableScrollPhysics(),
+//             itemCount: testimonies.length > 3 ? 3 : testimonies.length,
+//             itemBuilder: (context, index) {
+//               final t = testimonies[index];
+//               return _testimoniCard(t);
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+// Widget _testimoniCard(Testimonials t) {
+//   return CustomCardContainer(
+//     margin: EdgeInsets.only(bottom: padding12),
+//     borderRadius: borderRadius300,
+//     padding: EdgeInsets.all(paddingL),
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(t.title, style: smMedium),
+//         SizedBox(height: spacing2),
+//
+//         // Nama customer
+//         Text(t.nameCustomer, style: xsRegular.copyWith(color: black400)),
+//         SizedBox(height: spacing2),
+//
+//         // Review text
+//         Text(
+//           t.review,
+//           style: smRegular,
+//           maxLines: 3,
+//           overflow: TextOverflow.ellipsis,
+//         ),
+//         SizedBox(height: spacing3),
+//
+//         Align(
+//           alignment: Alignment.centerRight,
+//           child: Text(
+//             t.createdAt,
+//             style: xsRegular.copyWith(color: black400),
+//           ),
+//         ),
+//       ],
+//     ),
+//   );
+// }
 
   Widget _headerWithSearch() {
     return Stack(
@@ -138,58 +216,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NoticationsPage(),
-                      ),
-                    );                  },
-                  child: Icon(
-                    Icons.notifications,
-                    color: black00,
-                    size: 28,
-                  ),
+                  onTap: () {},
+                  child: Icon(Icons.notifications, color: black00, size: 28),
                 ),
               ],
             ),
           ),
         ),
-
         Positioned(
           bottom: -190,
           left: 16,
           right: 16,
-          child: searchTicket(),
+          child: _searchTicket(),
         ),
       ],
     );
   }
 
-  Widget searchTicket() {
-    // dummy data
-    String departure = "";
-    String arrival = "";
-
+  Widget _searchTicket() {
     return CustomCardContainer(
       borderRadius: borderRadius300,
       padding: EdgeInsets.all(paddingL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title
-          Center(
-            child: Text(
-              "Cari Tiket Bus",
-              style: smSemiBold,
-            ),
-          ),
+          Center(child: Text("Cari Tiket Bus", style: smSemiBold)),
           SizedBox(height: space1000),
           Stack(
             children: [
               Column(
                 children: [
-                  locationPicker("Keberangkatan", departure),
+                  _locationPicker("Keberangkatan", ""),
                   Container(
                     height: 1,
                     color: black950_10,
@@ -198,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       horizontal: space800,
                     ),
                   ),
-                  locationPicker("Tujuan", arrival),
+                  _locationPicker("Tujuan", ""),
                 ],
               ),
               Positioned(
@@ -206,16 +263,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 top: 20,
                 bottom: 20,
                 child: Center(
-                  child: Icon(
-                    Icons.swap_vert,
-                    color: black700_70,
-                  ),
+                  child: Icon(Icons.swap_vert, color: black700_70),
                 ),
               ),
             ],
           ),
           SizedBox(height: space1000),
-          // Button Cari Tiket
           CustomButton(
             onPressed: () {},
             backgroundColor: primaryColor,
@@ -226,28 +279,18 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget locationPicker(String label, String value) {
+  Widget _locationPicker(String label, String value) {
     return Row(
       children: [
-        Icon(
-          Icons.location_on_outlined,
-          color: iconBlack,
-          size: iconL,
-        ),
+        Icon(Icons.location_on_outlined, color: iconBlack, size: iconL),
         SizedBox(width: space200),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: xsRegular,
-              ),
+              Text(label, style: xsRegular),
               SizedBox(height: space100),
-              Text(
-                value.isEmpty ? "Pilih $label" : value,
-                style:smMedium,
-              ),
+              Text(value.isEmpty ? "Pilih $label" : value, style: smMedium),
             ],
           ),
         ),
@@ -255,106 +298,119 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget imageSlider() {
-    final List<String> sliderImages = [
-      'assets/images/red_bus.png',
-      'assets/images/red_bus.png',
-      'assets/images/red_bus.png',
-    ];
+  Widget _imageSlider(List<Artikel> sliders) {
+    if (sliders.isEmpty) return SizedBox.shrink();
+    return SizedBox(
+      child: CarouselSlider.builder(
+        itemCount: sliders.length,
+        itemBuilder: (context, index, realIndex) {
+          final slider = sliders[index];
 
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: padding16),
-      child: CarouselSlider(
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding16, vertical: padding16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(borderRadius300),
+              child: CachedNetworkImage(
+                imageUrl: slider.image,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: black700_70,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: primaryColor,
+                      strokeWidth: 2,
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: black700_70,
+                  alignment: Alignment.center,
+                  child: Text("Image tidak bisa diload", style: smMedium),
+                  // child: Image.asset('assets/images/red_bus.png'),
+                ),
+              ),
+            ),
+          );
+        },
         options: CarouselOptions(
           height: 200,
           autoPlay: true,
-          enlargeCenterPage: true,
-          viewportFraction: 0.9,
+          viewportFraction: 1,
+          autoPlayInterval: Duration(seconds: 3),
+          enlargeCenterPage: false,
         ),
-        items: sliderImages.map((img) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(borderRadius300),
-            child: Image.asset(
-              img,
-              fit: BoxFit.cover,
-              width: double.infinity,
-            ),
-          );
-        }).toList(),
       ),
     );
   }
 
-  Widget menuFavorit() {
-    final List<Map<String, dynamic>> menus = [
-      {"iconPath": "assets/images/tiket_pesanan.png", "title": "Pesan Tiket"},
-      {"iconPath": "assets/images/buss.png", "title": "Informasi Kelas Armada"},
-      {"iconPath": "assets/images/gedung.png", "title": "Informasi Perusahaan"},
-      {"iconPath": "assets/images/cart.png", "title": "New Shantika Shop"},
-      {"iconPath": "assets/images/sosmed.png", "title": "Sosial Media"},
-      {"iconPath": "assets/images/agen.png", "title": "Informasi Agen"},
-      {"iconPath": "assets/images/membership.png", "title": "E-Membership"},
-      {"iconPath": "assets/images/website.png", "title": "Website"},
-    ];
+  Widget _menuFavorit(List<CustomerMenu> menus) {
+    if (menus.isEmpty) return SizedBox.shrink();
 
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: paddingL,
-        vertical: paddingS,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: paddingL, vertical: paddingS),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SectionTitle(title: "Menu Favorit"),
           SizedBox(height: spacing4),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              double maxWidth = constraints.maxWidth;
-              int crossAxisCount = (maxWidth / 87).floor().clamp(2, 4);
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: menus.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 5,
-                  childAspectRatio: 0.8,
-                ),
-                itemBuilder: (_, i) {
-                  return Column(
-                    children: [
-                      Container(
-                        width: 55,
-                        height: 55,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: gradientMenu,
-                        ),
-                        child: Center(
-                          child: Image.asset(
-                            menus[i]["iconPath"],
-                            width: 55,
-                            height: 55,
-                            fit: BoxFit.contain,
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: menus.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 5,
+              childAspectRatio: 0.8,
+            ),
+            itemBuilder: (_, i) {
+              final menu = menus[i];
+              return GestureDetector(
+                onTap: () {
+                  print('Menu clicked: ${menu.name}');
+                },
+                child: Column(
+                  children: [
+                    Container(
+                      width: 55,
+                      height: 55,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: gradientMenu,
+                      ),
+                      child: ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: menu.icon,
+                          width: 55,
+                          height: 55,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Center(
+                            child: CircularProgressIndicator(
+                              color: primaryColor,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Icon(
+                            Icons.apps,
+                            color: Colors.white,
                           ),
                         ),
                       ),
-                      SizedBox(height: space100),
-                      Container(
-                        constraints: BoxConstraints(maxHeight: 32),
-                        alignment: Alignment.center,
-                        child: Text(
-                          menus[i]["title"],
-                          style: xxsRegular,
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                    ),
+                    SizedBox(height: space100),
+                    Container(
+                      constraints: BoxConstraints(maxHeight: 32),
+                      alignment: Alignment.center,
+                      child: Text(
+                        menu.name,
+                        style: xxsRegular,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ],
-                  );
-                },
+                    ),
+                  ],
+                ),
               );
             },
           ),
@@ -403,26 +459,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           SizedBox(width: space150),
-          Image.asset(
-            "assets/images/stars.png",
-            width: 80,
-            height: 80,
-          ),
+          Image.asset("assets/images/stars.png", width: 80, height: 80),
         ],
       ),
     );
   }
 
-  Widget _riwayats() {
-    final history = [
-      {
-        "title": "Bus 10 • Executive Big Top",
-        "date": "11 Februari 2025  • 20:30",
-        "from": "Krapyak - Semarang",
-        "to": "Gejayan - Sleman",
-        "price": "230.000"
-      },
-    ];
+  Widget _riwayats(List<PendingReview> reviews) {
+    if (reviews.isEmpty) return SizedBox.shrink();
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: paddingL),
@@ -433,248 +477,109 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               SectionTitle(title: "Riwayat"),
               Spacer(),
-              Text(
-                "Lihat Semua",
-                style: smMedium.copyWith(color: navy400),
+              GestureDetector(
+                onTap: () {},
+                child: Text("Lihat Semua", style: smMedium.copyWith(color: navy400)),
               ),
             ],
           ),
-          Column(
-            children: history.map((item) {
-              return CustomCardContainer(
-                borderRadius: borderRadius300,
-                margin: EdgeInsets.symmetric(vertical: paddingS),
-                padding: EdgeInsets.all(padding12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            item["title"] ?? "",
-                            style: smMedium),
+          SizedBox(height: spacing4),
+          ...reviews.take(3).map((review) {
+            return CustomCardContainer(
+              borderRadius: borderRadius300,
+              margin: EdgeInsets.only(bottom: padding12),
+              padding: EdgeInsets.all(padding12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "${review.nameFleet} • ${review.fleetClass}",
+                          style: smMedium,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(
-                          width: 95,
-                          height: 30,
-                          child: CustomButton(
-                            onPressed: () {},
-                            backgroundColor: navy600,
-                            child: Text(
-                              'Beri Review',
-                              style: xsMedium.copyWith(color: black00),
-                            ),
+                      ),
+                      SizedBox(width: space300),
+                      SizedBox(
+                        // width: 95,
+                        height: 30,
+                        child: CustomButton(
+                          onPressed: () {},
+                          backgroundColor: navy600,
+                          child: Text(
+                            'Beri Review',
+                            style: xsMedium.copyWith(color: black00),
                           ),
                         ),
-                      ],
-                    ),
-                    Text(
-                      item["date"] ?? "",
-                      style: xsRegular.copyWith(color: black400),
-                    ),
-                    SizedBox(height: spacing4),
-                    // From
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(Icons.location_pin, color: black700_70),
-                        SizedBox(width: space200),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("${item["from"]}", style: xsMedium),
-                            SizedBox(height: space150),
-                            Text("05:30", style: xxsRegular),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: spacing4),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(Icons.location_pin, color: navy400),
-                        SizedBox(width: space200),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("${item["to"]}", style: xsMedium),
-                            SizedBox(height: space150),
-                            Text("09:30", style: xxsRegular),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        "Rp ${item["price"]}",
-                        style:mdSemiBold.copyWith(color: navy400),
                       ),
-                    ),
-                    SizedBox(height: spacing5),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _promoSection() {
-    // dummy data
-    final promoList = [
-      {
-        "title": "Promo Mudik 2024",
-        "subtitle": "Potongan hingga Rp50.000",
-        "date": "28 April 2025",
-        "imagePath": "assets/images/promo.png",
-      },
-      {
-        "title": "Promo Mudik 2024",
-        "subtitle": "Potongan hingga Rp50.000",
-        "date": "28 April 2025",
-        "imagePath": "assets/images/promo.png",
-      },
-    ];
-
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: padding16,
-        vertical: paddingS,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              SectionTitle(title: "Promo"),
-              Spacer(),
-              Text(
-                "Lihat Semua",
-                style: smMedium.copyWith(color: navy400),
-              ),
-            ],
-          ),
-          // SizedBox(height: spacing6),
-          SizedBox(
-            height: 260,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              itemCount: promoList.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (context, index) {
-                final promo = promoList[index];
-                return SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  child: _promoItem(
-                    title: promo["title"]!,
-                    subtitle: promo["subtitle"]!,
-                    date: promo["date"]!,
-                    imagePath: promo["imagePath"]!,
+                    ],
                   ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _promoItem({
-    required String title,
-    required String subtitle,
-    required String date,
-    required String imagePath,
-  }) {
-    return CustomCardContainer(
-      margin: EdgeInsets.symmetric(vertical: space600),
-      padding: EdgeInsets.zero,
-      borderRadius: borderRadius500,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(borderRadius500),
-              topRight: Radius.circular(borderRadius500),
-            ),
-            child: Image.asset(
-              imagePath,
-              height: 130,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-
-          Padding(
-            padding: EdgeInsets.all(padding12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: spacing2),
-                Text(
-                  title,
-                  style: smMedium,
-                ),
-                SizedBox(height: spacing2),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        subtitle,
-                        style: xsRegular.copyWith(color: navy400),
-                        overflow: TextOverflow.ellipsis,
+                  SizedBox(height: space300),
+                  Text(
+                    "${review.createdAt} • ${review.departureAt}",
+                    style: xsRegular.copyWith(color: black400),
+                  ),
+                  SizedBox(height: spacing4),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.location_pin, color: black700_70, size: 20),
+                      SizedBox(width: space200),
+                      Expanded(
+                        child: Text(
+                          "${review.checkpoints.start.agencyName} - ${review.checkpoints.start.cityName}",
+                          style: xsMedium,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
+                    ],
+                  ),
+                  SizedBox(height: spacing4),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.location_pin, color: navy400, size: 20),
+                      SizedBox(width: space200),
+                      Expanded(
+                        child: Text(
+                          "${review.checkpoints.destination.agencyName} - ${review.checkpoints.destination.cityName}",
+                          style: xsMedium,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: spacing4),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "Rp ${_formatPrice(review.price)}",
+                      style: mdSemiBold.copyWith(color: navy400),
                     ),
-                    SizedBox(width: space250),
-                    Icon(Icons.calendar_month, size: iconM, color: black500),
-                    SizedBox(width: space100),
-                    Text(
-                      date,
-                      style: xsSemiBold,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
         ],
       ),
     );
   }
 
-  Widget _artikelSection() {
-    // dummy data
-    final articles = [
-      {
-        "image": "assets/images/artikel1.png",
-        "title": "Tips Aman Bepergian Jarak Jauh",
-      },
-      {
-        "image": "assets/images/artikel2.png",
-        "title": "5 Cara Nikmati Liburan Naik Bus",
-      },
-      {
-        "image": "assets/images/artikel3.png",
-        "title": "Promo Tiket Akhir Tahun!",
-      },
-    ];
+  Widget _artikelSection(List<Artikel> articles) {
+    if (articles.isEmpty) return SizedBox.shrink();
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: paddingL, vertical: space150),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Section
           Row(
             children: [
               SectionTitle(title: "Artikel"),
@@ -684,10 +589,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BlocProvider(
-                        create: (context) => ArtikelCubit(),
-                        child: ArtikelScreen(),
-                      ),
+                      builder: (context) => ArtikelScreen(),
                     ),
                   );
                 },
@@ -704,8 +606,8 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: (context, index) {
                 final article = articles[index];
                 return _artikelCard(
-                  imageUrl: article["image"] ?? "",
-                  title: article["title"] ?? "",
+                  imageUrl: article.image,
+                  title: article.name,
                 );
               },
             ),
@@ -719,118 +621,53 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       width: 157,
       margin: EdgeInsets.only(right: padding12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(borderRadius300),
-            child: Image.asset(
-              imageUrl,
-              height: 157,
-              width: double.infinity,
-              fit: BoxFit.cover,
+      child: GestureDetector(
+        onTap: () {},
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(borderRadius300),
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                height: 157,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: black750,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: primaryColor,
+                      strokeWidth: 2,
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: black750,
+                  child: Icon(Icons.article, size: 50),
+                ),
+              ),
             ),
-          ),
-          SizedBox(height: space200),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: space100),
-            child: Text(
+            SizedBox(height: space200),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: space100),
+              child: Text(
                 title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: xsMedium
+                style: xsMedium,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildTestimoniView(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: paddingL),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SectionTitle(title: "Testimoni"),
-              Text(
-                "Lihat Semua",
-                style: smMedium.copyWith(color: navy400),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: spacing5),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.33,
-          child: ListView.separated(
-            itemCount: 3,
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(horizontal: padding20),
-            separatorBuilder: (context, index) => SizedBox(width: spacing4),
-            itemBuilder: (BuildContext context, int index) {
-              return CustomCardContainer(
-                width: MediaQuery.of(context).size.width * 0.9,
-                borderRadius: borderRadius300,
-                margin: EdgeInsets.only(bottom: padding12),
-                borderColor: black00,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Esther Howard", style: smMedium),
-                        Text("13 Feb 2025", style: xsRegular),
-                      ],
-                    ),
-                    SizedBox(height: spacing5),
-                    Text("Super Executive", style: xsRegular),
-                    SizedBox(height: space200),
-                    Row(
-                      children: List.generate(5, (i) {
-                        return Icon(Icons.star, color: yellow500, size: iconM);
-                      }),
-                    ),
-                    SizedBox(height: spacing3),
-                    Text(
-                      "Sangat menyenangkan melakukan perjalanan bersama bus Shantika. Supirnya baik dan ramah, ACnya dingin, dan saya bisa tertidur pulas.",
-                      style: smRegular,
-                    ),
-                    SizedBox(height: space200),
-                    Row(
-                      children: [
-                        ...List.generate(3, (i) {
-                          return Padding(
-                            padding: EdgeInsets.only(right: space100),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(borderRadius200),
-                              child: Image.asset(
-                                "assets/images/testimoni.png",
-                                width: 35,
-                                height: 35,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          );
-                        }),
-                        SizedBox(width: space200),
-                        Align(
-                          alignment: Alignment.center,
-                          child: Text("+2", style: smMedium),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+  String _formatPrice(int price) {
+    return price.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]}.',
     );
   }
 }

@@ -1,24 +1,31 @@
-part of 'home_cubit.dart';
+import 'package:equatable/equatable.dart';
+import 'package:shantika_cubit/model/home_model.dart';
 
-sealed class HomeState extends Equatable {
+abstract class HomeState extends Equatable {
   const HomeState();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
-final class HomeInitial extends HomeState {}
+class HomeInitial extends HomeState {}
 
-final class HomeStateLoading extends HomeState {}
+class HomeLoading extends HomeState {}
 
-final class HomeStateSuccess extends HomeState {
-  final HomeResponse data;
+class HomeLoaded extends HomeState {
+  final HomeModel data;
 
-  HomeStateSuccess({required this.data});
+  const HomeLoaded(this.data);
+
+  @override
+  List<Object?> get props => [data];
 }
 
-final class HomeStateError extends HomeState {
+class HomeError extends HomeState {
   final String message;
 
-  HomeStateError({required this.message});
+  const HomeError(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }

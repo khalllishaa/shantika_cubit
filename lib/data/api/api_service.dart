@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:shantika_cubit/model/about_us_model.dart';
+import 'package:shantika_cubit/model/home_model.dart';
 import 'package:shantika_cubit/model/notification_model.dart';
 import 'package:shantika_cubit/model/response/chat_response.dart';
 import 'package:shantika_cubit/model/response/faq_response.dart';
@@ -16,9 +17,7 @@ import '../../model/address_model.dart';
 import '../../model/application_model.dart';
 import '../../model/detail_assignment_history_model.dart';
 import '../../model/equipment_support_model.dart';
-import '../../model/faq_model.dart';
 import '../../model/guard_model.dart';
-import '../../model/privacy_policy_model.dart';
 import '../../model/promo_model.dart';
 import '../../model/request/transaction_request.dart';
 import '../../model/response/api_response.dart';
@@ -28,15 +27,11 @@ import '../../model/response/auth_response.dart';
 import '../../model/response/guard_response.dart';
 import '../../model/response/guard_type_response.dart';
 import '../../model/response/history_assignment_response.dart';
-import '../../model/response/home_response.dart';
-import '../../model/response/notifications_response.dart';
 import '../../model/response/payment_method_response.dart';
 import '../../model/response/promo_response.dart';
 import '../../model/response/transaction_detail_response.dart';
 import '../../model/response/transaction_response.dart';
 import '../../model/slider_model.dart';
-import '../../model/terms_conditions_model.dart';
-import '../../model/user_model.dart';
 import '../../model/users_model.dart';
 
 part 'api_service.g.dart';
@@ -221,8 +216,8 @@ abstract class ApiService {
   // });
 
   /// Home
-  @GET("/home")
-  Future<HttpResponse<ApiResponse<HomeResponse>>> home();
+  @POST("/customer/home")
+  Future<HttpResponse<HomeModel>> home();
 
   /// Detail Slug
   @GET("/home/slider/{slug}")

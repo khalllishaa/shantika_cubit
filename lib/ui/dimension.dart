@@ -39,7 +39,7 @@ const double space1200 = 32;
 const double space1600 = 64;
 const double space2000 = 80;
 const double space2400 = 96;
-const double space3200 = 200;
+const double space3200 = 210;
 
 /// Spacing
 const double spacing1 = 2;
