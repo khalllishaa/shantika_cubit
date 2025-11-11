@@ -104,89 +104,115 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(height: spacing4),
             ],
 
+            _promoBanner(data.promo),
+            SizedBox(height: space600),
+            // if (data.promo.isNotEmpty) ...[
+            //   _promoBanner(data.promo),
+            //   SizedBox(height: space600),
+            // ],
+
             if (data.artikel.isNotEmpty) ...[
               _artikelSection(data.artikel),
               SizedBox(height: spacing4),
             ],
 
-            // if (data.testimonials.isNotEmpty) ...[
-            //   _buildTestimoniView(context, data.testimonials),
-            //   SizedBox(height: space600),
-            // ],
-
-            SizedBox(height: space600),
+            _buildTestimoniView(context, data.testimonials),
+            // SizedBox(height: space600),
           ],
         ),
       ),
     );
   }
 
-//   Widget _buildTestimoniView(BuildContext context, List<Testimonials> testimonies) {
-//     return Padding(
-//       padding: EdgeInsets.symmetric(horizontal: paddingL),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Row(
-//             children: [
-//               SectionTitle(title: "Testimoni"),
-//               Spacer(),
-//               GestureDetector(
-//                 onTap: () {},
-//                 child: Text("Lihat Semua", style: smMedium.copyWith(color: navy400)),
-//               ),
-//             ],
-//           ),
-//           SizedBox(height: spacing6),
-//           ListView.builder(
-//             shrinkWrap: true,
-//             physics: NeverScrollableScrollPhysics(),
-//             itemCount: testimonies.length > 3 ? 3 : testimonies.length,
-//             itemBuilder: (context, index) {
-//               final t = testimonies[index];
-//               return _testimoniCard(t);
-//             },
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-// Widget _testimoniCard(Testimonials t) {
-//   return CustomCardContainer(
-//     margin: EdgeInsets.only(bottom: padding12),
-//     borderRadius: borderRadius300,
-//     padding: EdgeInsets.all(paddingL),
-//     child: Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Text(t.title, style: smMedium),
-//         SizedBox(height: spacing2),
-//
-//         // Nama customer
-//         Text(t.nameCustomer, style: xsRegular.copyWith(color: black400)),
-//         SizedBox(height: spacing2),
-//
-//         // Review text
-//         Text(
-//           t.review,
-//           style: smRegular,
-//           maxLines: 3,
-//           overflow: TextOverflow.ellipsis,
-//         ),
-//         SizedBox(height: spacing3),
-//
-//         Align(
-//           alignment: Alignment.centerRight,
-//           child: Text(
-//             t.createdAt,
-//             style: xsRegular.copyWith(color: black400),
-//           ),
-//         ),
-//       ],
-//     ),
-//   );
-// }
+  Widget _buildTestimoniView(BuildContext context, List<Testimonials> testimonies) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: paddingL),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              SectionTitle(title: "Testimoni"),
+              Spacer(),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ArtikelScreen(),
+                    ),
+                  );
+                },
+                child: Text("Lihat Semua", style: smMedium.copyWith(color: navy400)),
+              ),
+            ],
+          ),
+          SizedBox(height: spacing6),
+
+          if (testimonies.isEmpty)
+            Container(
+              height: 180,
+              decoration: BoxDecoration(
+                color: black00,
+                borderRadius: BorderRadius.circular(borderRadius300),
+              ),
+              child: Center(
+                child: Text(
+                  "Belum ada testimoni",
+                  style: smMedium.copyWith(color: black400),
+                ),
+              ),
+            ),
+          if (testimonies.isNotEmpty)
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: testimonies.length > 3 ? 3 : testimonies.length,
+              itemBuilder: (context, index) {
+                final t = testimonies[index];
+                return _testimoniCard(t);
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+Widget _testimoniCard(Testimonials t) {
+  return CustomCardContainer(
+    margin: EdgeInsets.only(bottom: padding12),
+    borderRadius: borderRadius300,
+    padding: EdgeInsets.all(paddingL),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(t.title, style: smMedium),
+        SizedBox(height: spacing2),
+
+        // Nama customer
+        Text(t.nameCustomer, style: xsRegular.copyWith(color: black400)),
+        SizedBox(height: spacing2),
+
+        // Review text
+        Text(
+          t.review,
+          style: smRegular,
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+        ),
+        SizedBox(height: spacing3),
+
+        Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            t.createdAt,
+            style: xsRegular.copyWith(color: black400),
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _headerWithSearch() {
     return Stack(
@@ -567,6 +593,68 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           }).toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _promoBanner(List<String> promos) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: paddingL, vertical: space150),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              SectionTitle(title: "Promo"),
+              Spacer(),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ArtikelScreen(),
+                    ),
+                  );
+                },
+                child: Text("Lihat Semua", style: smMedium.copyWith(color: navy400)),
+              ),
+            ],
+          ),
+          SizedBox(height: spacing4),
+          promos.isEmpty
+              ? Container(
+            height: 180,
+            decoration: BoxDecoration(
+              color: black00,
+              borderRadius: BorderRadius.circular(borderRadius300),
+            ),
+            child: Center(
+              child: Text(
+                "Promo masih kosong",
+                style: smMedium.copyWith(color: black400),
+              ),
+            ),
+          )
+              : CarouselSlider.builder(
+            itemCount: promos.length,
+            itemBuilder: (context, index, realIndex) {
+              final image = promos[index];
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(borderRadius300),
+                child: CachedNetworkImage(
+                  imageUrl: image,
+                  fit: BoxFit.cover,
+                ),
+              );
+            },
+            options: CarouselOptions(
+              height: 180,
+              autoPlay: true,
+              viewportFraction: 0.92,
+              enlargeCenterPage: true,
+            ),
+          ),
         ],
       ),
     );

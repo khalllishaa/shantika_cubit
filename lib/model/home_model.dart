@@ -13,22 +13,22 @@ class HomeModel {
   @JsonKey(name: "message")
   final String message;
 
-  @JsonKey(name: "slider")
+  @JsonKey(name: "slider", defaultValue: [])
   final List<Artikel> slider;
 
-  @JsonKey(name: "artikel")
+  @JsonKey(name: "artikel", defaultValue: [])
   final List<Artikel> artikel;
 
-  @JsonKey(name: "testimonial")
-  final List<dynamic> testimonial;
+  @JsonKey(name: "testimonials", defaultValue: [])
+  final List<Testimonials> testimonials;
 
-  @JsonKey(name: "customer_menu")
+  @JsonKey(name: "customer_menu", defaultValue: [])
   final List<CustomerMenu> customerMenu;
 
-  @JsonKey(name: "promo")
-  final List<dynamic> promo;
+  @JsonKey(name: "promo", defaultValue: [])
+  final List<String> promo;
 
-  @JsonKey(name: "pending_reviews")
+  @JsonKey(name: "pending_reviews", defaultValue: [])
   final List<PendingReview> pendingReviews;
 
   @JsonKey(name: "is_active_customer_order")
@@ -41,12 +41,12 @@ class HomeModel {
     required this.code,
     required this.success,
     required this.message,
-    required this.slider,
-    required this.artikel,
-    required this.testimonial,
-    required this.customerMenu,
-    required this.promo,
-    required this.pendingReviews,
+    this.slider = const [],
+    this.artikel = const [],
+    this.testimonials = const [],
+    this.customerMenu = const [],
+    this.promo = const [],
+    this.pendingReviews = const [],
     required this.isActiveCustomerOrder,
     required this.timeLimitBeforeOrder,
   });
@@ -235,3 +235,45 @@ class Destination {
   factory Destination.fromJson(Map<String, dynamic> json) => _$DestinationFromJson(json);
   Map<String, dynamic> toJson() => _$DestinationToJson(this);
 }
+
+@JsonSerializable()
+class Testimonials {
+  @JsonKey(name: "id")
+  final int id;
+
+  @JsonKey(name: "user_id")
+  final int userId;
+
+  @JsonKey(name: "image")
+  final String image;
+
+  @JsonKey(name: "review")
+  final String review;
+
+  @JsonKey(name: "created_at")
+  final String createdAt;
+
+  @JsonKey(name: "updated_at")
+  final String updatedAt;
+
+  @JsonKey(name: "title")
+  final String title;
+
+  @JsonKey(name: "name_customer")
+  final String nameCustomer;
+
+  Testimonials({
+    required this.id,
+    required this.userId,
+    required this.image,
+    required this.review,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.title,
+    required this.nameCustomer,
+  });
+
+  factory Testimonials.fromJson(Map<String, dynamic> json) => _$TestimonialsFromJson(json);
+  Map<String, dynamic> toJson() => _$TestimonialsToJson(this);
+}
+
