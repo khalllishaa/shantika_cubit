@@ -1993,33 +1993,27 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<ApiResponse<NotificationsResponse>>> notifications({
+  Future<HttpResponse<NotificationModel>> notifications({
     required int page,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'page': page};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options =
-        _setStreamType<HttpResponse<ApiResponse<NotificationsResponse>>>(
-          Options(method: 'GET', headers: _headers, extra: _extra)
-              .compose(
-                _dio.options,
-                '/notification',
-                queryParameters: queryParameters,
-                data: _data,
-              )
-              .copyWith(
-                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
-              ),
-        );
+    final _options = _setStreamType<HttpResponse<NotificationModel>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/notification',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late ApiResponse<NotificationsResponse> _value;
+    late NotificationModel _value;
     try {
-      _value = ApiResponse<NotificationsResponse>.fromJson(
-        _result.data!,
-        (json) => NotificationsResponse.fromJson(json as Map<String, dynamic>),
-      );
+      _value = NotificationModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -2035,13 +2029,12 @@ class _ApiService implements ApiService {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('notification_id', id));
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<HttpResponse<ApiResponse<dynamic>>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/notification/see',
+            '/notification/${id}/read',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -2072,7 +2065,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/notification/see-all',
+            '/notification/read/all',
             queryParameters: queryParameters,
             data: _data,
           )

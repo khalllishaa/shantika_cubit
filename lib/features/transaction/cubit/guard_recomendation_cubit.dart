@@ -40,6 +40,9 @@ class GuardRecomendationCubit extends Cubit<GuardRecomendationState> {
         {
           emit(GuardRecomendationStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse<GuardModel>>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

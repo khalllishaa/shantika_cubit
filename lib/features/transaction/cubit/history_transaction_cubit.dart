@@ -45,6 +45,9 @@ class HistoryTransactionCubit extends Cubit<HistoryTransactionState> {
         {
           emit(HistoryTransactionStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse<TransactionResponse>>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

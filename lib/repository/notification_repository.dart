@@ -1,6 +1,7 @@
+// lib/repository/notification_repository.dart
+import 'package:shantika_cubit/model/notification_model.dart';
 import '../data/api/api_service.dart';
 import '../model/response/api_response.dart';
-import '../model/response/notifications_response.dart';
 import '../utility/resource/data_state.dart';
 import 'base/base_repository.dart';
 
@@ -9,27 +10,33 @@ class NotificationRepository extends BaseRepository {
 
   NotificationRepository(this._apiService);
 
-  Future<DataState<ApiResponse<NotificationsResponse>>> notifications({required int page}) async {
-    DataState<ApiResponse<NotificationsResponse>> dataStateAuthResponse =
-        await getStateOf<ApiResponse<NotificationsResponse>>(
+  Future<DataState<NotificationModel>> notifications({required int page}) async {
+    DataState<NotificationModel> dataStateAuthResponse =
+    await getStateOf<NotificationModel>(
       request: () => _apiService.notifications(page: page),
     );
 
     if (dataStateAuthResponse is DataStateSuccess) {
       return DataStateSuccess(dataStateAuthResponse.data!);
-    } else {
+    } else if (dataStateAuthResponse is DataStateError) {
       return DataStateError(dataStateAuthResponse.exception!);
+    } else {
+      return const DataStateLoading();
     }
   }
 
   Future<DataState<ApiResponse>> readNotification({required String id}) async {
     DataState<ApiResponse> dataStateAuthResponse =
-        await getStateOf<ApiResponse>(request: () => _apiService.readNotification(id: id));
+    await getStateOf<ApiResponse>(
+      request: () => _apiService.readNotification(id: id),
+    );
 
     if (dataStateAuthResponse is DataStateSuccess) {
       return DataStateSuccess(dataStateAuthResponse.data!);
-    } else {
+    } else if (dataStateAuthResponse is DataStateError) {
       return DataStateError(dataStateAuthResponse.exception!);
+    } else {
+      return const DataStateLoading();
     }
   }
 
@@ -40,8 +47,10 @@ class NotificationRepository extends BaseRepository {
 
     if (dataStateAuthResponse is DataStateSuccess) {
       return DataStateSuccess(dataStateAuthResponse.data!);
-    } else {
+    } else if (dataStateAuthResponse is DataStateError) {
       return DataStateError(dataStateAuthResponse.exception!);
+    } else {
+      return const DataStateLoading();
     }
   }
 }

@@ -5,10 +5,12 @@ import 'package:jiffy/jiffy.dart';
 import 'package:shantika_cubit/features/assignment/cubit/history_assignment_cubit.dart';
 import 'package:shantika_cubit/features/authentication/login/cubit/login_phone_cubit.dart';
 import 'package:shantika_cubit/features/home/cubit/artikel_cubit.dart';
+import 'package:shantika_cubit/features/home/cubit/notifications_cubit.dart';
 import 'package:shantika_cubit/features/profile/cubit/about_us_cubit.dart';
 import 'package:shantika_cubit/features/profile/cubit/faq_cubit.dart';
 import 'package:shantika_cubit/features/profile/cubit/privacy_policy_cubit.dart';
 import 'package:shantika_cubit/repository/app_settings_repository.dart';
+import 'package:shantika_cubit/repository/notification_repository.dart';
 import 'package:shantika_cubit/splash_screen.dart';
 import 'package:shantika_cubit/ui/theme.dart';
 
@@ -73,6 +75,7 @@ class MyApp extends StatelessWidget {
 
         /// HOME
         BlocProvider(create: (context) => HomeCubit()),
+        BlocProvider(create: (context) => NotificationListCubit(serviceLocator<NotificationRepository>())),
         BlocProvider(create: (context) => DetailSliderCubit()),
         BlocProvider(create: (context) => ArtikelCubit()),
         BlocProvider(create: (context) => LogoutCubit()..init()),

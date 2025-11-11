@@ -52,6 +52,9 @@ class LoginPhoneCubit extends Cubit<LoginPhoneState> {
             message: dataState.exception?.parseMessage() ?? "Terjadi kesalahan",
           ));
         }
+      case DataStateLoading<AuthResponse>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

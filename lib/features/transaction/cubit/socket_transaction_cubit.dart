@@ -31,6 +31,9 @@ class SocketTransactionCubit extends Cubit<SocketTransactionState> {
         {
           emit(SocketTransactionStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

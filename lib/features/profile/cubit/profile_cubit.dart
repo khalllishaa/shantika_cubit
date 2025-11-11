@@ -36,6 +36,9 @@ class ProfileCubit extends Cubit<ProfileState> {
         {
           emit(ProfileStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<UsersModel>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

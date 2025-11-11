@@ -40,6 +40,9 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
         {
           emit(ChangePasswordStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

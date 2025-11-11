@@ -33,6 +33,9 @@ class DetailSliderCubit extends Cubit<DetailSliderState> {
         {
           emit(DetailSliderStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse<SliderModel>>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

@@ -1,28 +1,69 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import '../notification_model.dart';
 part 'notifications_response.g.dart';
 
 @JsonSerializable()
 class NotificationsResponse {
-  int? unread;
-  NotificationsResponseData? notifications;
+  @JsonKey(name: "notifications")
+  final List<NotificationItem> notifications;
 
-  NotificationsResponse({this.unread});
+  NotificationsResponse({
+    required this.notifications,
+  });
 
-  factory NotificationsResponse.fromJson(Map<String, dynamic> json) => _$NotificationsResponseFromJson(json);
+  factory NotificationsResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotificationsResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$NotificationsResponseToJson(this);
 }
 
 @JsonSerializable()
-class NotificationsResponseData {
-  int? current_page;
-  List<NotificationModel>? data;
+class NotificationItem {
+  @JsonKey(name: "id")
+  final int id;
 
-  NotificationsResponseData({this.current_page, this.data});
+  @JsonKey(name: "user_id")
+  final int userId;
 
-  factory NotificationsResponseData.fromJson(Map<String, dynamic> json) => _$NotificationsResponseDataFromJson(json);
+  @JsonKey(name: "reference_id")
+  final int referenceId;
 
-  Map<String, dynamic> toJson() => _$NotificationsResponseDataToJson(this);
+  @JsonKey(name: "title")
+  final String title;
+
+  @JsonKey(name: "message")
+  final String message;
+
+  @JsonKey(name: "type")
+  final String type;
+
+  @JsonKey(name: "is_seen")
+  final bool isSeen;
+
+  @JsonKey(name: "created_at")
+  final DateTime createdAt;
+
+  @JsonKey(name: "updated_at")
+  final DateTime updatedAt;
+
+  @JsonKey(name: "deleted_at")
+  final dynamic deletedAt;
+
+  NotificationItem({
+    required this.id,
+    required this.userId,
+    required this.referenceId,
+    required this.title,
+    required this.message,
+    required this.type,
+    required this.isSeen,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+  });
+
+  factory NotificationItem.fromJson(Map<String, dynamic> json) =>
+      _$NotificationItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$NotificationItemToJson(this);
 }

@@ -38,6 +38,9 @@ class LogoutCubit extends Cubit<LogoutState> {
         {
           emit(LogoutStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

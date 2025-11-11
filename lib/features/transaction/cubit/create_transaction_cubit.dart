@@ -36,6 +36,9 @@ class CreateTransactionCubit extends Cubit<CreateTransactionState> {
         {
           emit(CreateTransactionStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

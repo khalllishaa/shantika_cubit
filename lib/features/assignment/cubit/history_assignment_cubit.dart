@@ -47,6 +47,9 @@ class HistoryAssignmentCubit extends Cubit<HistoryAssignmentState> {
         {
           emit(HistoryAssignmentStateError(message: dataState.exception?.parseMessage() ?? ""));
         }
+      case DataStateLoading<ApiResponse<HistoryAssignmentResponse>>():
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }
