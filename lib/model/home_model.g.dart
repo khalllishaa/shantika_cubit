@@ -10,20 +10,33 @@ HomeModel _$HomeModelFromJson(Map<String, dynamic> json) => HomeModel(
   code: (json['code'] as num).toInt(),
   success: json['success'] as bool,
   message: json['message'] as String,
-  slider: (json['slider'] as List<dynamic>)
-      .map((e) => Artikel.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  artikel: (json['artikel'] as List<dynamic>)
-      .map((e) => Artikel.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  testimonial: json['testimonial'] as List<dynamic>,
-  customerMenu: (json['customer_menu'] as List<dynamic>)
-      .map((e) => CustomerMenu.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  promo: json['promo'] as List<dynamic>,
-  pendingReviews: (json['pending_reviews'] as List<dynamic>)
-      .map((e) => PendingReview.fromJson(e as Map<String, dynamic>))
-      .toList(),
+  slider:
+      (json['slider'] as List<dynamic>?)
+          ?.map((e) => Artikel.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  artikel:
+      (json['artikel'] as List<dynamic>?)
+          ?.map((e) => Artikel.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  testimonials:
+      (json['testimonials'] as List<dynamic>?)
+          ?.map((e) => Testimonials.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  customerMenu:
+      (json['customer_menu'] as List<dynamic>?)
+          ?.map((e) => CustomerMenu.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  promo:
+      (json['promo'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
+  pendingReviews:
+      (json['pending_reviews'] as List<dynamic>?)
+          ?.map((e) => PendingReview.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
   isActiveCustomerOrder: json['is_active_customer_order'] as bool,
   timeLimitBeforeOrder: json['time_limit_before_order'] as String,
 );
@@ -34,7 +47,7 @@ Map<String, dynamic> _$HomeModelToJson(HomeModel instance) => <String, dynamic>{
   'message': instance.message,
   'slider': instance.slider,
   'artikel': instance.artikel,
-  'testimonial': instance.testimonial,
+  'testimonials': instance.testimonials,
   'customer_menu': instance.customerMenu,
   'promo': instance.promo,
   'pending_reviews': instance.pendingReviews,
@@ -147,4 +160,27 @@ Map<String, dynamic> _$DestinationToJson(Destination instance) =>
       'agency_lat': instance.agencyLat,
       'agency_lng': instance.agencyLng,
       'city_name': instance.cityName,
+    };
+
+Testimonials _$TestimonialsFromJson(Map<String, dynamic> json) => Testimonials(
+  id: (json['id'] as num).toInt(),
+  userId: (json['user_id'] as num).toInt(),
+  image: json['image'] as String,
+  review: json['review'] as String,
+  createdAt: json['created_at'] as String,
+  updatedAt: json['updated_at'] as String,
+  title: json['title'] as String,
+  nameCustomer: json['name_customer'] as String,
+);
+
+Map<String, dynamic> _$TestimonialsToJson(Testimonials instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'user_id': instance.userId,
+      'image': instance.image,
+      'review': instance.review,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
+      'title': instance.title,
+      'name_customer': instance.nameCustomer,
     };
