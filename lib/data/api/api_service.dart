@@ -6,6 +6,7 @@ import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:shantika_cubit/model/about_us_model.dart';
 import 'package:shantika_cubit/model/notification_model.dart';
+import 'package:shantika_cubit/model/response/chat_response.dart';
 import 'package:shantika_cubit/model/response/faq_response.dart';
 import 'package:shantika_cubit/model/response/privacy_policy_response.dart';
 import 'package:shantika_cubit/model/response/terms_and_condition_response.dart';
@@ -80,6 +81,10 @@ abstract class ApiService {
   // Future<HttpResponse<dynamic>> loginByPhone({
   //   @Part() required String phone,
   // });
+
+  /// Chat
+  @GET("/customer/chats")
+  Future<HttpResponse<ChatResponse>> getChats();
 
   /// Register with email and password
   @POST("/auth/register")
