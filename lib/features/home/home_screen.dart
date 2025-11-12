@@ -522,7 +522,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: spacing4),
           SizedBox(
-            height: 185,
+            height: 200,
             child: PageView.builder(
               controller: PageController(viewportFraction: 0.92),
               itemCount: reviews.length,
@@ -579,7 +579,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.location_pin, color: black700_70, size: 18),
+                            Column(
+                              children: [
+                                Icon(Icons.location_pin, color: black700_70, size: 18),
+                                SizedBox(height: space150),
+                                Container(
+                                  width: 1.5,
+                                  height: 12,
+                                  color: black400.withOpacity(0.3),
+                                ),
+                                SizedBox(height: space150),
+                              ],
+                            ),
                             SizedBox(width: space100),
                             Expanded(
                               child: Text(
@@ -591,7 +602,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
-                        SizedBox(height: spacing4),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
