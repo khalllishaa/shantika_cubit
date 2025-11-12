@@ -1,107 +1,166 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:shantika_cubit/config/service_locator.dart';
 import 'package:shantika_cubit/features/home/cubit/artikel_cubit.dart';
 import 'package:shantika_cubit/features/home/cubit/artikel_state.dart';
+import 'package:shantika_cubit/model/home_model.dart';
+import 'package:shantika_cubit/repository/home_repository.dart';
 import 'package:shantika_cubit/ui/color.dart';
 import 'package:shantika_cubit/ui/dimension.dart';
 import 'package:shantika_cubit/ui/typography.dart';
-
 import '../../ui/shared_widget/custom_card_container.dart';
 
 class DetailArtikelScreen extends StatelessWidget {
-  final String title;
-  final String image;
+  final int articleId;
+  final HomeRepository? repository;
 
   const DetailArtikelScreen({
     Key? key,
-    required this.title,
-    required this.image,
+    required this.articleId,
+    this.repository,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final homeRepository = repository ?? serviceLocator<HomeRepository>();
+
     return BlocProvider(
-      create: (context) => ArtikelCubit()..loadArticles(),
-      child: Scaffold(
-        backgroundColor: black00,
-        appBar: _header(context),
-        body: BlocBuilder<ArtikelCubit, ArtikelState>(
-          builder: (context, state) {
-            if (state is ArtikelLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+      create: (context) => ArtikelCubit(homeRepository)
+        ..loadArticleDetail(articleId),
+      child: const DetailArtikelPage(),
+    );
+  }
+}
 
-            if (state is ArtikelError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.error_outline, size: 64, color: black700_70),
-                    SizedBox(height: space100),
-                    Text('Terjadi kesalahan', style: smMedium),
-                    SizedBox(height: space100),
-                    Text(state.message, style: smMedium),
-                  ],
-                ),
-              );
-            }
+class DetailArtikelPage extends StatelessWidget {
+  const DetailArtikelPage({Key? key}) : super(key: key);
 
-            if (state is ArtikelLoaded) {
-              return RefreshIndicator(
-                onRefresh: () => context.read<ArtikelCubit>().loadArticles(),
-                child: ListView(
-                  padding: EdgeInsets.all(paddingL),
-                  children: [
-                    _protokol(image, title),
-                    SizedBox(height: space600),
-                    _artikelList(state.relatedArticles),
-                    SizedBox(height: space100),
-                    _bacaLainnya(context, state.articles),
-                  ],
-                ),
-              );
-            }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: black00,
+      appBar: _header(context),
+      body: BlocBuilder<ArtikelCubit, ArtikelState>(
+        builder: (context, state) {
+          if (state is ArtikelDetailLoading) {
+            return Center(
+              child: CircularProgressIndicator(color: primaryColor),
+            );
+          }
 
-            return const SizedBox();
-          },
-        ),
+          if (state is ArtikelDetailError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: iconXL, color: black700_70),
+                  SizedBox(height: space100),
+                  Text('Terjadi kesalahan', style: smMedium),
+                  SizedBox(height: space100),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: paddingL),
+                    child: Text(
+                      state.message,
+                      style: xxsMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(height: space600),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: paddingL,
+                        vertical: padding12,
+                      ),
+                    ),
+                    child: Text('Kembali'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          if (state is ArtikelDetailLoaded) {
+            return _buildContent(context, state);
+          }
+
+          return SizedBox();
+        },
       ),
     );
   }
 
-  // PreferredSizeWidget _header(BuildContext context) {
-  //   return AppBar(
-  //     leadingWidth: spacing10,
-  //     backgroundColor: black00,
-  //     leading: IconButton(
-  //       icon: Icon(
-  //         Icons.arrow_back_rounded,
-  //         size: iconL,
-  //         color: black950,
-  //       ),
-  //       onPressed: () => Navigator.pop(context),
-  //     ),
-  //     title: Text("Detail Artikel", style: xlMedium),
-  //     actions: [
-  //       Padding(
-  //         padding: EdgeInsets.only(right: paddingL),
-  //         child: IconButton(
-  //           icon: Icon(Icons.share, color: black950, size: iconL),
-  //           onPressed: () {
-  //             context.read<ArtikelCubit>().shareArticle(title);
-  //             ScaffoldMessenger.of(context).showSnackBar(
-  //               SnackBar(content: Text('Berbagi artikel: $title')),
-  //             );
-  //           },
-  //         ),
-  //       )
-  //     ],
-  //   );
-  // }
+  Widget _buildContent(BuildContext context, ArtikelDetailLoaded state) {
+    final article = state.article;
 
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(paddingL),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: CachedNetworkImage(
+                imageUrl: article.image,
+                width: double.infinity,
+                height: 200,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  width: double.infinity,
+                  height: 200,
+                  color: black700_70,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: primaryColor,
+                      strokeWidth: 2,
+                    ),
+                  ),
+                ),
+                errorWidget: (context, error, stackTrace) => Container(
+                  width: double.infinity,
+                  height: 200,
+                  color: black700_70,
+                  child:
+                  Icon(Icons.image, size: iconXL, color: black700_70),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: paddingL),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  article.name,
+                  style: lgSemiBold,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: space400),
+                HtmlWidget(
+                  article.description,
+                  textStyle: const TextStyle(
+                    fontSize: 14,
+                    height: 1.6,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: space600),
+        ],
+      ),
+    );
+  }
   PreferredSizeWidget _header(BuildContext context) {
     return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight + 4),
+      preferredSize: Size.fromHeight(kToolbarHeight + 4),
       child: Container(
         decoration: BoxDecoration(
           color: black00,
@@ -125,193 +184,158 @@ class DetailArtikelScreen extends StatelessWidget {
             style: xlMedium,
           ),
           actions: [
-            Padding(
-              padding: EdgeInsets.only(right: paddingL),
-              child: IconButton(
-                icon: Icon(Icons.share, color: black950, size: iconL),
-                onPressed: () {
-                  context.read<ArtikelCubit>().shareArticle(title);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Berbagi artikel: $title')),
+            BlocBuilder<ArtikelCubit, ArtikelState>(
+              builder: (context, state) {
+                if (state is ArtikelDetailLoaded) {
+                  return IconButton(
+                    icon: Icon(Icons.share, size: iconL, color: black950),
+                    onPressed: () {
+                      context.read<ArtikelCubit>().shareArticle(
+                        state.article.name,
+                        state.article.image,
+                      );
+                    },
                   );
-                },
-              ),
-            )
+                }
+                return SizedBox.shrink();
+              },
+            ),
           ],
         ),
       ),
     );
   }
 
-
-  Widget _protokol(String image, String title) {
+  Widget _relatedArticlesSection(
+      BuildContext context, List<Artikel> articles) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(borderRadius300),
-          child: Image.asset(
-            image,
-            height: 120,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                height: 120,
-                width: double.infinity,
-                color: black700_70,
-                child: Icon(Icons.image, size: 48, color: black700_70),
-              );
-            },
-          ),
-        ),
-        SizedBox(height: spacing5),
-        Center(
-          child: Text(title, textAlign: TextAlign.center, style: mdMedium),
-        ),
+        Text("Artikel Terkait", style: mdSemiBold),
         SizedBox(height: spacing4),
-        Text(
-          "Perjalanan selama pandemi menghadirkan tantangan tersendiri, tetapi juga memberikan pengalaman berharga yang sulit dilupakan. "
-              "Salah satu momen terbaik adalah ketika saya melakukan perjalanan ke daerah terpencil dengan protokol kesehatan yang ketat.",
-          textAlign: TextAlign.center,
-          style: xsRegular,
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: articles.length,
+          itemBuilder: (context, index) {
+            final article = articles[index];
+            return _relatedArticleCard(context, article);
+          },
         ),
       ],
     );
   }
 
-  Widget _artikelList(List<Map<String, String>> relatedArticles) {
-    return ListView.builder(
-      itemCount: relatedArticles.length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        final item = relatedArticles[index];
-        return Padding(
-          padding: EdgeInsets.only(bottom: space100),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _relatedArticleCard(BuildContext context, Artikel article) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: padding12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(borderRadius300),
+        onTap: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailArtikelScreen(articleId: article.id),
+            ),
+          );
+        },
+        child: CustomCardContainer(
+          padding: EdgeInsets.all(paddingL),
+          child: Row(
             children: [
-              Text(item['title'] ?? '', style: smMedium),
-              SizedBox(height: spacing4),
-              ClipRRect(
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: paddingL),
+                child:ClipRRect(
                 borderRadius: BorderRadius.circular(borderRadius300),
-                child: Image.asset(
-                  item['image'] ?? '',
-                  height: 116.74,
-                  width: 150,
+                child: CachedNetworkImage(
+                  imageUrl: article.image,
+                  height: 120,
+                  width: double.infinity,
                   fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    // width: 80,
+                    height: 120,
+                    color: black700_70,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: primaryColor,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, error, stackTrace) => Container(
+                    width: 80,
+                    height: 80,
+                    color: black700_70,
+                    child: Icon(Icons.image, size: iconXL, color: black700_70),
+                  ),
                 ),
               ),
-              SizedBox(height: spacing4),
-              Text(item['description'] ?? '', style: xsRegular),
-              SizedBox(height: spacing5),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _bacaLainnya(BuildContext context, List<Map<String, String>> articles) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Baca Artikel Lainnya', style: smMedium),
-            Text(
-              'Selengkapnya →',
-              style: smRegular.copyWith(color: orange700),
-            ),
-          ],
-        ),
-        SizedBox(height: spacing4),
-        Column(
-          children: articles.map((item) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: spacing4),
-              child: CustomCardContainer(
-                padding: EdgeInsets.zero,
-                borderRadius: borderRadius300,
+              ),
+              // ClipRRect(
+              //   borderRadius: BorderRadius.circular(borderRadius300),
+              //   child: CachedNetworkImage(
+              //     imageUrl: article.image,
+              //     width: 80,
+              //     height: 80,
+              //     fit: BoxFit.cover,
+              //     placeholder: (context, url) => Container(
+              //       width: 80,
+              //       height: 80,
+              //       color: black700_70,
+              //       child: Center(
+              //         child: CircularProgressIndicator(
+              //           color: primaryColor,
+              //           strokeWidth: 2,
+              //         ),
+              //       ),
+              //     ),
+              //     errorWidget: (context, error, stackTrace) => Container(
+              //       width: 80,
+              //       height: 80,
+              //       color: black700_70,
+              //       child: Icon(Icons.image, size: iconXL, color: black700_70),
+              //     ),
+              //   ),
+              // ),
+              SizedBox(width: space300),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(borderRadius300),
-                      ),
-                      child: Image.asset(
-                        item['image'] ?? '',
-                        height: 160,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
+                    Text(
+                      article.name,
+                      style: mdMedium,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(padding12),
-                      child: Text(
-                        item['title'] ?? '',
-                        style: smMedium.copyWith(color: black900),
-                      ),
+                    SizedBox(height: space100),
+                    Text(
+                      _stripHtmlTags(article.description),
+                      style: xsRegular,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCard(BuildContext context, String image, String title) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DetailArtikelScreen(
-              title: title,
-              image: image,
-            ),
+            ],
           ),
-        );
-      },
-      borderRadius: BorderRadius.circular(borderRadius300),
-      child: CustomCardContainer(
-        padding: EdgeInsets.zero,
-        borderRadius: borderRadius300,
-        borderColor: Colors.grey.shade300,
-        borderWidth: 1,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius:
-              BorderRadius.vertical(top: Radius.circular(borderRadius300)),
-              child: Image.asset(
-                image,
-                height: 100,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 100,
-                    width: double.infinity,
-                    color: black700_70,
-                    child: Icon(Icons.image, size: 32, color: black700_70),
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(paddingM),
-              child: Text(title, style: smMedium),
-            ),
-          ],
         ),
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    final months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
+  }
+
+  String _stripHtmlTags(String htmlText) {
+    final RegExp exp = RegExp(r"<[^>]*>", multiLine: true, caseSensitive: true);
+    return htmlText.replaceAll(exp, '').trim();
   }
 }

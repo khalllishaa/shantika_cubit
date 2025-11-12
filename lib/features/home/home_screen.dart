@@ -5,7 +5,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shantika_cubit/features/home/artikel_screen.dart';
 import 'package:shantika_cubit/features/home/cubit/home_cubit.dart';
 import 'package:shantika_cubit/features/home/cubit/home_state.dart';
+import 'package:shantika_cubit/features/home/notification_screen.dart';
+import 'package:shantika_cubit/features/profile/notifications_profile_screen.dart';
 import 'package:shantika_cubit/model/home_model.dart';
+import 'package:shantika_cubit/repository/home_repository.dart';
 import '../../ui/color.dart';
 import '../../ui/dimension.dart';
 import '../../ui/shared_widget/custom_button.dart';
@@ -135,14 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SectionTitle(title: "Testimoni"),
               Spacer(),
               GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ArtikelScreen(),
-                    ),
-                  );
-                },
+                onTap: () {},
                 child: Text("Lihat Semua", style: smMedium.copyWith(color: navy400)),
               ),
             ],
@@ -178,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-Widget _testimoniCard(Testimonials t) {
+  Widget _testimoniCard(Testimonials t) {
   return CustomCardContainer(
     margin: EdgeInsets.only(bottom: padding12),
     borderRadius: borderRadius300,
@@ -242,7 +238,14 @@ Widget _testimoniCard(Testimonials t) {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NoticationsPage(),
+                      ),
+                    );
+                  },
                   child: Icon(Icons.notifications, color: black00, size: 28),
                 ),
               ],
@@ -609,14 +612,7 @@ Widget _testimoniCard(Testimonials t) {
               SectionTitle(title: "Promo"),
               Spacer(),
               GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ArtikelScreen(),
-                    ),
-                  );
-                },
+                onTap: () {},
                 child: Text("Lihat Semua", style: smMedium.copyWith(color: navy400)),
               ),
             ],

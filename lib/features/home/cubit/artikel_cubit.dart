@@ -1,81 +1,87 @@
-// cubit/artikel_cubit.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'artikel_state.dart';
+import 'package:shantika_cubit/features/home/cubit/artikel_state.dart';
+import 'package:shantika_cubit/model/home_model.dart';
+import 'package:shantika_cubit/repository/home_repository.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ArtikelCubit extends Cubit<ArtikelState> {
-  ArtikelCubit() : super(ArtikelInitial());
+  final HomeRepository _repository;
+
+  ArtikelCubit(this._repository) : super(ArtikelInitial());
+
+  List<Artikel> _allArticles = [];
+  List<Artikel> _filteredArticles = [];
 
   Future<void> loadArticles() async {
-    emit(ArtikelLoading());
-
     try {
-      // Simulasi loading data
-      await Future.delayed(const Duration(milliseconds: 500));
+      emit(ArtikelLoading());
 
-      // Dummy data - ganti dengan data asli kamu
-      final articles = [
-        {
-          "title": "Tips Menjaga Kesehatan Mental di Era Digital",
-          "image": "assets/images/artikel1.png",
-        },
-        {
-          "title": "Pentingnya Olahraga Rutin untuk Tubuh Sehat",
-          "image": "assets/images/artikel2.png",
-        },
-        {
-          "title": "Nutrisi Seimbang untuk Keluarga Indonesia",
-          "image": "assets/images/artikel3.png",
-        },
-        {
-          "title": "Cara Mengatasi Stress dengan Mindfulness",
-          "image": "assets/images/artikel4.png",
-        },
-      ];
+      final homeData = await _repository.getHome();
 
-      final relatedArticles = [
-        {
-          "image": "assets/images/dokter.jpg",
-          "title": "1. Penerapan Protokol Kesehatan Dalam perjalanan",
-          "description": "Mengutamakan keselamatan dengan masker, hand sanitizer, dan menjaga jarak, memberikan rasa aman selama perjalanan."
-        },
-        {
-          "image": "assets/images/dokter.jpg",
-          "title": "2. Menemukan Keindahan Baru",
-          "description": "Mengeksplorasi tempat-tempat terpencil yang sebelumnya jarang dikunjungi."
-        },
-        {
-          "image": "assets/images/dokter.jpg",
-          "title": "3. Destinasi Lebih Sepi",
-          "description": "Wisata yang biasanya ramai menjadi lebih tenang, memungkinkan pengalaman yang lebih intim dengan alam."
-        },
-      ];
+      _allArticles = homeData.artikel;
+      _filteredArticles = _allArticles;
 
       emit(ArtikelLoaded(
-        articles: articles,
-        relatedArticles: relatedArticles, // Add this
+        articles: _allArticles,
+        filteredArticles: _filteredArticles,
       ));
     } catch (e) {
-      emit(ArtikelError(e.toString()));
+      emit(ArtikelError('Terjadi kesalahan: ${e.toString()}'));
     }
   }
 
   void searchArticles(String query) {
     if (state is ArtikelLoaded) {
-      final currentState = state as ArtikelLoaded;
-      emit(currentState.copyWith(searchQuery: query));
+      if (query.isEmpty) {
+        _filteredArticles = _allArticles;
+      } else {
+        _filteredArticles = _allArticles
+            .where((article) =>
+        article.name.toLowerCase().contains(query.toLowerCase()) ||
+            article.description.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+
+      emit(ArtikelLoaded(
+        articles: _allArticles,
+        filteredArticles: _filteredArticles,
+      ));
     }
   }
 
-  void clearSearch() {
-    if (state is ArtikelLoaded) {
-      final currentState = state as ArtikelLoaded;
-      emit(currentState.copyWith(searchQuery: ''));
+  Future<void> shareArticle(String title, String imageUrl) async {
+    try {
+      await Share.share(
+        '$title\n\nLihat artikel selengkapnya di aplikasi New Shantika\nGambar: $imageUrl',
+        subject: title,
+      );
+    } catch (e) {
+      print('Error sharing: $e');
     }
   }
 
-  // Method untuk share artikel
-  void shareArticle(String title) {
-    print('Share artikel: $title');
-  }
+  Future<void> loadArticleDetail(int articleId) async {
+    try {
+      emit(ArtikelDetailLoading());
 
+      // Fetch detail artikel
+      final articleDetail = await _repository.getArticleDetail(articleId);
+
+      // Fetch artikel terkait (dari endpoint home)
+      final homeData = await _repository.getHome();
+
+      // Filter artikel terkait (exclude artikel yang sedang dibuka)
+      final relatedArticles = homeData.artikel
+          .where((article) => article.id != articleId)
+          .take(3)
+          .toList();
+
+      emit(ArtikelDetailLoaded(
+        article: articleDetail,
+        relatedArticles: relatedArticles,
+      ));
+    } catch (e) {
+      emit(ArtikelDetailError('Terjadi kesalahan: ${e.toString()}'));
+    }
+  }
 }

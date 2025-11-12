@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shantika_cubit/config/service_locator.dart';
 import 'package:shantika_cubit/features/home/cubit/artikel_cubit.dart';
 import 'package:shantika_cubit/features/home/cubit/artikel_state.dart';
 import 'package:shantika_cubit/features/home/detail_artikel_screen.dart';
+import 'package:shantika_cubit/model/home_model.dart';
+import 'package:shantika_cubit/repository/home_repository.dart';
 import 'package:shantika_cubit/ui/color.dart';
 import 'package:shantika_cubit/ui/dimension.dart';
 import 'package:shantika_cubit/ui/typography.dart';
-
 import '../../ui/shared_widget/custom_card_container.dart';
 
 class ArtikelScreen extends StatelessWidget {
@@ -15,13 +18,14 @@ class ArtikelScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ArtikelCubit()..loadArticles(),
+      create: (context) => ArtikelCubit(
+        serviceLocator<HomeRepository>(),
+      )..loadArticles(),
       child: const ArtikelPage(),
     );
   }
 }
 
-// ✅ INI UI-nya
 class ArtikelPage extends StatelessWidget {
   const ArtikelPage({Key? key}) : super(key: key);
 
@@ -36,40 +40,36 @@ class ArtikelPage extends StatelessWidget {
           Expanded(
             child: BlocBuilder<ArtikelCubit, ArtikelState>(
               builder: (context, state) {
-                // Loading state
                 if (state is ArtikelLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                  return Center(
+                    child: CircularProgressIndicator(color: primaryColor),
                   );
                 }
 
-                // Error state
                 if (state is ArtikelError) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 64,
-                          color: black700_70,
-                        ),
+                        Icon(Icons.error_outline, size: iconXL, color: black700_70),
                         SizedBox(height: space100),
-                        Text(
-                          'Terjadi kesalahan',
-                          style: smMedium,
-                        ),
+                        Text('Terjadi kesalahan', style: smMedium),
                         SizedBox(height: space100),
-                        Text(
-                          state.message,
-                          style: xxsMedium,
+                        Text(state.message, style: xxsMedium, textAlign: TextAlign.center),
+                        SizedBox(height: space600),
+                        ElevatedButton(
+                          onPressed: () => context.read<ArtikelCubit>().loadArticles(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryColor,
+                            padding: EdgeInsets.symmetric(horizontal: paddingL, vertical: padding12),
+                          ),
+                          child: Text('Coba Lagi'),
                         ),
                       ],
                     ),
                   );
                 }
 
-                // Loaded state
                 if (state is ArtikelLoaded) {
                   final articles = state.filteredArticles;
 
@@ -78,16 +78,9 @@ class ArtikelPage extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.article_outlined,
-                            size: 64,
-                            color: black700_70,
-                          ),
+                          Icon(Icons.article_outlined, size: iconXL, color: black700_70),
                           SizedBox(height: space100),
-                          Text(
-                            'Tidak ada artikel ditemukan',
-                            style: smMedium,
-                          ),
+                          Text('Tidak ada artikel ditemukan', style: smMedium),
                         ],
                       ),
                     );
@@ -95,6 +88,7 @@ class ArtikelPage extends StatelessWidget {
 
                   return RefreshIndicator(
                     onRefresh: () => context.read<ArtikelCubit>().loadArticles(),
+                    color: primaryColor,
                     child: ListView.builder(
                       itemCount: articles.length,
                       padding: EdgeInsets.symmetric(horizontal: padding16),
@@ -121,18 +115,10 @@ PreferredSizeWidget _header(BuildContext context) {
     leadingWidth: spacing10,
     backgroundColor: black00,
     leading: IconButton(
-      icon: Icon(
-        Icons.arrow_back_rounded,
-        size: iconL,
-        color: black950,
-      ),
-      color: black950,
+      icon: Icon(Icons.arrow_back_rounded, size: iconL, color: black950),
       onPressed: () => Navigator.pop(context),
     ),
-    title: Text(
-      "Artikel",
-      style: xlMedium,
-    ),
+    title: Text("Artikel", style: xlMedium),
   );
 }
 
@@ -142,43 +128,36 @@ Widget _searchBar(BuildContext context) {
     child: Container(
       height: 45,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.grey.withOpacity(0.3)),
+        color: black00,
+        borderRadius: BorderRadius.circular(borderRadius750),
+        border: Border.all(color: black700_70.withOpacity(0.3)),
       ),
       child: Row(
         children: [
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(left: 16),
+              padding: EdgeInsets.only(left: padding16),
               child: TextField(
                 onChanged: (value) {
                   context.read<ArtikelCubit>().searchArticles(value);
                 },
-                cursorColor: Colors.grey,
-                style: const TextStyle(color: Colors.black87, fontSize: 14),
+                cursorColor: black700_70,
+                style: mdRegular,
                 decoration: InputDecoration(
                   hintText: "Cari Artikel",
-                  hintStyle: const TextStyle(
-                    color: Colors.black54,
-                    fontSize: 14,
-                  ),
+                  hintStyle: mdRegular.copyWith(color: black700_70),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none, // ✅ biar ga berubah pas fokus
+                  focusedBorder: InputBorder.none,
                   isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                  contentPadding: EdgeInsets.symmetric(vertical: paddingS),
                 ),
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: Icon(
-              Icons.search_rounded,
-              color: Colors.black45,
-              size: 22,
-            ),
+            padding: EdgeInsets.only(right: padding12),
+            child: Icon(Icons.search_rounded, color: black700_70, size: iconL),
           ),
         ],
       ),
@@ -186,7 +165,7 @@ Widget _searchBar(BuildContext context) {
   );
 }
 
-Widget _articleCard(BuildContext context, Map<String, String> article) {
+Widget _articleCard(BuildContext context, Artikel article) {
   return Padding(
     padding: EdgeInsets.only(bottom: paddingL),
     child: InkWell(
@@ -195,10 +174,7 @@ Widget _articleCard(BuildContext context, Map<String, String> article) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DetailArtikelScreen(
-              title: article["title"]!,
-              image: article["image"]!,
-            ),
+            builder: (context) => DetailArtikelScreen(articleId: article.id),
           ),
         );
       },
@@ -211,29 +187,31 @@ Widget _articleCard(BuildContext context, Map<String, String> article) {
               borderRadius: BorderRadius.vertical(
                 top: Radius.circular(borderRadius300),
               ),
-              child: Image.asset(
-                article["image"]!,
+              child: CachedNetworkImage(
+                imageUrl: article.image,
                 width: double.infinity,
                 height: 130,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: double.infinity,
-                    height: 130,
-                    color: black700_70,
-                    child: Icon(
-                      Icons.image,
-                      size: 48,
-                      color: black700_70,
-                    ),
-                  );
-                },
+                placeholder: (context, url) => Container(
+                  width: double.infinity,
+                  height: 130,
+                  color: black700_70,
+                  child: Center(
+                    child: CircularProgressIndicator(color: primaryColor, strokeWidth: 2),
+                  ),
+                ),
+                errorWidget: (context, error, stackTrace) => Container(
+                  width: double.infinity,
+                  height: 130,
+                  color: black700_70,
+                  child: Icon(Icons.image, size: iconXL, color: black700_70),
+                ),
               ),
             ),
             Padding(
               padding: EdgeInsets.all(paddingM),
               child: Text(
-                article["title"]!,
+                article.name,
                 style: smMedium,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

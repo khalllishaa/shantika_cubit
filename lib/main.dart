@@ -78,10 +78,11 @@ class MyApp extends StatelessWidget {
 
         /// HOME
         BlocProvider(create: (context) => HomeCubit(serviceLocator<HomeRepository>()),),
+        BlocProvider(create: (context) => ArtikelCubit(serviceLocator<HomeRepository>()),),
         BlocProvider(create: (context) => NotificationListCubit(serviceLocator<NotificationRepository>())),
         BlocProvider(create: (context) => DetailSliderCubit()),
         BlocProvider(create: (context) => ChatCubit(serviceLocator<ChatRepository>())),
-        BlocProvider(create: (context) => ArtikelCubit()),
+        // BlocProvider(create: (context) => ArtikelCubit()),
         BlocProvider(create: (context) => LogoutCubit()..init()),
 
         BlocProvider(create: (context) => UpdateFcmTokenCubit()),

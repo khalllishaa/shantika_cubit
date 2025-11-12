@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:shantika_cubit/model/detail_artikel_model.dart';
 import 'package:shantika_cubit/model/home_model.dart';
 
 import '../data/api/api_service.dart';
@@ -55,6 +56,36 @@ class HomeRepository extends BaseRepository {
       return DataStateSuccess(dataStateAuthResponse.data!);
     } else {
       return DataStateError(dataStateAuthResponse.exception!);
+    }
+  }
+
+  Future<Article> getArticleDetail(int articleId) async {
+    try {
+      final response = await _apiService.getArticleDetail(articleId);
+
+      if (response.response.statusCode == 200) {
+        if (response.data != null && response.data!.success) {
+          return response.data!.article;
+        } else {
+          throw Exception(response.data?.message ?? 'Data artikel tidak ditemukan');
+        }
+      } else {
+        throw Exception(
+            'Server error: ${response.response.statusCode} - ${response.response.statusMessage}'
+        );
+      }
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.badResponse) {
+        throw Exception('Artikel tidak ditemukan (${e.response?.statusCode})');
+      } else if (e.type == DioExceptionType.connectionTimeout) {
+        throw Exception('Koneksi timeout');
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        throw Exception('Server tidak merespons');
+      } else {
+        throw Exception('Koneksi gagal: ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching article detail: $e');
     }
   }
 }
