@@ -1,58 +1,43 @@
-import 'package:equatable/equatable.dart';
+import 'package:shantika_cubit/model/detail_artikel_model.dart';
+import 'package:shantika_cubit/model/home_model.dart';
 
-abstract class ArtikelState extends Equatable {
-  const ArtikelState();
-
-  @override
-  List<Object?> get props => [];
-}
+abstract class ArtikelState {}
 
 class ArtikelInitial extends ArtikelState {}
 
 class ArtikelLoading extends ArtikelState {}
 
 class ArtikelLoaded extends ArtikelState {
-  final List<Map<String, String>> articles;
-  final List<Map<String, String>> relatedArticles;
-  final String searchQuery;
+  final List<Artikel> articles;
+  final List<Artikel> filteredArticles;
 
-  const ArtikelLoaded({
+  ArtikelLoaded({
     required this.articles,
-    required this.relatedArticles,
-    this.searchQuery = '',
+    required this.filteredArticles,
   });
+}
 
-  List<Map<String, String>> get filteredArticles {
-    if (searchQuery.isEmpty) return articles;
+// State untuk Detail Artikel
+class ArtikelDetailLoading extends ArtikelState {}
 
-    return articles.where((article) {
-      return article['title']!
-          .toLowerCase()
-          .contains(searchQuery.toLowerCase());
-    }).toList();
-  }
+class ArtikelDetailLoaded extends ArtikelState {
+  final Article article;
+  final List<Artikel> relatedArticles;
 
-  ArtikelLoaded copyWith({
-    List<Map<String, String>>? articles,
-    List<Map<String, String>>? relatedArticles, // Add this
-    String? searchQuery,
-  }) {
-    return ArtikelLoaded(
-      articles: articles ?? this.articles,
-      relatedArticles: relatedArticles ?? this.relatedArticles, // Add this
-      searchQuery: searchQuery ?? this.searchQuery,
-    );
-  }
+  ArtikelDetailLoaded({
+    required this.article,
+    this.relatedArticles = const [],
+  });
+}
 
-  @override
-  List<Object?> get props => [articles, searchQuery];
+class ArtikelDetailError extends ArtikelState {
+  final String message;
+
+  ArtikelDetailError(this.message);
 }
 
 class ArtikelError extends ArtikelState {
   final String message;
 
-  const ArtikelError(this.message);
-
-  @override
-  List<Object?> get props => [message];
+  ArtikelError(this.message);
 }

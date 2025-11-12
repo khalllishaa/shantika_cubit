@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:shantika_cubit/model/about_us_model.dart';
+import 'package:shantika_cubit/model/detail_artikel_model.dart';
 import 'package:shantika_cubit/model/home_model.dart';
 import 'package:shantika_cubit/model/notification_model.dart';
 import 'package:shantika_cubit/model/response/chat_response.dart';
@@ -218,6 +219,11 @@ abstract class ApiService {
   /// Home
   @POST("/customer/home")
   Future<HttpResponse<HomeModel>> home();
+
+  /// Get Article Detail
+  @GET("/article_detail/{id}")
+  Future<HttpResponse<DetailArtikelModel>> getArticleDetail(
+  @Path("id") int id);
 
   /// Detail Slug
   @GET("/home/slider/{slug}")
