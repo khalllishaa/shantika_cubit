@@ -135,7 +135,7 @@ class LoginScreen extends StatelessWidget {
               validator: (input) =>
               input?.isEmpty == true ? "Nomor telepon tidak boleh kosong" : null,
             ),
-            SizedBox(height: space800),
+            SizedBox(height: space600),
 
             CustomButton(
               onPressed: () {
@@ -143,7 +143,9 @@ class LoginScreen extends StatelessWidget {
                   loginPhoneCubit.login(phone: _phoneController.text);
                 }
               },
+              padding: EdgeInsets.symmetric(vertical: padding16),
               child: Text('Masuk'),
+              backgroundColor: primaryColor,
             ),
 
             SizedBox(height: space400),

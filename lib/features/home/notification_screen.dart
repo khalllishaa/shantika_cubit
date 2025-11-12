@@ -1,10 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:shantika_cubit/features/home/cubit/notifications_cubit.dart';
 import 'package:shantika_cubit/ui/color.dart';
 import 'package:shantika_cubit/ui/dimension.dart';
 import 'package:shantika_cubit/ui/typography.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shantika_cubit/repository/notification_repository.dart';
+import 'package:shantika_cubit/config/service_locator.dart';
+import 'package:shantika_cubit/ui/color.dart';
+import 'package:shantika_cubit/ui/dimension.dart';
+import 'package:shantika_cubit/ui/typography.dart';
+import 'package:shantika_cubit/utility/resource/data_state.dart';
+import 'package:shantika_cubit/model/notification_model.dart';
+
 class NoticationsPage extends StatelessWidget {
   const NoticationsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final notificationRepo = serviceLocator<NotificationRepository>();
+
+    return BlocProvider(
+      create: (context) => NotificationListCubit(notificationRepo)..getNotifications(page: 1),
+      child: const _NotificationPageView(),
+    );
+  }
+}
+
+class _NotificationPageView extends StatelessWidget {
+  const _NotificationPageView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +40,8 @@ class NoticationsPage extends StatelessWidget {
         appBar: _header(context),
         body: TabBarView(
           children: [
-            NotificationList(),
-            NotificationList(),
+            _NotificationList(isUnreadTab: false),
+            _NotificationList(isUnreadTab: true),
           ],
         ),
       ),
@@ -32,10 +57,7 @@ class NoticationsPage extends StatelessWidget {
         color: black950,
         onPressed: () => Navigator.pop(context),
       ),
-      title: Text(
-        "Notifikasi",
-        style: xlMedium,
-      ),
+      title: Text("Notifikasi", style: xlMedium),
       bottom: PreferredSize(
         preferredSize: Size.fromHeight(spacing10),
         child: Container(
@@ -50,9 +72,9 @@ class NoticationsPage extends StatelessWidget {
             indicatorWeight: 2,
             labelStyle: smMedium,
             unselectedLabelStyle: smMedium.copyWith(color: navy400),
-            tabs: [
-              Tab(text: 'Semua 16'),
-              Tab(text: 'Belum Dibaca 7'),
+            tabs: const [
+              Tab(text: 'Semua'),
+              Tab(text: 'Belum Dibaca'),
             ],
           ),
         ),
@@ -61,65 +83,72 @@ class NoticationsPage extends StatelessWidget {
   }
 }
 
-class NotificationList extends StatelessWidget {
-  const NotificationList({super.key});
+class _NotificationList extends StatelessWidget {
+  final bool isUnreadTab;
+  const _NotificationList({super.key, required this.isUnreadTab});
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: paddingS, vertical: padding12),
-            child: Column(
-              children: [
-                _buildDateSection('8 Februari 2024'),
-                NotificationItem(
-                  icon: Icons.airplane_ticket_outlined,
-                  title: 'Promo Tiket Murah Mudik 2025',
-                  subtitle:
-                  'Yuk segera amankan tiket mudik mu sekarang juga sebelum kehabisan...',
-                  time: '10:00',
-                ),
-                NotificationItem(
-                  icon: Icons.check_circle_outline,
-                  title: 'Tiket anda sudah dibayar lunas',
-                  subtitle:
-                  'Terimakasih sudah membeli tiket di new shantika nikmati perjalanannya.',
-                  time: '10:00',
-                ),
-                NotificationItem(
-                  icon: Icons.airplane_ticket_outlined,
-                  title: 'Segera Bayar Tiket yang sudah anda pesan',
-                  subtitle:
-                  'Bayar tiket anda dan nikmati perjalanan bus new shantika',
-                  time: '10:00',
-                ),
-                _buildDateSection('8 Februari 2024'),
-                NotificationItem(
-                  icon: Icons.money,
-                  title: 'Segera Bayar Tiket yang sudah anda pesan',
-                  subtitle:
-                  'Bayar tiket anda dan nikmati perjalanan bus new shantika',
-                  time: '10:00',
-                ),
-              ],
-            ),
-        ),
-      ],
+    return BlocBuilder<NotificationListCubit, DataState<NotificationModel>>(
+      builder: (context, state) {
+        if (state is DataStateLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state is DataStateError) {
+          return Center(child: Text('Gagal memuat notifikasi'));
+        }
+
+        if (state is DataStateSuccess<NotificationModel>) {
+          final allNotifs = state.data?.notifications ?? [];
+          final notifications = isUnreadTab
+              ? allNotifs.where((n) => !n.isSeen).toList()
+              : allNotifs;
+
+          if (notifications.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/img_no_notif.png',
+                    height: 300,
+                  ),
+                  SizedBox(height: spacing4),
+                  Text(
+                    'Tidak ada notifikasi',
+                    style: smMedium.copyWith(color: black750),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: notifications.length,
+            itemBuilder: (context, index) {
+              final notif = notifications[index];
+              return NotificationItem(
+                icon: notif.isSeen
+                    ? Icons.notifications_none
+                    : Icons.notifications_active,
+                title: notif.title,
+                subtitle: notif.message,
+                time: _formatTime(notif.createdAt),
+              );
+            },
+          );
+        }
+
+        return const SizedBox();
+      },
     );
   }
 
-  Widget _buildDateSection(String date) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: padding16, vertical: padding12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(date, style: smMedium),
-          Text('Baca Semua', style: smMedium.copyWith(color: navy400)),
-        ],
-      ),
-    );
+  String _formatTime(DateTime dateTime) {
+    return "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
   }
 }
 

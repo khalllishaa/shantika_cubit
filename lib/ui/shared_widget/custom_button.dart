@@ -15,6 +15,7 @@ class CustomButton extends StatelessWidget {
   final Color disabledColor;
   final Size? minimumSize;
   final Border? border;
+  final Color? borderColor; // 🆕 warna border
   final double? width;
   final EdgeInsetsGeometry? padding;
   final double borderRadius;
@@ -31,10 +32,11 @@ class CustomButton extends StatelessWidget {
     this.minimumSize,
     this.backgroundColor = bgButtonInfoPressed,
     this.border,
+    this.borderColor,
     this.disabledColor = bgDisabled,
     this.width,
     this.padding,
-    this.borderRadius = borderRadius300, // <-- default biar tetep aman
+    this.borderRadius = borderRadius300,
   }) : super(key: key);
 
   @override
@@ -48,7 +50,13 @@ class CustomButton extends StatelessWidget {
         width: width,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),
-          border: border,
+          border: border ??
+              (borderColor != null
+                  ? Border.all(
+                color: borderColor!,
+                width: 1,
+              )
+                  : null),
         ),
         child: Material(
           color: onPressed != null ? backgroundColor : disabledColor,
