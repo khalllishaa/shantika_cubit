@@ -254,7 +254,6 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _showLogoutDialog(BuildContext context) {
-    // ✅ Get nama user dari Cubit state
     final state = context.read<ProfileCubit>().state;
     String userName = "User";
 
@@ -266,9 +265,10 @@ class ProfileScreen extends StatelessWidget {
       context: context,
       builder: (context) {
         return Dialog(
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          backgroundColor: black00,
           child: Padding(
             padding: EdgeInsets.all(padding20),
             child: Column(
@@ -279,44 +279,34 @@ class ProfileScreen extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(28),
+                    color: red600.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(borderRadius500),
                   ),
-                  child: Icon(Icons.logout, color: Colors.red, size: 28),
+                  child: Icon(Icons.logout, color: red600, size: iconL),
                 ),
-                SizedBox(height: 16),
-                Text(
-                  "Keluar Akun",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.black,
-                  ),
-                ),
-                SizedBox(height: 8),
+                SizedBox(height: spacing5),
+                Text("Keluar Akun", style: mdSemiBold),
+                SizedBox(height: space200),
                 Text(
                   "Yakin Anda akan keluar dari akun $userName?",
-                  style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                  style: smRegular.copyWith(color: black700_70),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: spacing6),
                 Row(
                   children: [
                     Expanded(
-                      child: OutlinedButton(
+                      child: CustomButton(
                         onPressed: () => Navigator.pop(context),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.black26),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text("Batal",
-                            style: TextStyle(color: Colors.black)),
+                        padding: EdgeInsets.symmetric(vertical: paddingS),
+                        child: Text('Batal'),
+                        backgroundColor: black00,
+                        textColor: black950,
+                        borderColor: black700_70,
                       ),
                     ),
-                    SizedBox(width: 12),
+                    SizedBox(width: spacing4),
                     Expanded(
-                      child: ElevatedButton(
+                      child: CustomButton(
                         onPressed: () async {
                           Navigator.pop(context);
 
@@ -330,14 +320,9 @@ class ProfileScreen extends StatelessWidget {
                                 (route) => false,
                           );
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text("Keluar",
-                            style: TextStyle(color: Colors.white)),
+                        padding: EdgeInsets.symmetric(vertical: paddingS),
+                        child: Text('Keluar'),
+                        backgroundColor: red600,
                       ),
                     ),
                   ],

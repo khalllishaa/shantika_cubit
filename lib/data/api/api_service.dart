@@ -435,7 +435,6 @@ abstract class ApiService {
   });
 
   /// NOTIFICATION
-  // In your api_service.dart
   @GET("/notification")
   Future<HttpResponse<NotificationModel>> notifications({
     @Query('page') required int page,

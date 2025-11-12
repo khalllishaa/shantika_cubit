@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shantika_cubit/features/home/artikel_screen.dart';
 import 'package:shantika_cubit/features/home/cubit/home_cubit.dart';
 import 'package:shantika_cubit/features/home/cubit/home_state.dart';
+import 'package:shantika_cubit/features/home/detail_artikel_screen.dart';
 import 'package:shantika_cubit/features/home/notification_screen.dart';
 import 'package:shantika_cubit/features/profile/notifications_profile_screen.dart';
 import 'package:shantika_cubit/model/home_model.dart';
@@ -300,6 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: space1000),
           CustomButton(
             onPressed: () {},
+            padding: EdgeInsets.symmetric(vertical: padding12),
             backgroundColor: primaryColor,
             child: Text('Cari Tiket'),
           ),
@@ -498,104 +500,128 @@ class _HomeScreenState extends State<HomeScreen> {
     if (reviews.isEmpty) return SizedBox.shrink();
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: paddingL),
+      padding: EdgeInsets.only(bottom: space200),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              SectionTitle(title: "Riwayat"),
-              Spacer(),
-              GestureDetector(
-                onTap: () {},
-                child: Text("Lihat Semua", style: smMedium.copyWith(color: navy400)),
-              ),
-            ],
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: paddingL),
+            child: Row(
+              children: [
+                SectionTitle(title: "Riwayat"),
+                Spacer(),
+                GestureDetector(
+                  onTap: () {},
+                  child: Text(
+                    "Lihat Semua",
+                    style: smMedium.copyWith(color: navy400),
+                  ),
+                ),
+              ],
+            ),
           ),
           SizedBox(height: spacing4),
-          ...reviews.take(3).map((review) {
-            return CustomCardContainer(
-              borderRadius: borderRadius300,
-              margin: EdgeInsets.only(bottom: padding12),
-              padding: EdgeInsets.all(padding12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "${review.nameFleet} • ${review.fleetClass}",
-                          style: smMedium,
-                          maxLines: 2,
+          SizedBox(
+            height: 185,
+            child: PageView.builder(
+              controller: PageController(viewportFraction: 0.92),
+              itemCount: reviews.length,
+              itemBuilder: (context, index) {
+                final review = reviews[index];
+                return Padding(
+                  padding: EdgeInsets.only(
+                    left: index == 0 ? padding16 : spacing2,
+                    right: index == reviews.length - 1 ? padding16 : spacing2,
+                  ),
+                  child: CustomCardContainer(
+                    boxShadow: [],
+                    borderRadius: borderRadius300,
+                    borderColor: black100,
+                    backgroundColor: black00,
+                    padding: EdgeInsets.all(padding12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                "${review.nameFleet} • ${review.fleetClass}",
+                                style: smMedium,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            SizedBox(width: space300),
+                            SizedBox(
+                              height: 30,
+                              child: CustomButton(
+                                onPressed: () {},
+                                borderRadius: borderRadius750,
+                                backgroundColor: navy600,
+                                child: Text(
+                                  'Beri Review',
+                                  style: xsMedium.copyWith(color: black00),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: spacing4),
+                        Text(
+                          "${review.createdAt} • ${review.departureAt}",
+                          style: xsRegular.copyWith(color: black400),
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      SizedBox(width: space300),
-                      SizedBox(
-                        // width: 95,
-                        height: 30,
-                        child: CustomButton(
-                          onPressed: () {},
-                          backgroundColor: navy600,
+                        SizedBox(height: spacing4),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.location_pin, color: black700_70, size: 18),
+                            SizedBox(width: space100),
+                            Expanded(
+                              child: Text(
+                                "${review.checkpoints.start.agencyName} - ${review.checkpoints.start.cityName}",
+                                style: xsMedium,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: spacing4),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.location_pin, color: navy400, size: 18),
+                            SizedBox(width: space100),
+                            Expanded(
+                              child: Text(
+                                "${review.checkpoints.destination.agencyName} - ${review.checkpoints.destination.cityName}",
+                                style: xsMedium,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: spacing3),
+                        Align(
+                          alignment: Alignment.centerRight,
                           child: Text(
-                            'Beri Review',
-                            style: xsMedium.copyWith(color: black00),
+                            "Rp ${_formatPrice(review.price)}",
+                            style: mdSemiBold.copyWith(color: navy400),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: space300),
-                  Text(
-                    "${review.createdAt} • ${review.departureAt}",
-                    style: xsRegular.copyWith(color: black400),
-                  ),
-                  SizedBox(height: spacing4),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.location_pin, color: black700_70, size: 20),
-                      SizedBox(width: space200),
-                      Expanded(
-                        child: Text(
-                          "${review.checkpoints.start.agencyName} - ${review.checkpoints.start.cityName}",
-                          style: xsMedium,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: spacing4),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.location_pin, color: navy400, size: 20),
-                      SizedBox(width: space200),
-                      Expanded(
-                        child: Text(
-                          "${review.checkpoints.destination.agencyName} - ${review.checkpoints.destination.cityName}",
-                          style: xsMedium,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: spacing4),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      "Rp ${_formatPrice(review.price)}",
-                      style: mdSemiBold.copyWith(color: navy400),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            );
-          }).toList(),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -692,6 +718,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return _artikelCard(
                   imageUrl: article.image,
                   title: article.name,
+                  article: article,
                 );
               },
             ),
@@ -701,12 +728,23 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _artikelCard({required String imageUrl, required String title}) {
+  Widget _artikelCard({
+    required String imageUrl,
+    required String title,
+    required Artikel article,
+  }) {
     return Container(
       width: 157,
       margin: EdgeInsets.only(right: padding12),
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailArtikelScreen(articleId: article.id),
+            ),
+          );
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
