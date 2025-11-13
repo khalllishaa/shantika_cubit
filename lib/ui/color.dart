@@ -32,6 +32,7 @@ const Color black300 = Color(0xFFD4D4D8);
 const Color black400 = Color(0xFF6B7280);
 const Color black500 = Color(0xFF9B9B9B);
 const Color black600 = Color(0xFF52525B);
+const Color black650 = Color(0xFF9CA3AF);
 const Color black700_70 = Color(0xB2131415); // 70% opacity
 const Color black750 = Color(0xFF4B5563);
 const Color black800 = Color(0xFF111827);

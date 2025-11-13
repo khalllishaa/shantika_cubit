@@ -1,147 +1,41 @@
-import 'package:meta/meta.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'dart:convert';
 
 part 'agency_model.g.dart';
 
-AgencyModel agencyModelFromJson(String str) => AgencyModel.fromJson(json.decode(str));
-String agencyModelToJson(AgencyModel data) => json.encode(data.toJson());
-
 @JsonSerializable()
-class AgencyModel {
-  @JsonKey(name: "code")
+class AgencyCityResponse {
   final int code;
-  @JsonKey(name: "success")
   final bool success;
-  @JsonKey(name: "message")
-  final String? message;
-  @JsonKey(name: "agencies")
-  final List<Agency>? agencies;
+  final String message;
 
-  AgencyModel({
+  @JsonKey(name: "agencies_city")
+  final List<AgencyCity> agenciesCity;
+
+  AgencyCityResponse({
     required this.code,
     required this.success,
-    this.message,
-    this.agencies,
+    required this.message,
+    required this.agenciesCity,
   });
 
-  factory AgencyModel.fromJson(Map<String, dynamic> json) => _$AgencyModelFromJson(json);
-  Map<String, dynamic> toJson() => _$AgencyModelToJson(this);
+  factory AgencyCityResponse.fromJson(Map<String, dynamic> json) =>
+      _$AgencyCityResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AgencyCityResponseToJson(this);
 }
 
 @JsonSerializable()
-class Agency {
-  @JsonKey(name: "id")
-  final int? id;
-  @JsonKey(name: "agency_name")
-  final String? agencyName;
-  @JsonKey(name: "city_name")
-  final String? cityName;
-  @JsonKey(name: "agency_address")
-  final String? agencyAddress;
-  @JsonKey(name: "agency_phone")
-  final String? agencyPhone;
-  @JsonKey(name: "phone")
-  final List<String>? phone;
-  @JsonKey(name: "agency_avatar")
-  final AgencyAvatar? agencyAvatar;
-  @JsonKey(name: "agency_lat")
-  final String? agencyLat;
-  @JsonKey(name: "agency_lng")
-  final String? agencyLng;
-  @JsonKey(name: "morning_time")
-  final String? morningTime;
-  @JsonKey(name: "night_time")
-  final String? nightTime;
-  @JsonKey(name: "agency_departure_times")
-  final List<AgencyDepartureTime>? agencyDepartureTimes;
+class AgencyCity {
+  final int id;
+  final String name;
 
-  Agency({
-    this.id,
-    this.agencyName,
-    this.cityName,
-    this.agencyAddress,
-    this.agencyPhone,
-    this.phone,
-    this.agencyAvatar,
-    this.agencyLat,
-    this.agencyLng,
-    this.morningTime,
-    this.nightTime,
-    this.agencyDepartureTimes,
+  AgencyCity({
+    required this.id,
+    required this.name,
   });
 
-  factory Agency.fromJson(Map<String, dynamic> json) => _$AgencyFromJson(json);
-  Map<String, dynamic> toJson() => _$AgencyToJson(this);
-}
+  factory AgencyCity.fromJson(Map<String, dynamic> json) =>
+      _$AgencyCityFromJson(json);
 
-enum AgencyAvatar {
-  @JsonValue("/avatar/KbzwboL5uHghGdeJyTyJrEWdWwWfw1DlkJXDCrwl.jpg")
-  AVATAR_KBZWBO,
-  @JsonValue("")
-  EMPTY,
-}
-
-@JsonSerializable()
-class AgencyDepartureTime {
-  @JsonKey(name: "id")
-  final int? id;
-  @JsonKey(name: "agency_id")
-  final int? agencyId;
-  @JsonKey(name: "departure_at")
-  final String? departureAt;
-  @JsonKey(name: "created_at")
-  final String? createdAt;
-  @JsonKey(name: "updated_at")
-  final String? updatedAt;
-  @JsonKey(name: "time_classification_id")
-  final int? timeClassificationId;
-  @JsonKey(name: "time_name")
-  final String? timeName;
-  @JsonKey(name: "time_classification")
-  final TimeClassification? timeClassification;
-
-  AgencyDepartureTime({
-    this.id,
-    this.agencyId,
-    this.departureAt,
-    this.createdAt,
-    this.updatedAt,
-    this.timeClassificationId,
-    this.timeName,
-    this.timeClassification,
-  });
-
-  factory AgencyDepartureTime.fromJson(Map<String, dynamic> json) =>
-      _$AgencyDepartureTimeFromJson(json);
-  Map<String, dynamic> toJson() => _$AgencyDepartureTimeToJson(this);
-}
-
-@JsonSerializable()
-class TimeClassification {
-  @JsonKey(name: "id")
-  final int? id;
-  @JsonKey(name: "name")
-  final String? name;
-  @JsonKey(name: "time_start")
-  final String? timeStart;
-  @JsonKey(name: "time_end")
-  final String? timeEnd;
-  @JsonKey(name: "created_at")
-  final String? createdAt;
-  @JsonKey(name: "updated_at")
-  final String? updatedAt;
-
-  TimeClassification({
-    this.id,
-    this.name,
-    this.timeStart,
-    this.timeEnd,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  factory TimeClassification.fromJson(Map<String, dynamic> json) =>
-      _$TimeClassificationFromJson(json);
-  Map<String, dynamic> toJson() => _$TimeClassificationToJson(this);
+  Map<String, dynamic> toJson() => _$AgencyCityToJson(this);
 }

@@ -52,9 +52,9 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
               primary: primaryColor,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Colors.black,
+              onPrimary: black00,
+              surface: black00,
+              onSurface: black950,
             ),
           ),
           child: child!,
@@ -76,9 +76,9 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
               primary: primaryColor,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Colors.black,
+              onPrimary: black00,
+              surface: black00,
+              onSurface: black950,
             ),
           ),
           child: child!,
@@ -136,31 +136,11 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
     );
   }
 
-  void _showAgencyBottomSheet(BuildContext context) {
+  _showAgencyBottomSheet(BuildContext context) {
     final cubit = context.read<PesanTiketCubit>();
     final state = cubit.state;
 
     if (state is! PesanTiketLoaded) return;
-
-    if (state.selectedDepartureCity == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Pilih kota keberangkatan terlebih dahulu'),
-          backgroundColor: red100,
-        ),
-      );
-      return;
-    }
-
-    if (state.agencies.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Tidak ada agen tersedia'),
-          backgroundColor: red100,
-        ),
-      );
-      return;
-    }
 
     showModalBottomSheet(
       context: context,
@@ -168,11 +148,11 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
       backgroundColor: Colors.transparent,
       builder: (modalContext) => _AgencyBottomSheet(
         title: "Pilih Agen",
-        items: state.agencies,
-        selectedItem: state.selectedAgency,
-        onItemSelected: (agency) {
+        items: state.agencies, // harus List<AgencyCity>
+        selectedItem: state.selectedAgency, // harus AgencyCity?
+        onItemSelected: (agencyCity) {
           Navigator.pop(modalContext);
-          cubit.selectAgency(agency);
+          cubit.selectAgency(agencyCity); // emit pake AgencyCity
         },
       ),
     );
@@ -225,79 +205,96 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
           }
 
           if (state is PesanTiketLoaded) {
-            return SingleChildScrollView(
-              padding: EdgeInsets.all(padding20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildField(
-                    label: "Kota Keberangkatan",
-                    icon: Icons.location_city_rounded,
-                    text: state.selectedDepartureCity?.name ?? "Pilih Kota",
-                    onTap: () => _showDepartureCityBottomSheet(context),
-                  ),
-                  SizedBox(height: spacing6),
-                  _buildField(
-                    label: "Agen Keberangkatan",
-                    icon: Icons.store_rounded,
-                    text: state.selectedAgency?.agencyName ?? "Pilih Agen",
-                    onTap: () => _showAgencyBottomSheet(context),
-                  ),
-                  SizedBox(height: spacing6),
-                  _buildField(
-                    label: "Tujuan",
-                    icon: Icons.location_on_outlined,
-                    text: state.selectedDestinationCity?.name ??
-                        "Pilih Tempat Tujuan",
-                    onTap: () => _showDestinationCityBottomSheet(context),
-                  ),
-                  SizedBox(height: spacing6),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildField(
-                          label: "Tanggal Berangkat",
-                          icon: Icons.calendar_today,
-                          text: state.selectedDate != null
-                              ? DateFormat('dd MMMM yyyy', 'id_ID')
-                              .format(state.selectedDate!)
-                              : "Pilih Tanggal",
-                          onTap: () => _pickDate(context),
+            final isFormComplete = state.selectedDepartureCity != null &&
+                state.selectedAgency != null &&
+                state.selectedDestinationCity != null &&
+                state.selectedDate != null &&
+                state.selectedTime != null &&
+                state.selectedClass != null;
+
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(padding20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildField(
+                          label: "Kota Keberangkatan",
+                          icon: Icons.location_city_rounded,
+                          text: state.selectedDepartureCity?.name ?? "Pilih Kota",
+                          onTap: () => _showDepartureCityBottomSheet(context),
                         ),
-                      ),
-                      SizedBox(width: spacing2),
-                      Expanded(
-                        child: _buildField(
-                          label: "Waktu Berangkat",
-                          icon: Icons.access_time,
-                          text: state.selectedTime ?? "Pilih Waktu",
-                          onTap: () => _pickTime(context),
+                        SizedBox(height: spacing6),
+                        _buildField(
+                          label: "Agen Keberangkatan",
+                          icon: Icons.store_rounded,
+                          text: state.selectedAgency?.name ?? "Pilih Agen",
+                          onTap: () => _showAgencyBottomSheet(context),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: spacing6),
+                        _buildField(
+                          label: "Tujuan",
+                          icon: Icons.location_on_outlined,
+                          text: state.selectedDestinationCity?.name ?? "Pilih Tujuan",
+                          onTap: () => _showDestinationCityBottomSheet(context),
+                        ),
+                        SizedBox(height: spacing6),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildField(
+                                label: "Tanggal Berangkat",
+                                icon: Icons.calendar_today,
+                                text: state.selectedDate != null
+                                    ? DateFormat('EEE, dd MMM yyyy', 'id_ID')
+                                    .format(state.selectedDate!)
+                                    : "Pilih Tanggal",
+                                onTap: () => _pickDate(context),
+                              ),
+                            ),
+                            SizedBox(width: spacing2),
+                            Expanded(
+                              child: _buildField(
+                                label: "Waktu Berangkat",
+                                icon: Icons.access_time,
+                                text: state.selectedTime ?? "Pilih Waktu",
+                                onTap: () => _pickTime(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: spacing6),
+                        _buildField(
+                          label: "Kelas Keberangkatan",
+                          icon: Icons.directions_bus_filled,
+                          text: state.selectedClass ?? "Pilih Kelas Armada",
+                          onTap: () => _showFleetClassBottomSheet(context),
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: spacing6),
-                  _buildField(
-                    label: "Kelas Keberangkatan",
-                    icon: Icons.directions_bus_filled,
-                    text: state.selectedClass ?? "Pilih Kelas Armada",
-                    onTap: () => _showFleetClassBottomSheet(context),
-                  ),
-                  SizedBox(height: spacing6),
-                  SizedBox(
+                ),
+                Padding(
+                  padding: EdgeInsets.all(padding20),
+                  child: SizedBox(
                     width: double.infinity,
                     height: 48,
                     child: CustomButton(
-                      onPressed: () {
+                      onPressed: isFormComplete
+                          ? () {
                         context.read<PesanTiketCubit>().searchTickets();
-                      },
+                      }
+                          : null,
                       padding: EdgeInsets.symmetric(vertical: padding12),
-                      backgroundColor: primaryColor,
+                      backgroundColor:
+                      isFormComplete ? primaryColor : black650,
                       child: Text('Cari Tiket'),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           }
 
@@ -337,9 +334,10 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
   Widget _buildField({
     required String label,
     required IconData icon,
-    required String text,
+    String? text,
     required VoidCallback onTap,
   }) {
+    final bool isEmpty = text == null || text.isEmpty || text.contains("Pilih");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -360,10 +358,12 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
                 SizedBox(width: spacing2),
                 Expanded(
                   child: Text(
-                    text,
+                    text ?? "",
                     style: mdRegular.copyWith(
-                      color: text.contains("Pilih") ? black700_70 : black950,
+                      color: isEmpty ? black700_70 : black950,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -375,7 +375,6 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
   }
 }
 
-// Bottom Sheet untuk Departure Cities
 class _DepartureCityBottomSheet extends StatefulWidget {
   final String title;
   final List<departure.City> items;
@@ -692,12 +691,11 @@ class _DestinationCityBottomSheetState
   }
 }
 
-// Bottom Sheet untuk Agency
 class _AgencyBottomSheet extends StatefulWidget {
   final String title;
-  final List<Agency> items;
-  final Agency? selectedItem;
-  final Function(Agency) onItemSelected;
+  final List<AgencyCity> items;
+  final AgencyCity? selectedItem;
+  final Function(AgencyCity) onItemSelected;
 
   const _AgencyBottomSheet({
     required this.title,
@@ -711,7 +709,7 @@ class _AgencyBottomSheet extends StatefulWidget {
 }
 
 class _AgencyBottomSheetState extends State<_AgencyBottomSheet> {
-  List<Agency> _filteredItems = [];
+  List<AgencyCity> _filteredItems = [];
 
   @override
   void initState() {
@@ -725,7 +723,7 @@ class _AgencyBottomSheetState extends State<_AgencyBottomSheet> {
         _filteredItems = widget.items;
       } else {
         _filteredItems = widget.items
-            .where((item) => (item.agencyName ?? '')
+            .where((item) => (item.name)
             .toLowerCase()
             .contains(query.toLowerCase()))
             .toList();
@@ -814,22 +812,11 @@ class _AgencyBottomSheetState extends State<_AgencyBottomSheet> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          item.agencyName ?? 'Nama Agen',
+                          item.name,
                           style: smMedium.copyWith(
                             color: isSelected ? navy600 : black950,
                           ),
                         ),
-                        if (item.agencyAddress != null) ...[
-                          SizedBox(height: 4),
-                          Text(
-                            item.agencyAddress!,
-                            style: xxsRegular.copyWith(
-                              color: black700_70,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
                       ],
                     ),
                   ),
@@ -844,7 +831,6 @@ class _AgencyBottomSheetState extends State<_AgencyBottomSheet> {
   }
 }
 
-// Bottom Sheet untuk String items (Fleet Class)
 class _SimpleStringBottomSheet extends StatefulWidget {
   final String title;
   final List<String> items;

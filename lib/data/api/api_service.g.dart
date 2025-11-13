@@ -869,25 +869,27 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<AgencyModel>> getAgencies(String cityId) async {
+  Future<HttpResponse<AgencyCityResponse>> getAgencyCities(
+    String cityId,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'city_id': cityId};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<HttpResponse<AgencyModel>>(
+    final _options = _setStreamType<HttpResponse<AgencyCityResponse>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/agencies',
+            '/agency_city',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late AgencyModel _value;
+    late AgencyCityResponse _value;
     try {
-      _value = AgencyModel.fromJson(_result.data!);
+      _value = AgencyCityResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

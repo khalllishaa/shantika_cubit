@@ -228,10 +228,15 @@ abstract class ApiService {
   Future<HttpResponse<PesanTiketModel>> getCityDestinations();
 
   /// Get Agencies by City ID
-  @GET("/agencies")
-  Future<HttpResponse<AgencyModel>> getAgencies(
+  @GET("/agency_city")
+  Future<HttpResponse<AgencyCityResponse>> getAgencyCities(
       @Query("city_id") String cityId,
       );
+
+  // @GET("/agencies")
+  // Future<HttpResponse<AgencyModel>> getAgencies(
+  //     @Query("city_id") String cityId,
+  //     );
 
   /// Get City Departure
   @GET("/city_departure")

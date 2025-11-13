@@ -11,10 +11,10 @@ class PesanTiketLoading extends PesanTiketState {}
 class PesanTiketLoaded extends PesanTiketState {
   final List<City> cities; // destination cities
   final List<departure.City> departureCities;
-  final List<Agency> agencies;
+  final List<AgencyCity> agencies;
   final departure.City? selectedDepartureCity;
   final City? selectedDestinationCity;
-  final Agency? selectedAgency;
+  final AgencyCity? selectedAgency;
   final DateTime? selectedDate;
   final String? selectedTime;
   final String? selectedClass;
@@ -34,10 +34,10 @@ class PesanTiketLoaded extends PesanTiketState {
   PesanTiketLoaded copyWith({
     List<City>? cities,
     List<departure.City>? departureCities,
-    List<Agency>? agencies,
+    List<AgencyCity>? agencies,
     departure.City? selectedDepartureCity,
     City? selectedDestinationCity,
-    Agency? selectedAgency,
+    AgencyCity? selectedAgency,
     DateTime? selectedDate,
     String? selectedTime,
     String? selectedClass,
