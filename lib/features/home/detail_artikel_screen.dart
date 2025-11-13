@@ -158,6 +158,7 @@ class DetailArtikelPage extends StatelessWidget {
       ),
     );
   }
+
   PreferredSizeWidget _header(BuildContext context) {
     return PreferredSize(
       preferredSize: Size.fromHeight(kToolbarHeight + 4),
