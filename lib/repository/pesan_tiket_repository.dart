@@ -40,18 +40,14 @@ class TicketRepository extends BaseRepository {
     }
   }
 
-  // ✅ GET AGEN berdasarkan City ID
-  Future<List<Agency>> getAgencies(String cityId) async {
-    try {
-      final response = await _apiService.getAgencies(cityId);
-      if (response.response.statusCode == 200 &&
-          response.data?.success == true) {
-        return response.data!.agencies ?? [];
-      } else {
-        throw Exception(response.data?.message ?? 'Gagal memuat data agen');
-      }
-    } catch (e) {
-      throw Exception('Error fetching agencies: $e');
+  // ✅ GET AGEN CITY berdasarkan City ID
+  Future<List<AgencyCity>> getAgencyCities(String cityId) async {
+    final response = await _apiService.getAgencyCities(cityId);
+    if (response.response.statusCode == 200 &&
+        response.data?.success == true) {
+      return response.data!.agenciesCity;
+    } else {
+      throw Exception(response.data?.message ?? 'Gagal memuat data agen');
     }
   }
 }

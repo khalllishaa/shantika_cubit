@@ -10,7 +10,6 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
 
   PesanTiketCubit(this._repository) : super(PesanTiketInitial());
 
-  /// 🔹 Load data awal: cuma city aja, biar ringan
   Future<void> loadInitialData() async {
     try {
       emit(PesanTiketLoading());
@@ -25,7 +24,7 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
       emit(PesanTiketLoaded(
         cities: destinationCities,
         departureCities: departureCities,
-        agencies: [], // belum di-load
+        agencies: [],
       ));
     } catch (e) {
       print('❌ Error loading cities: $e');
@@ -33,12 +32,10 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
     }
   }
 
-  /// 🔹 Load agency saat pilih departure city aja
   Future<void> selectDepartureCity(departure.City city) async {
     if (state is! PesanTiketLoaded) return;
     final currentState = state as PesanTiketLoaded;
 
-    // tampilkan dulu city-nya biar UI langsung update
     emit(currentState.copyWith(
       selectedDepartureCity: city,
       selectedAgency: null,
@@ -47,7 +44,7 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
 
     try {
       print('🔎 Fetching agencies for city_id: ${city.id}');
-      final agencies = await _repository.getAgencies(city.id.toString());
+      final agencies = await _repository.getAgencyCities(city.id.toString());
       print('✅ Agencies loaded: ${agencies.length}');
 
       emit(currentState.copyWith(
@@ -65,7 +62,6 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
     }
   }
 
-  /// 🔹 Select destination city
   void selectDestinationCity(City city) {
     if (state is PesanTiketLoaded) {
       final currentState = state as PesanTiketLoaded;
@@ -73,15 +69,13 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
     }
   }
 
-  /// 🔹 Select agency
-  void selectAgency(Agency agency) {
+  void selectAgency(AgencyCity agencyCity) {
     if (state is PesanTiketLoaded) {
       final currentState = state as PesanTiketLoaded;
-      emit(currentState.copyWith(selectedAgency: agency));
+      emit(currentState.copyWith(selectedAgency: agencyCity));
     }
   }
 
-  /// 🔹 Select date
   void selectDate(DateTime date) {
     if (state is PesanTiketLoaded) {
       final currentState = state as PesanTiketLoaded;
@@ -89,7 +83,6 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
     }
   }
 
-  /// 🔹 Select time
   void selectTime(String time) {
     if (state is PesanTiketLoaded) {
       final currentState = state as PesanTiketLoaded;
@@ -97,7 +90,6 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
     }
   }
 
-  /// 🔹 Select class
   void selectClass(String fleetClass) {
     if (state is PesanTiketLoaded) {
       final currentState = state as PesanTiketLoaded;
@@ -105,7 +97,6 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
     }
   }
 
-  /// 🔹 Search tickets (belum ke API)
   Future<void> searchTickets() async {
     if (state is! PesanTiketLoaded) return;
     final currentState = state as PesanTiketLoaded;
@@ -119,7 +110,7 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
     try {
       print('🚀 Searching tickets...');
       print('Departure City: ${currentState.selectedDepartureCity?.name}');
-      print('Agency: ${currentState.selectedAgency?.agencyName}');
+      print('Agency: ${currentState.selectedAgency?.name}');
       print('Destination City: ${currentState.selectedDestinationCity?.name}');
       print('Date: ${currentState.selectedDate}');
       print('Time: ${currentState.selectedTime}');
@@ -130,7 +121,6 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
     }
   }
 
-  /// 🔹 Fleet class dummy list
   List<String> getFleetClasses() {
     return [
       'Ekonomi',
