@@ -42,11 +42,11 @@ class City {
   @JsonKey(name: "name")
   String name;
   @JsonKey(name: "province_id")
-  int provinceId;
+  int? provinceId;
   @JsonKey(name: "area_id")
-  int areaId;
+  int? areaId;
   @JsonKey(name: "pg_id")
-  String pgId;
+  String? pgId;
   @JsonKey(name: "duration")
   dynamic duration;
   @JsonKey(name: "agent_count")
@@ -55,9 +55,9 @@ class City {
   City({
     required this.id,
     required this.name,
-    required this.provinceId,
-    required this.areaId,
-    required this.pgId,
+    this.provinceId,
+    this.areaId,
+    this.pgId,
     required this.duration,
     required this.agentCount,
   });

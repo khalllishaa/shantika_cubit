@@ -46,7 +46,7 @@ class TicketRepository extends BaseRepository {
       final response = await _apiService.getAgencies(cityId);
       if (response.response.statusCode == 200 &&
           response.data?.success == true) {
-        return response.data!.agencies;
+        return response.data!.agencies ?? [];
       } else {
         throw Exception(response.data?.message ?? 'Gagal memuat data agen');
       }

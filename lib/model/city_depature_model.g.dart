@@ -27,9 +27,9 @@ Map<String, dynamic> _$CityDepatureModelToJson(CityDepatureModel instance) =>
 City _$CityFromJson(Map<String, dynamic> json) => City(
   id: (json['id'] as num).toInt(),
   name: json['name'] as String,
-  provinceId: (json['province_id'] as num).toInt(),
-  areaId: (json['area_id'] as num).toInt(),
-  pgId: json['pg_id'] as String,
+  provinceId: (json['province_id'] as num?)?.toInt(),
+  areaId: (json['area_id'] as num?)?.toInt(),
+  pgId: json['pg_id'] as String?,
   duration: json['duration'],
   agentCount: (json['agent_count'] as num).toInt(),
 );
