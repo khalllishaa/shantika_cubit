@@ -8,6 +8,7 @@ import 'package:shantika_cubit/repository/app_settings_repository.dart';
 import 'package:shantika_cubit/repository/chat_repository.dart';
 import 'package:shantika_cubit/repository/home_repository.dart';
 import 'package:shantika_cubit/repository/notification_repository.dart';
+import 'package:shantika_cubit/repository/pesan_tiket_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/api/api_service.dart';
@@ -59,9 +60,12 @@ Future<void> setUpLocator() async {
         () => ChatRepository(serviceLocator<ApiService>()),
   );
 
-  // Home Repository
   serviceLocator.registerLazySingleton<HomeRepository>(
         () => HomeRepository(serviceLocator<ApiService>()),
+  );
+
+  serviceLocator.registerLazySingleton<TicketRepository>(
+        () => TicketRepository(serviceLocator<ApiService>()),
   );
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();

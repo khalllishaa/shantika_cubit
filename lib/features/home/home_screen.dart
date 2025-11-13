@@ -2,11 +2,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shantika_cubit/features/books_ticket/pesan_tiket_screen.dart';
 import 'package:shantika_cubit/features/home/artikel_screen.dart';
 import 'package:shantika_cubit/features/home/cubit/home_cubit.dart';
 import 'package:shantika_cubit/features/home/cubit/home_state.dart';
 import 'package:shantika_cubit/features/home/detail_artikel_screen.dart';
 import 'package:shantika_cubit/features/home/notification_screen.dart';
+import 'package:shantika_cubit/features/profile/faq_screen.dart';
 import 'package:shantika_cubit/features/profile/notifications_profile_screen.dart';
 import 'package:shantika_cubit/model/home_model.dart';
 import 'package:shantika_cubit/repository/home_repository.dart';
@@ -398,7 +400,19 @@ class _HomeScreenState extends State<HomeScreen> {
               final menu = menus[i];
               return GestureDetector(
                 onTap: () {
-                  print('Menu clicked: ${menu.name}');
+                  print('Menu clicked: ${menu.name} (${menu.id})');
+
+                  switch (menu.id) {
+                    case 1:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const PesanTiketScreen()),
+                      );
+                      break;
+
+                    default:
+                      print('Belum ada page untuk menu id: ${menu.id}');
+                  }
                 },
                 child: Column(
                   children: [
