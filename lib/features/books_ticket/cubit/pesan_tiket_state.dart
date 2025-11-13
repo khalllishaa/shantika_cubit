@@ -1,4 +1,6 @@
 import 'package:shantika_cubit/model/pesan_tiket_model.dart';
+import 'package:shantika_cubit/model/city_depature_model.dart' as departure;
+import 'package:shantika_cubit/model/agency_model.dart';
 
 abstract class PesanTiketState {}
 
@@ -7,16 +9,20 @@ class PesanTiketInitial extends PesanTiketState {}
 class PesanTiketLoading extends PesanTiketState {}
 
 class PesanTiketLoaded extends PesanTiketState {
-  final List<City> cities;
-  final City? selectedDepartureCity;
+  final List<City> cities; // destination cities
+  final List<departure.City> departureCities;
+  final List<Agency> agencies;
+  final departure.City? selectedDepartureCity;
   final City? selectedDestinationCity;
-  final String? selectedAgency;
+  final Agency? selectedAgency;
   final DateTime? selectedDate;
   final String? selectedTime;
   final String? selectedClass;
 
   PesanTiketLoaded({
     required this.cities,
+    required this.departureCities,
+    required this.agencies,
     this.selectedDepartureCity,
     this.selectedDestinationCity,
     this.selectedAgency,
@@ -27,18 +33,23 @@ class PesanTiketLoaded extends PesanTiketState {
 
   PesanTiketLoaded copyWith({
     List<City>? cities,
-    City? selectedDepartureCity,
+    List<departure.City>? departureCities,
+    List<Agency>? agencies,
+    departure.City? selectedDepartureCity,
     City? selectedDestinationCity,
-    String? selectedAgency,
+    Agency? selectedAgency,
     DateTime? selectedDate,
     String? selectedTime,
     String? selectedClass,
+    bool clearAgency = false,
   }) {
     return PesanTiketLoaded(
       cities: cities ?? this.cities,
+      departureCities: departureCities ?? this.departureCities,
+      agencies: agencies ?? this.agencies,
       selectedDepartureCity: selectedDepartureCity ?? this.selectedDepartureCity,
       selectedDestinationCity: selectedDestinationCity ?? this.selectedDestinationCity,
-      selectedAgency: selectedAgency ?? this.selectedAgency,
+      selectedAgency: clearAgency ? null : (selectedAgency ?? this.selectedAgency),
       selectedDate: selectedDate ?? this.selectedDate,
       selectedTime: selectedTime ?? this.selectedTime,
       selectedClass: selectedClass ?? this.selectedClass,
