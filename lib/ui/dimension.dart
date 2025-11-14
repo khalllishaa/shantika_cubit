@@ -17,6 +17,7 @@ const double borderRadius100 = 4;
 const double borderRadius150 = 6;
 const double borderRadius200 = 8;
 const double borderRadius300 = 12;
+const double borderRadius350 = 10;
 const double borderRadius400 = 16;
 const double borderRadius500 = 20;
 const double borderRadius750 = 30;
