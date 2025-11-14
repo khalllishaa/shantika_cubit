@@ -8,6 +8,7 @@ import 'package:shantika_cubit/model/about_us_model.dart';
 import 'package:shantika_cubit/model/agency_model.dart';
 import 'package:shantika_cubit/model/city_depature_model.dart';
 import 'package:shantika_cubit/model/detail_artikel_model.dart';
+import 'package:shantika_cubit/model/fleet_classes_model.dart';
 import 'package:shantika_cubit/model/home_model.dart';
 import 'package:shantika_cubit/model/notification_model.dart';
 import 'package:shantika_cubit/model/pesan_tiket_model.dart';
@@ -36,6 +37,7 @@ import '../../model/response/promo_response.dart';
 import '../../model/response/transaction_detail_response.dart';
 import '../../model/response/transaction_response.dart';
 import '../../model/slider_model.dart';
+import '../../model/time_model.dart';
 import '../../model/users_model.dart';
 
 part 'api_service.g.dart';
@@ -241,6 +243,14 @@ abstract class ApiService {
   /// Get City Departure
   @GET("/city_departure")
   Future<HttpResponse<CityDepatureModel>> getCityDepartures();
+
+  /// Get Time Classification
+  @GET("/time")
+  Future<HttpResponse<TimeModel>> getTime();
+
+  /// Get Fleet Classification
+  @GET("/fleet_classes")
+  Future<HttpResponse<FleetClassesModel>> getFleetClasses();
 
   /// Get Article Detail
   @GET("/article_detail/{id}")

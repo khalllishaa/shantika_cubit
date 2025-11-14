@@ -1,7 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shantika_cubit/model/fleet_classes_model.dart';
 import 'package:shantika_cubit/model/pesan_tiket_model.dart';
 import 'package:shantika_cubit/model/city_depature_model.dart' as departure;
 import 'package:shantika_cubit/model/agency_model.dart';
+import 'package:shantika_cubit/model/time_model.dart';
 import 'package:shantika_cubit/repository/pesan_tiket_repository.dart';
 import 'pesan_tiket_state.dart';
 
@@ -13,22 +15,28 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
   Future<void> loadInitialData() async {
     try {
       emit(PesanTiketLoading());
-      print('🔄 Loading cities only...');
+      print('Loading initial data...');
 
       final destinationCities = await _repository.getCities();
       final departureCities = await _repository.getDepartureCities();
+      final timeSlots = await _repository.getTime();
+      final fleetClasses = await _repository.getFleetClasses();
 
-      print('✅ Destination cities: ${destinationCities.length}');
-      print('✅ Departure cities: ${departureCities.length}');
+      print('Destination cities: ${destinationCities.length}');
+      print('Departure cities: ${departureCities.length}');
+      print('Time slots: ${timeSlots.length}');
+      print('Fleet Classes: ${fleetClasses.length}');
 
       emit(PesanTiketLoaded(
         cities: destinationCities,
         departureCities: departureCities,
         agencies: [],
+        timeSlots: timeSlots,
+        fleetClasses: fleetClasses,
       ));
     } catch (e) {
-      print('❌ Error loading cities: $e');
-      emit(PesanTiketError('Gagal memuat data kota: ${e.toString()}'));
+      print('Error loading initial data: $e');
+      emit(PesanTiketError('Gagal memuat data: ${e.toString()}'));
     }
   }
 
@@ -43,9 +51,9 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
     ));
 
     try {
-      print('🔎 Fetching agencies for city_id: ${city.id}');
+      print('Fetching agencies for city_id: ${city.id}');
       final agencies = await _repository.getAgencyCities(city.id.toString());
-      print('✅ Agencies loaded: ${agencies.length}');
+      print('Agencies loaded: ${agencies.length}');
 
       emit(currentState.copyWith(
         selectedDepartureCity: city,
@@ -53,7 +61,7 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
         selectedAgency: null,
       ));
     } catch (e) {
-      print('❌ Error fetching agencies: $e');
+      print('Error fetching agencies: $e');
       emit(PesanTiketError('Gagal memuat data agen: ${e.toString()}'));
       emit(currentState.copyWith(
         selectedDepartureCity: city,
@@ -83,14 +91,14 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
     }
   }
 
-  void selectTime(String time) {
+  void selectTime(Time time) {
     if (state is PesanTiketLoaded) {
       final currentState = state as PesanTiketLoaded;
       emit(currentState.copyWith(selectedTime: time));
     }
   }
 
-  void selectClass(String fleetClass) {
+  void selectClass(FleetClass fleetClass) {
     if (state is PesanTiketLoaded) {
       final currentState = state as PesanTiketLoaded;
       emit(currentState.copyWith(selectedClass: fleetClass));
@@ -108,25 +116,16 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
     }
 
     try {
-      print('🚀 Searching tickets...');
+      print('Searching tickets...');
       print('Departure City: ${currentState.selectedDepartureCity?.name}');
       print('Agency: ${currentState.selectedAgency?.name}');
       print('Destination City: ${currentState.selectedDestinationCity?.name}');
       print('Date: ${currentState.selectedDate}');
-      print('Time: ${currentState.selectedTime}');
+      print('Time: ${currentState.selectedTime?.name} (${currentState.selectedTime?.timeStart} - ${currentState.selectedTime?.timeEnd})'); // ✅ UPDATED
       print('Class: ${currentState.selectedClass}');
     } catch (e) {
       emit(PesanTiketError('Terjadi kesalahan: ${e.toString()}'));
       emit(currentState);
     }
-  }
-
-  List<String> getFleetClasses() {
-    return [
-      'Ekonomi',
-      'Eksekutif',
-      'Super Eksekutif',
-      'Sleeper',
-    ];
   }
 }
