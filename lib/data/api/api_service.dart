@@ -6,16 +6,19 @@ import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:shantika_cubit/model/about_us_model.dart';
 import 'package:shantika_cubit/model/agency_model.dart';
+import 'package:shantika_cubit/model/all_cities_model.dart';
 import 'package:shantika_cubit/model/city_depature_model.dart';
 import 'package:shantika_cubit/model/detail_artikel_model.dart';
 import 'package:shantika_cubit/model/fleet_classes_model.dart';
 import 'package:shantika_cubit/model/home_model.dart';
+import 'package:shantika_cubit/model/info_agency_model.dart';
 import 'package:shantika_cubit/model/notification_model.dart';
 import 'package:shantika_cubit/model/pesan_tiket_model.dart';
 import 'package:shantika_cubit/model/response/chat_response.dart';
 import 'package:shantika_cubit/model/response/faq_response.dart';
 import 'package:shantika_cubit/model/response/privacy_policy_response.dart';
 import 'package:shantika_cubit/model/response/terms_and_condition_response.dart';
+import 'package:shantika_cubit/repository/info_agency_repository.dart';
 
 import '../../config/constant.dart';
 import '../../model/address_model.dart';
@@ -251,6 +254,15 @@ abstract class ApiService {
   /// Get Fleet Classification
   @GET("/fleet_classes")
   Future<HttpResponse<FleetClassesModel>> getFleetClasses();
+
+  /// Get All Cities
+  @GET("/cities_all")
+  Future<HttpResponse<AllCitiesModel>> getAllCities();
+
+  /// Get Information Agency
+  @GET("/agencies")
+  Future<HttpResponse<InfoAgencyModel>> getInfoAgency(
+      @Query("city_id") int cityId);
 
   /// Get Article Detail
   @GET("/article_detail/{id}")

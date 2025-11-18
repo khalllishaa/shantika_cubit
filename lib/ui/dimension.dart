@@ -6,6 +6,7 @@ const double paddingM = 17;
 const double paddingL = 25;
 const double paddingXL = 35;
 const double paddingGoogle1 = 72;
+const double padding6 = 6;
 const double padding16 = 16;
 const double padding12 = 12;
 const double padding20 = 20;

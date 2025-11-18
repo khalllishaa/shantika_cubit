@@ -4,9 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shantika_cubit/features/books_ticket/pesan_tiket_screen.dart';
 import 'package:shantika_cubit/features/home/artikel_screen.dart';
+import 'package:shantika_cubit/features/home/cubit/cities/all_cities_cubit.dart';
 import 'package:shantika_cubit/features/home/cubit/home_cubit.dart';
 import 'package:shantika_cubit/features/home/cubit/home_state.dart';
 import 'package:shantika_cubit/features/home/detail_artikel_screen.dart';
+import 'package:shantika_cubit/features/home/info_agency_screen.dart';
+import 'package:shantika_cubit/features/home/info_fleet_classes.dart';
+import 'package:shantika_cubit/features/home/list_cities_screen.dart';
 import 'package:shantika_cubit/features/home/notification_screen.dart';
 import 'package:shantika_cubit/features/profile/faq_screen.dart';
 import 'package:shantika_cubit/features/profile/notifications_profile_screen.dart';
@@ -406,7 +410,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     case 1:
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const PesanTiketScreen()),
+                        MaterialPageRoute(builder: (context) => PesanTiketScreen()),
+                      );
+                      break;
+
+
+                      case 2:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => InfoFleetClasses()),
+                      );
+                      break;
+
+                    case 6:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BlocProvider.value(
+                            value: context.read<AllCitiesCubit>(),
+                            child: ListCitiesScreen(),
+                          ),
+                        ),
                       );
                       break;
 
