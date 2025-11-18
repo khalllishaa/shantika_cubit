@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shantika_cubit/features/home/cities/cubit/all_cities_state.dart';
 import 'package:shantika_cubit/repository/info_agency_repository.dart';
-import 'all_cities_state.dart';
 
 class AllCitiesCubit extends Cubit<AllCitiesState> {
   final InfoAgencyRepository _repository;

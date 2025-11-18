@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shantika_cubit/features/home/cubit/artikel_state.dart';
+import 'package:shantika_cubit/features/home/article/cubit/artikel_state.dart';
 import 'package:shantika_cubit/model/home_model.dart';
 import 'package:shantika_cubit/repository/home_repository.dart';
 import 'package:share_plus/share_plus.dart';

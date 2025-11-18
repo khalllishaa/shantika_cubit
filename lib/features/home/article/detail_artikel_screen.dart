@@ -3,14 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:shantika_cubit/config/service_locator.dart';
-import 'package:shantika_cubit/features/home/cubit/artikel_cubit.dart';
-import 'package:shantika_cubit/features/home/cubit/artikel_state.dart';
+import 'package:shantika_cubit/features/home/article/cubit/artikel_cubit.dart';
+import 'package:shantika_cubit/features/home/article/cubit/artikel_state.dart';
 import 'package:shantika_cubit/model/home_model.dart';
 import 'package:shantika_cubit/repository/home_repository.dart';
 import 'package:shantika_cubit/ui/color.dart';
 import 'package:shantika_cubit/ui/dimension.dart';
+import 'package:shantika_cubit/ui/shared_widget/custom_card_container.dart';
 import 'package:shantika_cubit/ui/typography.dart';
-import '../../ui/shared_widget/custom_card_container.dart';
 
 class DetailArtikelScreen extends StatelessWidget {
   final int articleId;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shantika_cubit/features/home/cubit/info_agency/info_agency_cubit.dart';
-import 'package:shantika_cubit/features/home/cubit/info_agency/info_agency_state.dart';
+import 'package:shantika_cubit/features/home/cities/cubit/info_agency_cubit.dart';
+import 'package:shantika_cubit/features/home/cities/cubit/info_agency_state.dart';
 import 'package:shantika_cubit/model/info_agency_model.dart';
 import 'package:shantika_cubit/ui/color.dart';
 import 'package:shantika_cubit/ui/dimension.dart';

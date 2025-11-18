@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:shantika_cubit/data/api/api_service.dart';
 import 'package:shantika_cubit/model/fleet_classes_model.dart';
+import 'package:shantika_cubit/model/fleet_detail_model.dart';
 import 'package:shantika_cubit/model/pesan_tiket_model.dart' as destination;
 import 'package:shantika_cubit/model/city_depature_model.dart' as departure;
 import 'package:shantika_cubit/model/agency_model.dart';
@@ -75,6 +76,25 @@ class TicketRepository extends BaseRepository {
       }
     } catch (e) {
       throw Exception('Error fetching time: $e');
+    }
+  }
+
+  Future<FleetDetail> getFleetDetail(int fleetClassId) async {
+    try {
+      print('Fetching fleet detail for ID: $fleetClassId');
+      final response = await _apiService.getInfoFleet(fleetClassId);
+
+      print('Response status: ${response.response.statusCode}');
+
+      if (response.response.statusCode == 200 && response.data?.success == true) {
+        print('Fleet detail fetched successfully');
+        return response.data!.fleetDetail;
+      } else {
+        throw Exception(response.data?.message ?? 'Gagal memuat detail armada');
+      }
+    } catch (e) {
+      print('Error in getFleetDetail: $e');
+      throw Exception('Error fetching fleet detail: $e');
     }
   }
 }

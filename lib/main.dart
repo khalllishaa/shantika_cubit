@@ -5,11 +5,12 @@ import 'package:jiffy/jiffy.dart';
 import 'package:shantika_cubit/features/assignment/cubit/chat_cubit.dart';
 import 'package:shantika_cubit/features/assignment/cubit/history_assignment_cubit.dart';
 import 'package:shantika_cubit/features/authentication/login/cubit/login_phone_cubit.dart';
-import 'package:shantika_cubit/features/books_ticket/cubit/pesan_tiket_cubit.dart';
-import 'package:shantika_cubit/features/home/cubit/artikel_cubit.dart';
-import 'package:shantika_cubit/features/home/cubit/cities/all_cities_cubit.dart';
-import 'package:shantika_cubit/features/home/cubit/info_agency/info_agency_cubit.dart';
+import 'package:shantika_cubit/features/home/books_ticket/cubit/pesan_tiket_cubit.dart';
+import 'package:shantika_cubit/features/home/article/cubit/artikel_cubit.dart';
+import 'package:shantika_cubit/features/home/cities/cubit/all_cities_cubit.dart';
+import 'package:shantika_cubit/features/home/cities/cubit/info_agency_cubit.dart';
 import 'package:shantika_cubit/features/home/cubit/notifications_cubit.dart';
+import 'package:shantika_cubit/features/home/fleet/cubit/fleet_cubit.dart';
 import 'package:shantika_cubit/features/profile/cubit/about_us_cubit.dart';
 import 'package:shantika_cubit/features/profile/cubit/faq_cubit.dart';
 import 'package:shantika_cubit/features/profile/cubit/privacy_policy_cubit.dart';
@@ -88,6 +89,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => DetailSliderCubit()),
         BlocProvider(create: (context) => ChatCubit(serviceLocator<ChatRepository>())),
         BlocProvider(create: (context) => PesanTiketCubit(serviceLocator<TicketRepository>())),
+        BlocProvider(create: (context) => FleetClassesCubit(serviceLocator<TicketRepository>())),
         BlocProvider(create: (context) => InfoAgencyCubit(serviceLocator<InfoAgencyRepository>())),
         BlocProvider(create: (context) => AllCitiesCubit(serviceLocator<InfoAgencyRepository>())),
         BlocProvider(create: (context) => LogoutCubit()..init()),

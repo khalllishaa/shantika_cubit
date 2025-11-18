@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shantika_cubit/features/home/cubit/cities/all_cities_cubit.dart';
-import 'package:shantika_cubit/features/home/cubit/cities/all_cities_state.dart';
-import 'package:shantika_cubit/features/home/cubit/info_agency/info_agency_cubit.dart';
-import 'package:shantika_cubit/features/home/info_agency_screen.dart';
+import 'package:shantika_cubit/features/home/cities/cubit/all_cities_cubit.dart';
+import 'package:shantika_cubit/features/home/cities/cubit/all_cities_state.dart';
+import 'package:shantika_cubit/features/home/cities/cubit/info_agency_cubit.dart';
+import 'package:shantika_cubit/features/home/cities/info_agency_screen.dart';
 import 'package:shantika_cubit/repository/info_agency_repository.dart';
 import 'package:shantika_cubit/data/api/api_service.dart';
 import 'package:dio/dio.dart';
