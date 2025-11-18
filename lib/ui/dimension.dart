@@ -60,3 +60,4 @@ const double iconS = 16;
 const double iconM = 20;
 const double iconL = 24;
 const double iconXL = 36;
+const double iconXXL = 64;

@@ -10,6 +10,7 @@ import 'package:shantika_cubit/model/all_cities_model.dart';
 import 'package:shantika_cubit/model/city_depature_model.dart';
 import 'package:shantika_cubit/model/detail_artikel_model.dart';
 import 'package:shantika_cubit/model/fleet_classes_model.dart';
+import 'package:shantika_cubit/model/fleet_detail_model.dart';
 import 'package:shantika_cubit/model/home_model.dart';
 import 'package:shantika_cubit/model/info_agency_model.dart';
 import 'package:shantika_cubit/model/notification_model.dart';
@@ -254,6 +255,12 @@ abstract class ApiService {
   /// Get Fleet Classification
   @GET("/fleet_classes")
   Future<HttpResponse<FleetClassesModel>> getFleetClasses();
+
+  /// Get Info Fleet (Fleet Detail)
+  @GET("/customer/fleet_lists")
+  Future<HttpResponse<FleetDetailResponse>> getInfoFleet(
+    @Query("fleet_class_id") int fleetClassId,
+  );
 
   /// Get All Cities
   @GET("/cities_all")

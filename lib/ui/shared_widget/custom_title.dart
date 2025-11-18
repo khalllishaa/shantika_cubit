@@ -6,11 +6,19 @@ import 'package:shantika_cubit/ui/typography.dart';
 class SectionTitle extends StatelessWidget {
   final String title;
   final Color? lineColor;
+  final TextStyle? textStyle;
+  final double? lineWidth;
+  final double? lineHeight;
+  final BorderRadiusGeometry? lineRadius;
 
   const SectionTitle({
     Key? key,
     required this.title,
     this.lineColor,
+    this.textStyle,
+    this.lineWidth,
+    this.lineHeight,
+    this.lineRadius,
   }) : super(key: key);
 
   @override
@@ -22,17 +30,17 @@ class SectionTitle extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 4,
-            height: 24,
+            width: lineWidth ?? 4,
+            height: lineHeight ?? 24,
             decoration: BoxDecoration(
               color: lineColor ?? navy400,
-              borderRadius: BorderRadius.circular(0),
+              borderRadius: lineRadius ?? BorderRadius.circular(0),
             ),
           ),
           SizedBox(width: space150),
           Text(
             title,
-            style: smSemiBold,
+            style: textStyle ?? smSemiBold,
           ),
         ],
       ),

@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:shantika_cubit/features/books_ticket/cubit/pesan_tiket_cubit.dart';
-import 'package:shantika_cubit/features/books_ticket/cubit/pesan_tiket_state.dart';
+import 'package:shantika_cubit/features/home/books_ticket/cubit/pesan_tiket_cubit.dart';
+import 'package:shantika_cubit/features/home/books_ticket/cubit/pesan_tiket_state.dart';
 import 'package:shantika_cubit/model/city_depature_model.dart' as departure;
 import 'package:shantika_cubit/model/pesan_tiket_model.dart';
 import 'package:shantika_cubit/model/agency_model.dart';
 import 'package:shantika_cubit/ui/shared_widget/custom_button.dart';
-import '../../ui/color.dart';
-import '../../ui/dimension.dart';
-import '../../ui/typography.dart';
+
+import '../../../ui/color.dart';
+import '../../../ui/dimension.dart';
+import '../../../ui/typography.dart';
 
 class PesanTiketScreen extends StatelessWidget {
   const PesanTiketScreen({super.key});
