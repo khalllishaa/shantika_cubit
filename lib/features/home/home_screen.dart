@@ -9,13 +9,10 @@ import 'package:shantika_cubit/features/home/cities/cubit/all_cities_cubit.dart'
 import 'package:shantika_cubit/features/home/cities/list_cities_screen.dart';
 import 'package:shantika_cubit/features/home/cubit/home_cubit.dart';
 import 'package:shantika_cubit/features/home/cubit/home_state.dart';
-import 'package:shantika_cubit/features/home/cities/info_agency_screen.dart';
 import 'package:shantika_cubit/features/home/fleet/fleet_classes_screen.dart';
 import 'package:shantika_cubit/features/home/notification_screen.dart';
-import 'package:shantika_cubit/features/profile/faq_screen.dart';
-import 'package:shantika_cubit/features/profile/notifications_profile_screen.dart';
+import 'package:shantika_cubit/features/home/social_media/social_media_screen.dart';
 import 'package:shantika_cubit/model/home_model.dart';
-import 'package:shantika_cubit/repository/home_repository.dart';
 import '../../ui/color.dart';
 import '../../ui/dimension.dart';
 import '../../ui/shared_widget/custom_button.dart';
@@ -415,11 +412,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       break;
 
 
-                      case 2:
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => InfoFleetClasses()),
-                      );
+                    case 2:
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => InfoFleetClasses()),
+                    );
+                      break;
+
+                    case 5:
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SocialMediaScreen()),
+                    );
                       break;
 
                     case 6:

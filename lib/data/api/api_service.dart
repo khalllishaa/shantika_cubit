@@ -19,6 +19,7 @@ import 'package:shantika_cubit/model/response/chat_response.dart';
 import 'package:shantika_cubit/model/response/faq_response.dart';
 import 'package:shantika_cubit/model/response/privacy_policy_response.dart';
 import 'package:shantika_cubit/model/response/terms_and_condition_response.dart';
+import 'package:shantika_cubit/model/social_media_model.dart';
 import 'package:shantika_cubit/repository/info_agency_repository.dart';
 
 import '../../config/constant.dart';
@@ -261,6 +262,10 @@ abstract class ApiService {
   Future<HttpResponse<FleetDetailResponse>> getInfoFleet(
     @Query("fleet_class_id") int fleetClassId,
   );
+
+  /// Get Social Media
+  @GET("/social_media")
+  Future<HttpResponse<SocialMediaModel>> getSocialMedia();
 
   /// Get All Cities
   @GET("/cities_all")

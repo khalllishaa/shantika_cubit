@@ -10,6 +10,7 @@ import 'package:shantika_cubit/repository/home_repository.dart';
 import 'package:shantika_cubit/repository/info_agency_repository.dart';
 import 'package:shantika_cubit/repository/notification_repository.dart';
 import 'package:shantika_cubit/repository/pesan_tiket_repository.dart';
+import 'package:shantika_cubit/repository/social_media_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/api/api_service.dart';
@@ -71,6 +72,10 @@ Future<void> setUpLocator() async {
 
   serviceLocator.registerLazySingleton<InfoAgencyRepository>(
         () => InfoAgencyRepository(serviceLocator<ApiService>()),
+  );
+
+  serviceLocator.registerLazySingleton<SocialMediaRepository>(
+        () => SocialMediaRepository(serviceLocator<ApiService>()),
   );
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();

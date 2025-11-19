@@ -11,6 +11,7 @@ import 'package:shantika_cubit/features/home/cities/cubit/all_cities_cubit.dart'
 import 'package:shantika_cubit/features/home/cities/cubit/info_agency_cubit.dart';
 import 'package:shantika_cubit/features/home/cubit/notifications_cubit.dart';
 import 'package:shantika_cubit/features/home/fleet/cubit/fleet_cubit.dart';
+import 'package:shantika_cubit/features/home/social_media/cubit/social_media_cubit.dart';
 import 'package:shantika_cubit/features/profile/cubit/about_us_cubit.dart';
 import 'package:shantika_cubit/features/profile/cubit/faq_cubit.dart';
 import 'package:shantika_cubit/features/profile/cubit/privacy_policy_cubit.dart';
@@ -20,6 +21,7 @@ import 'package:shantika_cubit/repository/home_repository.dart';
 import 'package:shantika_cubit/repository/info_agency_repository.dart';
 import 'package:shantika_cubit/repository/notification_repository.dart';
 import 'package:shantika_cubit/repository/pesan_tiket_repository.dart';
+import 'package:shantika_cubit/repository/social_media_repository.dart';
 import 'package:shantika_cubit/splash_screen.dart';
 import 'package:shantika_cubit/ui/theme.dart';
 
@@ -92,6 +94,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => FleetClassesCubit(serviceLocator<TicketRepository>())),
         BlocProvider(create: (context) => InfoAgencyCubit(serviceLocator<InfoAgencyRepository>())),
         BlocProvider(create: (context) => AllCitiesCubit(serviceLocator<InfoAgencyRepository>())),
+        BlocProvider(create: (context) => SocialMediaCubit(serviceLocator<SocialMediaRepository>())),
         BlocProvider(create: (context) => LogoutCubit()..init()),
 
         BlocProvider(create: (context) => UpdateFcmTokenCubit()),
