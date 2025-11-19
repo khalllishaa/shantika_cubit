@@ -9,17 +9,17 @@ class AllCitiesCubit extends Cubit<AllCitiesState> {
 
   Future<void> loadCities() async {
     try {
-      print('🔵 AllCitiesCubit: Starting loadCities()');
+      print('AllCitiesCubit: Starting loadCities()');
       emit(AllCitiesLoading());
-      print('🔵 AllCitiesCubit: Emitted AllCitiesLoading');
+      print('AllCitiesCubit: Emitted AllCitiesLoading');
 
       final cities = await _repository.getAllCities();
-      print('🔵 AllCitiesCubit: Got ${cities.length} cities from repository');
+      print('AllCitiesCubit: Got ${cities.length} cities from repository');
 
       emit(AllCitiesLoaded(cities));
-      print('🔵 AllCitiesCubit: Emitted AllCitiesLoaded');
+      print('AllCitiesCubit: Emitted AllCitiesLoaded');
     } catch (e) {
-      print('🔴 AllCitiesCubit: Error - $e');
+      print('AllCitiesCubit: Error - $e');
       emit(AllCitiesError(e.toString()));
     }
   }
