@@ -19,7 +19,6 @@ class HomeRepository extends BaseRepository {
     try {
       final response = await _apiService.home();
 
-      // Cek status code dan data
       if (response.response.statusCode == 200) {
         if (response.data != null) {
           return response.data!;
@@ -32,7 +31,6 @@ class HomeRepository extends BaseRepository {
         );
       }
     } on DioException catch (e) {
-      // Handle Dio specific errors
       if (e.type == DioExceptionType.badResponse) {
         throw Exception('Endpoint tidak ditemukan (${e.response?.statusCode})');
       } else if (e.type == DioExceptionType.connectionTimeout) {

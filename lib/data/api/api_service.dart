@@ -17,6 +17,7 @@ import 'package:shantika_cubit/model/notification_model.dart';
 import 'package:shantika_cubit/model/pesan_tiket_model.dart';
 import 'package:shantika_cubit/model/response/chat_response.dart';
 import 'package:shantika_cubit/model/response/faq_response.dart';
+import 'package:shantika_cubit/model/history_order_model.dart';
 import 'package:shantika_cubit/model/response/privacy_policy_response.dart';
 import 'package:shantika_cubit/model/response/terms_and_condition_response.dart';
 import 'package:shantika_cubit/model/social_media_model.dart';
@@ -91,6 +92,10 @@ abstract class ApiService {
   /// Chat
   @GET("/customer/chats")
   Future<HttpResponse<ChatResponse>> getChats();
+
+  /// History Order
+  @POST("/customer/riwayat")
+  Future<HttpResponse<HistoryOrderModel>> getHistoryOrder();
 
   /// Register with email and password
   @POST("/auth/register")
