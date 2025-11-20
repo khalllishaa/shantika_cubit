@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:shantika_cubit/features/home/books_ticket/cubit/pesan_tiket_cubit.dart';
 import 'package:shantika_cubit/features/home/books_ticket/cubit/pesan_tiket_state.dart';
+import 'package:shantika_cubit/features/home/books_ticket/list_armada_screen.dart';
 import 'package:shantika_cubit/model/city_depature_model.dart' as departure;
 import 'package:shantika_cubit/model/pesan_tiket_model.dart';
 import 'package:shantika_cubit/model/agency_model.dart';
@@ -842,7 +843,13 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
                     child: CustomButton(
                       onPressed: isFormComplete
                           ? () {
-                        context.read<PesanTiketCubit>().searchTickets();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ListArmadaScreen(),
+                          ),
+                        );
+                        // context.read<PesanTiketCubit>().searchTickets();
                       }
                           : null,
                       padding: EdgeInsets.symmetric(vertical: padding12),

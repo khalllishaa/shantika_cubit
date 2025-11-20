@@ -54,6 +54,7 @@ const double spacing7 = 22;
 const double spacing8 = 26;
 const double spacing9 = 36;
 const double spacing10 = 45;
+const double spacing11 = 55;
 
 /// Size Images & Icons
 const double iconS = 16;
