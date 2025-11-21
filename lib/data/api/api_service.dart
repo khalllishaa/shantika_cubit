@@ -5,10 +5,12 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:shantika_cubit/model/about_us_model.dart';
+import 'package:shantika_cubit/model/agency_by_id_model.dart';
 import 'package:shantika_cubit/model/agency_model.dart';
 import 'package:shantika_cubit/model/all_cities_model.dart';
 import 'package:shantika_cubit/model/city_depature_model.dart';
 import 'package:shantika_cubit/model/detail_artikel_model.dart';
+import 'package:shantika_cubit/model/fleet_available_model.dart';
 import 'package:shantika_cubit/model/fleet_classes_model.dart';
 import 'package:shantika_cubit/model/fleet_detail_model.dart';
 import 'package:shantika_cubit/model/home_model.dart';
@@ -42,6 +44,8 @@ import '../../model/response/payment_method_response.dart';
 import '../../model/response/promo_response.dart';
 import '../../model/response/transaction_detail_response.dart';
 import '../../model/response/transaction_response.dart';
+import '../../model/routes_available_model.dart';
+import '../../model/seat_layout_model.dart';
 import '../../model/slider_model.dart';
 import '../../model/time_model.dart';
 import '../../model/users_model.dart';
@@ -239,16 +243,17 @@ abstract class ApiService {
   @GET("/city_destination")
   Future<HttpResponse<PesanTiketModel>> getCityDestinations();
 
-  /// Get Agencies by City ID
+  /// Get Agencies with City ID
   @GET("/agency_city")
   Future<HttpResponse<AgencyCityResponse>> getAgencyCities(
       @Query("city_id") String cityId,
       );
 
-  // @GET("/agencies")
-  // Future<HttpResponse<AgencyModel>> getAgencies(
-  //     @Query("city_id") String cityId,
-  //     );
+  /// Get Agencies by City ID
+  @GET("/agencies")
+  Future<HttpResponse<AgencyByIdModel>> getAgenciesById(
+      @Query("city_id") String cityId,
+      );
 
   /// Get City Departure
   @GET("/city_departure")
@@ -267,6 +272,36 @@ abstract class ApiService {
   Future<HttpResponse<FleetDetailResponse>> getInfoFleet(
     @Query("fleet_class_id") int fleetClassId,
   );
+
+  /// Get Fleet Available)
+  @GET('/fleet_classes/available')
+  Future<HttpResponse<FleetAvailableModel>> getAvailableFleetClasses({
+    @Query('agency_id') required int agencyId,
+    @Query('time_classification_id') required int timeClassificationId,
+    @Query('date') required String date,
+    @Query('agency_departure_id') required int agencyDepartureId,
+    @Query('destination_city_id') int? destinationCityId,
+  });
+
+  /// Get Available Routes
+  @GET('/customer/routes/available')
+  Future<HttpResponse<RoutesAvailableModel>> getAvailableRoutes({
+    @Query('fleet_class_id') required int fleetClassId,
+    @Query('agency_departure_id') required int agencyDepartureId,
+    @Query('agency_arrived_id') required int agencyArrivedId,
+    @Query('time_classification_id') required int timeClassificationId,
+    @Query('date') required String date,
+  });
+
+  /// Get Seat Layout
+  @GET('/customer/layouts')
+  Future<HttpResponse<SeatLayoutModel>> getSeatLayout({
+    @Query('fleet_route_id') required int fleetRouteId,
+    @Query('time_classification_id') required int timeClassificationId,
+    @Query('date') required String date,
+    @Query('departure_agency_id') required int departureAgencyId,
+    @Query('destination_agency_id') required int destinationAgencyId,
+  });
 
   /// Get Social Media
   @GET("/social_media")
