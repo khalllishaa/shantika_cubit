@@ -9,8 +9,11 @@ import 'package:shantika_cubit/model/pesan_tiket_model.dart' as destination;
 import 'package:shantika_cubit/model/city_depature_model.dart' as departure;
 import 'package:shantika_cubit/model/agency_model.dart';
 import 'package:shantika_cubit/model/agency_by_id_model.dart' as byId;
+import 'package:shantika_cubit/model/seat_layout_model.dart';
 import 'package:shantika_cubit/model/time_model.dart';
 import 'package:shantika_cubit/repository/base/base_repository.dart';
+
+import '../model/routes_available_model.dart';
 
 class TicketRepository extends BaseRepository {
   final ApiService _apiService;
@@ -140,15 +143,82 @@ class TicketRepository extends BaseRepository {
     }
   }
 
-  Future<byId.AgencyByIdModel> getAgencyById(String cityId) async {
-    final response = await _apiService.getAgenciesById(cityId);
+  Future<List<byId.Agency>> getDestinationAgencies(String cityId) async {
+    try {
+      final response = await _apiService.getAgenciesById(cityId);
 
-    if (response.response.statusCode == 200 &&
-        response.data?.success == true) {
-      return response.data!;
-    } else {
-      throw Exception(response.data?.message ?? 'Gagal memuat data agen');
+      if (response.response.statusCode == 200 &&
+          response.data?.success == true) {
+        return response.data!.agencies;
+      } else {
+        throw Exception(response.data?.message ?? 'Gagal memuat data tujuan');
+      }
+    } catch (e) {
+      throw Exception('Error fetching destination agencies: $e');
     }
   }
+
+  Future<List<Route>> getAvailableRoutes({
+    required int fleetClassId,
+    required int agencyDepartureId,
+    required int agencyArrivedId,
+    required int timeClassificationId,
+    required String date,
+  }) async {
+    try {
+      print('Fetching available routes with params:');
+      print('- fleet_class_id: $fleetClassId');
+      print('- agency_departure_id: $agencyDepartureId');
+      print('- agency_arrived_id: $agencyArrivedId');
+      print('- time_classification_id: $timeClassificationId');
+      print('- date: $date');
+
+      final response = await _apiService.getAvailableRoutes(
+        fleetClassId: fleetClassId,
+        agencyDepartureId: agencyDepartureId,
+        agencyArrivedId: agencyArrivedId,
+        timeClassificationId: timeClassificationId,
+        date: date,
+      );
+
+      if (response.response.statusCode == 200 &&
+          response.data?.success == true) {
+        print('Available routes loaded: ${response.data!.routes.length}');
+        return response.data!.routes;
+      } else {
+        throw Exception(response.data?.message ?? 'Gagal memuat data rute');
+      }
+    } catch (e) {
+      print('Error fetching available routes: $e');
+      throw Exception('Error fetching available routes: $e');
+    }
+  }
+
+  Future<SeatLayoutModel> getSeatLayout({
+    required int fleetRouteId,
+    required int timeClassificationId,
+    required String date,
+    required int departureAgencyId,
+    required int destinationAgencyId,
+  }) async {
+    try {
+      final response = await _apiService.getSeatLayout(
+        fleetRouteId: fleetRouteId,
+        timeClassificationId: timeClassificationId,
+        date: date,
+        departureAgencyId: departureAgencyId,
+        destinationAgencyId: destinationAgencyId,
+      );
+
+      if (response.response.statusCode == 200 && response.data!.success == true) {
+        return response.data!;
+      } else {
+        throw Exception(response.data?.message ?? 'Gagal memuat layout kursi');
+      }
+    } catch (e) {
+      throw Exception('Error getSeatLayout: $e');
+    }
+  }
+
 
 }

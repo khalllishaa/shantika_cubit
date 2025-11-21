@@ -1110,6 +1110,86 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<HttpResponse<RoutesAvailableModel>> getAvailableRoutes({
+    required int fleetClassId,
+    required int agencyDepartureId,
+    required int agencyArrivedId,
+    required int timeClassificationId,
+    required String date,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'fleet_class_id': fleetClassId,
+      r'agency_departure_id': agencyDepartureId,
+      r'agency_arrived_id': agencyArrivedId,
+      r'time_classification_id': timeClassificationId,
+      r'date': date,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<HttpResponse<RoutesAvailableModel>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/customer/routes/available',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late RoutesAvailableModel _value;
+    try {
+      _value = RoutesAvailableModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<SeatLayoutModel>> getSeatLayout({
+    required int fleetRouteId,
+    required int timeClassificationId,
+    required String date,
+    required int departureAgencyId,
+    required int destinationAgencyId,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'fleet_route_id': fleetRouteId,
+      r'time_classification_id': timeClassificationId,
+      r'date': date,
+      r'departure_agency_id': departureAgencyId,
+      r'destination_agency_id': destinationAgencyId,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<HttpResponse<SeatLayoutModel>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/customer/layouts',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SeatLayoutModel _value;
+    try {
+      _value = SeatLayoutModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
   Future<HttpResponse<SocialMediaModel>> getSocialMedia() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

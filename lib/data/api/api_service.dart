@@ -44,6 +44,8 @@ import '../../model/response/payment_method_response.dart';
 import '../../model/response/promo_response.dart';
 import '../../model/response/transaction_detail_response.dart';
 import '../../model/response/transaction_response.dart';
+import '../../model/routes_available_model.dart';
+import '../../model/seat_layout_model.dart';
 import '../../model/slider_model.dart';
 import '../../model/time_model.dart';
 import '../../model/users_model.dart';
@@ -241,12 +243,13 @@ abstract class ApiService {
   @GET("/city_destination")
   Future<HttpResponse<PesanTiketModel>> getCityDestinations();
 
-  /// Get Agencies by City ID
+  /// Get Agencies with City ID
   @GET("/agency_city")
   Future<HttpResponse<AgencyCityResponse>> getAgencyCities(
       @Query("city_id") String cityId,
       );
 
+  /// Get Agencies by City ID
   @GET("/agencies")
   Future<HttpResponse<AgencyByIdModel>> getAgenciesById(
       @Query("city_id") String cityId,
@@ -278,6 +281,26 @@ abstract class ApiService {
     @Query('date') required String date,
     @Query('agency_departure_id') required int agencyDepartureId,
     @Query('destination_city_id') int? destinationCityId,
+  });
+
+  /// Get Available Routes
+  @GET('/customer/routes/available')
+  Future<HttpResponse<RoutesAvailableModel>> getAvailableRoutes({
+    @Query('fleet_class_id') required int fleetClassId,
+    @Query('agency_departure_id') required int agencyDepartureId,
+    @Query('agency_arrived_id') required int agencyArrivedId,
+    @Query('time_classification_id') required int timeClassificationId,
+    @Query('date') required String date,
+  });
+
+  /// Get Seat Layout
+  @GET('/customer/layouts')
+  Future<HttpResponse<SeatLayoutModel>> getSeatLayout({
+    @Query('fleet_route_id') required int fleetRouteId,
+    @Query('time_classification_id') required int timeClassificationId,
+    @Query('date') required String date,
+    @Query('departure_agency_id') required int departureAgencyId,
+    @Query('destination_agency_id') required int destinationAgencyId,
   });
 
   /// Get Social Media

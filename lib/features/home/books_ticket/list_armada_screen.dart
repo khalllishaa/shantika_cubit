@@ -1,60 +1,32 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Route;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:shantika_cubit/features/home/books_ticket/pilh_kursi_screen.dart';
+import 'package:shantika_cubit/model/routes_available_model.dart';
 import '../../../ui/color.dart';
 import '../../../ui/dimension.dart';
 import '../../../ui/typography.dart';
 import '../../../ui/shared_widget/custom_card_container.dart';
 
 class ListArmadaScreen extends StatefulWidget {
-  const ListArmadaScreen({super.key});
+  final List<Route> routes;
+  final DateTime selectedDate;
+  final String departureCity;
+  final String destinationAgency;
+
+  const ListArmadaScreen({
+    super.key,
+    required this.routes,
+    required this.selectedDate,
+    required this.departureCity,
+    required this.destinationAgency,
+  });
 
   @override
   State<ListArmadaScreen> createState() => _ListArmadaScreenState();
 }
 
 class _ListArmadaScreenState extends State<ListArmadaScreen> {
-  String selectedDate = "17 Januari";
-  String selectedTime = "Pagi 08:00 WIB";
-  String selectedClass = "Super Exe";
-
-  final List<Map<String, dynamic>> armadaList = [
-    {
-      "bus_number": "Bus 10",
-      "class": "Executive",
-      "route": "Cikarang - Bekasi - Klari - Cibitung - Sumaracon",
-      "departure": "Cileunyi Didin",
-      "departure_city": "Bandung",
-      "arrival": "Batangan",
-      "arrival_city": "Pati",
-      "price": 230000,
-      "seats_available": 4,
-    },
-    {
-      "bus_number": "Bus 10",
-      "class": "Executive",
-      "route": "Cikarang - Bekasi - Klari - Cibitung - Sumaracon",
-      "departure": "Cileunyi Didin",
-      "departure_city": "Bandung",
-      "arrival": "Batangan",
-      "arrival_city": "Pati",
-      "price": 230000,
-      "seats_available": 4,
-    },
-    {
-      "bus_number": "Bus 10",
-      "class": "Executive",
-      "route": "Cikarang - Bekasi - Klari - Cibitung - Sumaracon",
-      "departure": "Cileunyi Didin",
-      "departure_city": "Bandung",
-      "arrival": "Batangan",
-      "arrival_city": "Pati",
-      "price": 230000,
-      "seats_available": 4,
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,12 +37,14 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
           children: [
             _routeHeader(),
             Expanded(
-              child: ListView.separated(
+              child: widget.routes.isEmpty
+                  ? _emptyState()
+                  : ListView.separated(
                 padding: EdgeInsets.all(paddingL),
-                itemCount: armadaList.length,
+                itemCount: widget.routes.length,
                 separatorBuilder: (_, __) => SizedBox(height: spacing4),
                 itemBuilder: (context, index) {
-                  return _armadaCard(armadaList[index]);
+                  return _armadaCard(widget.routes[index]);
                 },
               ),
             ),
@@ -108,6 +82,8 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
   }
 
   Widget _routeHeader() {
+    final formattedDate = DateFormat('dd MMMM', 'id_ID').format(widget.selectedDate);
+
     return Container(
       decoration: BoxDecoration(
         color: black00,
@@ -121,93 +97,112 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
       child: Column(
         children: [
           Padding(
-            padding: EdgeInsets.only(left: padding16, top: padding16, right: padding16),
-            child:Row(
+            padding: EdgeInsets.only(
+              left: padding16,
+              top: padding16,
+              right: padding16,
+            ),
+            child: Row(
               children: [
                 Icon(Icons.location_on_outlined, color: black700_70, size: iconM),
                 SizedBox(width: space200),
-                Text(
-                  "Amsaliti - Jepara",
-                  style: smRegular.copyWith(color: black950),
+                Expanded(
+                  child: Text(
+                    widget.destinationAgency,
+                    style: smRegular.copyWith(color: black950),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
           ),
-          _filterChips(),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: paddingL,
+              vertical: padding12,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: padding12,
+                    vertical: space200,
+                  ),
+                  decoration: BoxDecoration(
+                    color: black00,
+                    border: Border.all(color: black950.withOpacity(0.2)),
+                    borderRadius: BorderRadius.circular(borderRadius300),
+                  ),
+                  child: Text(
+                    formattedDate,
+                    style: smRegular.copyWith(color: black950),
+                  ),
+                ),
+                SizedBox(width: space300),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: padding12,
+                    vertical: space200,
+                  ),
+                  decoration: BoxDecoration(
+                    color: black00,
+                    border: Border.all(color: black950.withOpacity(0.2)),
+                    borderRadius: BorderRadius.circular(borderRadius300),
+                  ),
+                  child: Text(
+                    '${widget.routes.length} Armada',
+                    style: smRegular.copyWith(color: black950),
+                  ),
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: space100),
         ],
       ),
     );
   }
 
-  Widget _filterChips() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.symmetric(
-        horizontal: paddingL,
-        vertical: padding12,
-      ),
-      child: Row(
-        children: [
-          _filterChip(
-            label: selectedDate,
-            icon: Icons.keyboard_arrow_down,
-          ),
-          SizedBox(width: space300),
-          _filterChip(
-            label: selectedTime,
-            icon: Icons.keyboard_arrow_down,
-          ),
-          SizedBox(width: space300),
-          _filterChip(
-            label: selectedClass,
-            icon: null,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _filterChip({
-    required String label,
-    IconData? icon,
-  }) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: padding12,
-        vertical: space200,
-      ),
-      decoration: BoxDecoration(
-        color: black00,
-        border: Border.all(color: black950.withOpacity(0.2)),
-        borderRadius: BorderRadius.circular(borderRadius300),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: smRegular.copyWith(color: black950),
-          ),
-          if (icon != null) ...[
-            SizedBox(width: space100),
-            Icon(icon, size: iconS, color: black950),
+  Widget _emptyState() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(paddingXL),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.directions_bus_outlined,
+              size: 80,
+              color: black700_70,
+            ),
+            SizedBox(height: spacing5),
+            Text(
+              'Tidak Ada Armada Tersedia',
+              style: lgSemiBold.copyWith(color: black950),
+            ),
+            SizedBox(height: space200),
+            Text(
+              'Maaf, tidak ada armada yang tersedia untuk rute dan jadwal yang Anda pilih.',
+              style: smRegular.copyWith(color: black700_70),
+              textAlign: TextAlign.center,
+            ),
           ],
-        ],
+        ),
       ),
     );
   }
 
-  Widget _armadaCard(Map<String, dynamic> armada) {
+  Widget _armadaCard(Route route) {
     final formattedPrice = NumberFormat.currency(
       locale: 'id_ID',
       symbol: 'Rp',
       decimalDigits: 0,
-    ).format(armada['price']);
+    ).format(route.price);
 
     return GestureDetector(
       onTap: () {
-        _showArmadaBottomSheet(context);
+        _showArmadaBottomSheet(context, route);
       },
       child: CustomCardContainer(
         borderRadius: borderRadius300,
@@ -215,6 +210,7 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Bus Info
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -228,12 +224,12 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "${armada['bus_number']} . ${armada['class']}",
+                              "${route.fleetName} • ${route.fleetClass}",
                               style: smMedium.copyWith(color: black950),
                             ),
                             SizedBox(height: space150),
                             Text(
-                              armada['route'],
+                              route.routeName,
                               style: xxsRegular.copyWith(color: black400),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -254,38 +250,42 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
                     color: orange500,
                     borderRadius: BorderRadius.circular(borderRadius200),
                   ),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PilihKursiScreen(),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/car_seat.svg',
+                        colorFilter: ColorFilter.mode(
+                          orange600,
+                          BlendMode.srcIn,
                         ),
-                      );
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/car_seat.svg',
-                          colorFilter: ColorFilter.mode(
-                            orange600,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                        SizedBox(width: space100),
-                        Text(
-                          "Sisa ${armada['seats_available']}",
-                          style: xxsMedium.copyWith(color: orange600),
-                        ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(width: space100),
+                      Text(
+                        "Sisa ${route.chairsAvailable}",
+                        style: xxsMedium.copyWith(color: orange600),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
             SizedBox(height: spacing6),
 
+            // Departure Time
+            Row(
+              children: [
+                Icon(Icons.schedule, color: black700_70, size: iconM),
+                SizedBox(width: space200),
+                Text(
+                  route.fleetDetailTime,
+                  style: xsMedium.copyWith(color: black950),
+                ),
+              ],
+            ),
+            SizedBox(height: spacing4),
+
+            // Locations
             Row(
               children: [
                 Expanded(
@@ -302,12 +302,12 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              armada['departure'],
+                              route.checkpoints.start.agencyName,
                               style: xsMedium.copyWith(color: black950),
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              armada['departure_city'],
+                              route.checkpoints.start.cityName,
                               style: xxsRegular.copyWith(color: black400),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -332,12 +332,12 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              armada['arrival'],
+                              route.checkpoints.destination.agencyName,
                               style: xsMedium.copyWith(color: black950),
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              armada['arrival_city'],
+                              route.checkpoints.destination.cityName,
                               style: xxsRegular.copyWith(color: black400),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -351,6 +351,7 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
             ),
             SizedBox(height: spacing6),
 
+            // Price
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -374,62 +375,50 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
     );
   }
 
-  Future<Map<String, dynamic>?> _showArmadaBottomSheet(BuildContext context) {
-    return showModalBottomSheet<Map<String, dynamic>>(
+  Future<void> _showArmadaBottomSheet(BuildContext context, Route selectedRoute) {
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => _ArmadaBottomSheetContent(),
+      builder: (context) => _ArmadaBottomSheetContent(route: selectedRoute),
     );
   }
 
-  Widget _ArmadaBottomSheetContent() {
+  Widget _ArmadaBottomSheetContent({required Route route}) {
     return StatefulBuilder(
       builder: (context, setState) {
         String searchQuery = "";
-        int? selectedIndex;
 
-        final List<Map<String, dynamic>> armadaSchedules = [
+        // Extract all checkpoints from the route
+        final List<Map<String, dynamic>> allCheckpoints = [
           {
-            "city": "Semarang",
-            "terminal": "Krapyak",
-            "time": "05:30",
+            "agency": route.checkpoints.start,
+            "label": "Keberangkatan",
           },
           {
-            "city": "Semarang",
-            "terminal": "Ungaran",
-            "time": "05:30",
+            "agency": route.checkpoints.destination,
+            "label": "Tujuan",
           },
           {
-            "city": "Semarang",
-            "terminal": "Terminal Bawen",
-            "time": "05:30",
-          },
-          {
-            "city": "Magelang",
-            "terminal": "Muntilan",
-            "time": "05:30",
-          },
-          {
-            "city": "Magelang",
-            "terminal": "Terminal Magelang",
-            "time": "05:30",
+            "agency": route.checkpoints.end,
+            "label": "Akhir",
           },
         ];
 
-        List<Map<String, dynamic>> getFilteredSchedules() {
+        List<Map<String, dynamic>> getFilteredCheckpoints() {
           if (searchQuery.isEmpty) {
-            return armadaSchedules;
+            return allCheckpoints;
           }
-          return armadaSchedules.where((schedule) {
-            final terminal = schedule['terminal'].toString().toLowerCase();
-            final city = schedule['city'].toString().toLowerCase();
+          return allCheckpoints.where((checkpoint) {
+            final agency = checkpoint['agency'] as Destination;
+            final agencyName = agency.agencyName.toLowerCase();
+            final cityName = agency.cityName.toLowerCase();
             final query = searchQuery.toLowerCase();
-            return terminal.contains(query) || city.contains(query);
+            return agencyName.contains(query) || cityName.contains(query);
           }).toList();
         }
 
-        final filteredSchedules = getFilteredSchedules();
+        final filteredCheckpoints = getFilteredCheckpoints();
 
         return Padding(
           padding: EdgeInsets.only(
@@ -437,10 +426,10 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
           ),
           child: Container(
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.8,
+              maxHeight: MediaQuery.of(context).size.height * 0.7,
             ),
             decoration: BoxDecoration(
-              color:black00,
+              color: black00,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(borderRadius500),
                 topRight: Radius.circular(borderRadius500),
@@ -455,7 +444,7 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: black00,
+                    color: black700_70.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(borderRadius100),
                   ),
                 ),
@@ -463,7 +452,7 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: padding16),
                   child: Text(
-                    "Pilih Armada",
+                    "Detail Rute - ${route.fleetClass}",
                     style: mdMedium,
                   ),
                 ),
@@ -476,12 +465,13 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
                         searchQuery = value;
                       });
                     },
+                    style: smRegular,
                     decoration: InputDecoration(
-                      hintText: "Cari Armada",
+                      hintText: "Cari Lokasi",
                       hintStyle: smRegular.copyWith(color: black700_70),
-                      prefixIcon: Icon(Icons.search, size: iconM),
+                      prefixIcon: Icon(Icons.search, size: iconM, color: black700_70),
                       filled: true,
-                      fillColor: black00,
+                      fillColor: black250,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(borderRadius300),
                         borderSide: BorderSide.none,
@@ -495,20 +485,8 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
                 ),
                 SizedBox(height: spacing5),
 
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding16),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Super Executive",
-                      style: smRegular,
-                    ),
-                  ),
-                ),
-                SizedBox(height: spacing4),
-
                 Flexible(
-                  child: filteredSchedules.isEmpty
+                  child: filteredCheckpoints.isEmpty
                       ? Center(
                     child: Padding(
                       padding: EdgeInsets.all(paddingXL),
@@ -523,7 +501,8 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
                           SizedBox(height: padding12),
                           Text(
                             'Tidak ada hasil untuk "$searchQuery"',
-                            style: smMedium),
+                            style: smMedium.copyWith(color: black700_70),
+                          ),
                         ],
                       ),
                     ),
@@ -535,23 +514,31 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
                       right: padding16,
                       bottom: padding20,
                     ),
-                    itemCount: filteredSchedules.length,
+                    itemCount: filteredCheckpoints.length,
                     separatorBuilder: (_, __) => SizedBox(height: spacing4),
                     itemBuilder: (context, index) {
-                      final schedule = filteredSchedules[index];
-                      final originalIndex = armadaSchedules.indexOf(schedule);
-                      final isSelected = selectedIndex == originalIndex;
+                      final checkpoint = filteredCheckpoints[index];
+                      final agency = checkpoint['agency'] as Destination;
+                      final label = checkpoint['label'] as String;
 
-                      return _buildScheduleItem(
+                      return _buildCheckpointItem(
                         context: context,
-                        schedule: schedule,
-                        isSelected: isSelected,
+                        agency: agency,
+                        label: label,
                         onTap: () {
-                          setState(() {
-                            selectedIndex = originalIndex;
-                          });
-
-                          Navigator.pop(context, schedule);
+                          // Navigate to seat selection
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PilihKursiScreen(
+                                // route: route,
+                                // selectedDate: widget.selectedDate,
+                                // departureAgencyId: route.checkpoints.start.agencyId,
+                                // destinationAgencyId: agency.agencyId,
+                              ),
+                            ),
+                          );
                         },
                       );
                     },
@@ -565,10 +552,10 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
     );
   }
 
-  Widget _buildScheduleItem({
+  Widget _buildCheckpointItem({
     required BuildContext context,
-    required Map<String, dynamic> schedule,
-    required bool isSelected,
+    required Destination agency,
+    required String label,
     required VoidCallback onTap,
   }) {
     return InkWell(
@@ -577,18 +564,14 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
       child: Container(
         padding: EdgeInsets.all(padding16),
         decoration: BoxDecoration(
-          color: isSelected ? black250 : black250,
-          border: Border.all(
-            color: isSelected ? black300 : black00!,
-            width: isSelected ? 2 : 1,
-          ),
+          color: black250,
           borderRadius: BorderRadius.circular(borderRadius300),
         ),
         child: Row(
           children: [
             Icon(
-              isSelected ? Icons.check_circle : Icons.location_on_outlined,
-              color: isSelected ? black00 : black700_70,
+              Icons.location_on_outlined,
+              color: navy400,
               size: iconL,
             ),
             SizedBox(width: spacing4),
@@ -596,22 +579,41 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: space200,
+                          vertical: space100,
+                        ),
+                        decoration: BoxDecoration(
+                          color: navy600.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(borderRadius200),
+                        ),
+                        child: Text(
+                          label,
+                          style: xxsRegular.copyWith(color: navy600),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: space150),
                   Text(
-                    schedule['terminal'],
-                    style: smRegular,
+                    agency.agencyName,
+                    style: smSemiBold.copyWith(color: black950),
                   ),
                   SizedBox(height: space100),
                   Text(
-                    schedule['city'],
-                    style: smSemiBold,
+                    agency.cityName,
+                    style: xsRegular.copyWith(color: black700_70),
                   ),
                 ],
               ),
             ),
-
-            Text(
-              schedule['time'],
-              style: smRegular,
+            Icon(
+              Icons.arrow_forward_ios,
+              size: iconS,
+              color: black700_70,
             ),
           ],
         ),
