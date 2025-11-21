@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shantika_cubit/features/home/books_ticket/kursi_anda_screen.dart';
 import 'package:shantika_cubit/ui/shared_widget/custom_button.dart';
 import 'package:shantika_cubit/ui/shared_widget/custom_card_container.dart';
 
@@ -216,11 +217,21 @@ class _DetailPesananScreenState extends State<DetailPesananScreen> {
                     children: [
                       Text('Jumlah Seat (2)', style: smMedium),
                       Spacer(),
-                      Icon(
-                        isSeatExpanded
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: black700_70,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => KursiAndaScreen(),
+                            ),
+                          );
+                        },
+                        child: Icon(
+                          isSeatExpanded
+                              ? Icons.open_in_new
+                              : Icons.open_in_new,
+                          color: primaryColor,
+                        ),
                       ),
                     ],
                   ),

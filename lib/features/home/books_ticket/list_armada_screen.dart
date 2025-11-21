@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:shantika_cubit/features/home/books_ticket/pilh_kursi_bawah_screen.dart';
+import 'package:shantika_cubit/features/home/books_ticket/pilh_kursi_screen.dart';
 import '../../../ui/color.dart';
 import '../../../ui/dimension.dart';
 import '../../../ui/typography.dart';
