@@ -65,7 +65,7 @@ class _KursiAndaScreenState extends State<KursiAndaScreen> {
           icon: Icon(Icons.arrow_back, color: black950),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Pilih Kursi', style: xlMedium),
+        title: Text('Kursi Anda', style: xlMedium),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: spacing4),
@@ -137,7 +137,7 @@ class _KursiAndaScreenState extends State<KursiAndaScreen> {
               ),
             ),
           ),
-          _buildPriceDetail(totalPrice, vipCount, regularCount),
+          // _buildPriceDetail(totalPrice, vipCount, regularCount),
           Container(
             padding: EdgeInsets.all(spacing4),
             color: black00,

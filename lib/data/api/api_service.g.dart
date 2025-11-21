@@ -927,6 +927,34 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<HttpResponse<AgencyByIdModel>> getAgenciesById(String cityId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'city_id': cityId};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<HttpResponse<AgencyByIdModel>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/agencies',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AgencyByIdModel _value;
+    try {
+      _value = AgencyByIdModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
   Future<HttpResponse<CityDepatureModel>> getCityDepartures() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1032,6 +1060,47 @@ class _ApiService implements ApiService {
     late FleetDetailResponse _value;
     try {
       _value = FleetDetailResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<FleetAvailableModel>> getAvailableFleetClasses({
+    required int agencyId,
+    required int timeClassificationId,
+    required String date,
+    required int agencyDepartureId,
+    int? destinationCityId,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'agency_id': agencyId,
+      r'time_classification_id': timeClassificationId,
+      r'date': date,
+      r'agency_departure_id': agencyDepartureId,
+      r'destination_city_id': destinationCityId,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<HttpResponse<FleetAvailableModel>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/fleet_classes/available',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late FleetAvailableModel _value;
+    try {
+      _value = FleetAvailableModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

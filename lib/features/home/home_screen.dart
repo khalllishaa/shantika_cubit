@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shantika_cubit/features/home/article/artikel_screen.dart';
 import 'package:shantika_cubit/features/home/article/detail_artikel_screen.dart';
+import 'package:shantika_cubit/features/home/books_ticket/list_armada_screen.dart';
 import 'package:shantika_cubit/features/home/books_ticket/pesan_tiket_screen.dart';
 import 'package:shantika_cubit/features/home/cities/cubit/all_cities_cubit.dart';
 import 'package:shantika_cubit/features/home/cities/list_cities_screen.dart';
@@ -416,6 +417,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => InfoFleetClasses()),
+                    );
+                      break;
+
+                    case 3:
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ListArmadaScreen()),
                     );
                       break;
 

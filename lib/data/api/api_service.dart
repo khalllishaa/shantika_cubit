@@ -5,10 +5,12 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:shantika_cubit/model/about_us_model.dart';
+import 'package:shantika_cubit/model/agency_by_id_model.dart';
 import 'package:shantika_cubit/model/agency_model.dart';
 import 'package:shantika_cubit/model/all_cities_model.dart';
 import 'package:shantika_cubit/model/city_depature_model.dart';
 import 'package:shantika_cubit/model/detail_artikel_model.dart';
+import 'package:shantika_cubit/model/fleet_available_model.dart';
 import 'package:shantika_cubit/model/fleet_classes_model.dart';
 import 'package:shantika_cubit/model/fleet_detail_model.dart';
 import 'package:shantika_cubit/model/home_model.dart';
@@ -245,10 +247,10 @@ abstract class ApiService {
       @Query("city_id") String cityId,
       );
 
-  // @GET("/agencies")
-  // Future<HttpResponse<AgencyModel>> getAgencies(
-  //     @Query("city_id") String cityId,
-  //     );
+  @GET("/agencies")
+  Future<HttpResponse<AgencyByIdModel>> getAgenciesById(
+      @Query("city_id") String cityId,
+      );
 
   /// Get City Departure
   @GET("/city_departure")
@@ -267,6 +269,16 @@ abstract class ApiService {
   Future<HttpResponse<FleetDetailResponse>> getInfoFleet(
     @Query("fleet_class_id") int fleetClassId,
   );
+
+  /// Get Fleet Available)
+  @GET('/fleet_classes/available')
+  Future<HttpResponse<FleetAvailableModel>> getAvailableFleetClasses({
+    @Query('agency_id') required int agencyId,
+    @Query('time_classification_id') required int timeClassificationId,
+    @Query('date') required String date,
+    @Query('agency_departure_id') required int agencyDepartureId,
+    @Query('destination_city_id') int? destinationCityId,
+  });
 
   /// Get Social Media
   @GET("/social_media")

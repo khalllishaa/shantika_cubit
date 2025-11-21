@@ -1,7 +1,7 @@
 import 'package:shantika_cubit/model/fleet_classes_model.dart';
 import 'package:shantika_cubit/model/pesan_tiket_model.dart';
 import 'package:shantika_cubit/model/city_depature_model.dart' as departure;
-import 'package:shantika_cubit/model/agency_model.dart';
+import 'package:shantika_cubit/model/agency_by_id_model.dart';
 import 'package:shantika_cubit/model/time_model.dart';
 
 abstract class PesanTiketState {}
@@ -13,15 +13,16 @@ class PesanTiketLoading extends PesanTiketState {}
 class PesanTiketLoaded extends PesanTiketState {
   final List<City> cities;
   final List<departure.City> departureCities;
-  final List<AgencyCity> agencies;
+  final List<Agency> agencies;
   final List<Time> timeSlots;
   final List<FleetClass> fleetClasses;
   final departure.City? selectedDepartureCity;
   final City? selectedDestinationCity;
-  final AgencyCity? selectedAgency;
+  final Agency? selectedAgency;
   final DateTime? selectedDate;
   final Time? selectedTime;
   final FleetClass? selectedClass;
+  final bool isLoadingFleetClasses;
 
   PesanTiketLoaded({
     required this.cities,
@@ -35,21 +36,24 @@ class PesanTiketLoaded extends PesanTiketState {
     this.selectedDate,
     this.selectedTime,
     this.selectedClass,
+    this.isLoadingFleetClasses = false,
   });
 
   PesanTiketLoaded copyWith({
     List<City>? cities,
     List<departure.City>? departureCities,
-    List<AgencyCity>? agencies,
+    List<Agency>? agencies,
     List<Time>? timeSlots,
     List<FleetClass>? fleetClasses,
     departure.City? selectedDepartureCity,
     City? selectedDestinationCity,
-    AgencyCity? selectedAgency,
+    Agency? selectedAgency,
     DateTime? selectedDate,
     Time? selectedTime,
     FleetClass? selectedClass,
+    bool? isLoadingFleetClasses,
     bool clearAgency = false,
+    bool clearClass = false,
   }) {
     return PesanTiketLoaded(
       cities: cities ?? this.cities,
@@ -62,7 +66,8 @@ class PesanTiketLoaded extends PesanTiketState {
       selectedAgency: clearAgency ? null : (selectedAgency ?? this.selectedAgency),
       selectedDate: selectedDate ?? this.selectedDate,
       selectedTime: selectedTime ?? this.selectedTime,
-      selectedClass: selectedClass ?? this.selectedClass,
+      selectedClass: clearClass ? null : (selectedClass ?? this.selectedClass),
+      isLoadingFleetClasses: isLoadingFleetClasses ?? this.isLoadingFleetClasses,
     );
   }
 

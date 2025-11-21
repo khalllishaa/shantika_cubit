@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:shantika_cubit/features/home/books_ticket/cubit/pesan_tiket_cubit.dart';
 import 'package:shantika_cubit/features/home/books_ticket/cubit/pesan_tiket_state.dart';
 import 'package:shantika_cubit/features/home/books_ticket/list_armada_screen.dart';
+import 'package:shantika_cubit/model/agency_by_id_model.dart';
 import 'package:shantika_cubit/model/city_depature_model.dart' as departure;
 import 'package:shantika_cubit/model/pesan_tiket_model.dart';
 import 'package:shantika_cubit/model/agency_model.dart';
@@ -453,7 +454,7 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (modalContext) {
-        List<AgencyCity> filteredItems = state.agencies;
+        List<Agency> filteredItems = state.agencies;
 
         return StatefulBuilder(
           builder: (context, setModalState) => Container(
@@ -498,7 +499,7 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
                           filteredItems = query.isEmpty
                               ? state.agencies
                               : state.agencies
-                              .where((item) => item.name
+                              .where((item) => item.agencyName
                               .toLowerCase()
                               .contains(query.toLowerCase()))
                               .toList();
@@ -528,7 +529,45 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
                 ),
                 SizedBox(height: spacing4),
                 Expanded(
-                  child: ListView.builder(
+                  child: state.agencies.isEmpty // ✅ TAMBAHKAN EMPTY STATE
+                      ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          "assets/icons/ic_destination.svg",
+                          width: 64,
+                          height: 64,
+                          colorFilter: ColorFilter.mode(
+                            black700_70.withOpacity(0.3),
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        SizedBox(height: spacing4),
+                        Text(
+                          'Belum Ada Agen',
+                          style: lgSemiBold.copyWith(color: black950),
+                        ),
+                        SizedBox(height: spacing2),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: padding20 * 2),
+                          child: Text(
+                            'Pilih kota keberangkatan terlebih dahulu',
+                            textAlign: TextAlign.center,
+                            style: smRegular.copyWith(color: black700_70),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                      : filteredItems.isEmpty
+                      ? Center(
+                    child: Text(
+                      'Tidak ada hasil pencarian',
+                      style: smRegular.copyWith(color: black700_70),
+                    ),
+                  )
+                      : ListView.builder(
                     itemCount: filteredItems.length,
                     padding: EdgeInsets.symmetric(horizontal: padding20),
                     itemBuilder: (context, index) {
@@ -554,171 +593,41 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: Text(
-                                  item.name,
-                                  style: smMedium.copyWith(
-                                    color:
-                                    isSelected ? black00 : black950,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showFleetClassBottomSheet(BuildContext context) {
-    final cubit = context.read<PesanTiketCubit>();
-    final state = cubit.state;
-
-    if (state is! PesanTiketLoaded) return;
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (modalContext) {
-        List<dynamic> filteredItems = state.fleetClasses;
-
-        return StatefulBuilder(
-          builder: (context, setModalState) => Container(
-            height: MediaQuery.of(context).size.height * 0.65,
-            decoration: BoxDecoration(
-              color: black00,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(borderRadius500),
-              ),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: padding12),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: black700_70.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(borderRadius500),
-                  ),
-                ),
-                SizedBox(height: spacing4),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding20),
-                  child: Text("Pilih Kelas Armada", style: lgSemiBold),
-                ),
-                SizedBox(height: spacing5),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding20),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: black00,
-                      borderRadius: BorderRadius.circular(borderRadius350),
-                    ),
-                    child: TextField(
-                      onChanged: (query) {
-                        setModalState(() {
-                          filteredItems = query.isEmpty
-                              ? state.fleetClasses
-                              : state.fleetClasses
-                              .where((item) => item.name
-                              .toLowerCase()
-                              .contains(query.toLowerCase()))
-                              .toList();
-                        });
-                      },
-                      style: smRegular,
-                      decoration: InputDecoration(
-                        hintText: 'Cari Kelas',
-                        hintStyle: smRegular.copyWith(color: black700_70),
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.all(padding12),
-                          child: SvgPicture.asset(
-                            "assets/icons/ic_search.svg",
-                            width: 16,
-                            height: 16,
-                            colorFilter: ColorFilter.mode(
-                              black700_70,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: paddingM,
-                          vertical: padding12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: spacing4),
-
-                Expanded(
-                  child: filteredItems.isEmpty
-                      ? Center(
-                    child: Text(
-                      'Tidak ada hasil',
-                      style: smRegular.copyWith(color: black700_70),
-                    ),
-                  )
-                      : ListView.builder(
-                    itemCount: filteredItems.length,
-                    padding: EdgeInsets.symmetric(horizontal: padding20),
-                    itemBuilder: (context, index) {
-                      final item = filteredItems[index];
-                      final isSelected = item.id == state.selectedClass?.id;
-
-                      return InkWell(
-                        onTap: () {
-                          Navigator.pop(modalContext);
-                          cubit.selectClass(item);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: paddingM,
-                            vertical: padding16,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? navy600
-                                : Colors.transparent,
-                            borderRadius:
-                            BorderRadius.circular(borderRadius300),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
                                 child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      item.name,
+                                      item.agencyName, // ✅ GANTI DARI .name
                                       style: smMedium.copyWith(
-                                        color: isSelected
-                                            ? black00
-                                            : black950,
+                                        color: isSelected ? black00 : black950,
                                       ),
                                     ),
-                                    SizedBox(height: space100),
-                                    Text(
-                                      '${item.seatCapacity} kursi',
-                                      style: xsRegular.copyWith(
-                                        color: isSelected
-                                            ? black00.withOpacity(0.8)
-                                            : black700_70,
+                                    // ✅ TAMBAHKAN INFO TAMBAHAN
+                                    if (item.agencyAddress.isNotEmpty) ...[
+                                      SizedBox(height: space100),
+                                      Text(
+                                        '${item.cityName} - ${item.agencyAddress}',
+                                        style: xsRegular.copyWith(
+                                          color: isSelected
+                                              ? black00.withOpacity(0.8)
+                                              : black700_70,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                    ),
+                                    ],
+                                    // ✅ TAMBAHKAN INFO JADWAL
+                                    if (item.agencyDepartureTimes.isNotEmpty) ...[
+                                      SizedBox(height: space100),
+                                      Text(
+                                        '${item.agencyDepartureTimes.length} jadwal tersedia',
+                                        style: xsRegular.copyWith(
+                                          color: isSelected
+                                              ? black00.withOpacity(0.8)
+                                              : black700_70,
+                                        ),
+                                      ),
+                                    ],
                                   ],
                                 ),
                               ),
@@ -729,7 +638,6 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
                     },
                   ),
                 ),
-                SizedBox(height: spacing5),
               ],
             ),
           ),
@@ -737,6 +645,282 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
       },
     );
   }
+
+  void _showFleetClassBottomSheet(BuildContext context) async {
+    final cubit = context.read<PesanTiketCubit>();
+    final state = cubit.state;
+
+    if (state is! PesanTiketLoaded) return;
+
+    if (state.selectedAgency == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pilih Agen Keberangkatan terlebih dahulu'),
+          backgroundColor: red100,
+        ),
+      );
+      return;
+    }
+
+    if (state.selectedTime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pilih Waktu Berangkat terlebih dahulu'),
+          backgroundColor: red100,
+        ),
+      );
+      return;
+    }
+
+    if (state.selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pilih Tanggal Berangkat terlebih dahulu'),
+          backgroundColor: red100,
+        ),
+      );
+      return;
+    }
+
+    if (state.selectedDepartureCity == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pilih Kota Keberangkatan terlebih dahulu'),
+          backgroundColor: red100,
+        ),
+      );
+      return;
+    }
+
+    await cubit.loadAvailableFleetClasses();
+
+    if (!context.mounted) return;
+
+    final updatedState = cubit.state;
+    if (updatedState is! PesanTiketLoaded) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (modalContext) {
+        return BlocBuilder<PesanTiketCubit, PesanTiketState>(
+          builder: (context, state) {
+            if (state is! PesanTiketLoaded) {
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.65,
+                decoration: BoxDecoration(
+                  color: black00,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(borderRadius500),
+                  ),
+                ),
+                child: Center(
+                  child: CircularProgressIndicator(color: primaryColor),
+                ),
+              );
+            }
+
+            List<dynamic> filteredItems = state.fleetClasses;
+
+            return StatefulBuilder(
+              builder: (context, setModalState) => Container(
+                height: MediaQuery.of(context).size.height * 0.65,
+                decoration: BoxDecoration(
+                  color: black00,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(borderRadius500),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: padding12),
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: black700_70.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(borderRadius500),
+                      ),
+                    ),
+                    SizedBox(height: spacing4),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: padding20),
+                      child: Text("Pilih Kelas Armada", style: lgSemiBold),
+                    ),
+                    SizedBox(height: spacing5),
+
+                    if (!state.isLoadingFleetClasses && state.fleetClasses.isNotEmpty)
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: padding20),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: black00,
+                            borderRadius: BorderRadius.circular(borderRadius350),
+                          ),
+                          child: TextField(
+                            onChanged: (query) {
+                              setModalState(() {
+                                filteredItems = query.isEmpty
+                                    ? state.fleetClasses
+                                    : state.fleetClasses
+                                    .where((item) => item.name
+                                    .toLowerCase()
+                                    .contains(query.toLowerCase()))
+                                    .toList();
+                              });
+                            },
+                            style: smRegular,
+                            decoration: InputDecoration(
+                              hintText: 'Cari Kelas',
+                              hintStyle: smRegular.copyWith(color: black700_70),
+                              prefixIcon: Padding(
+                                padding: EdgeInsets.all(padding12),
+                                child: SvgPicture.asset(
+                                  "assets/icons/ic_search.svg",
+                                  width: 16,
+                                  height: 16,
+                                  colorFilter: ColorFilter.mode(
+                                    black700_70,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: paddingM,
+                                vertical: padding12,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    if (!state.isLoadingFleetClasses && state.fleetClasses.isNotEmpty)
+                      SizedBox(height: spacing4),
+
+                    Expanded(
+                      child: state.isLoadingFleetClasses
+                          ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(color: primaryColor),
+                            SizedBox(height: spacing4),
+                            Text(
+                              'Memuat armada tersedia...',
+                              style: smRegular.copyWith(color: black700_70),
+                            ),
+                          ],
+                        ),
+                      )
+                          : state.fleetClasses.isEmpty
+                          ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              "assets/icons/ic_fleet.svg",
+                              width: 64,
+                              height: 64,
+                              colorFilter: ColorFilter.mode(
+                                black700_70.withOpacity(0.3),
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                            SizedBox(height: spacing4),
+                            Text(
+                              'Armada Tidak Tersedia',
+                              style: lgSemiBold.copyWith(color: black950),
+                            ),
+                            SizedBox(height: spacing2),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: padding20 * 2),
+                              child: Text(
+                                'Maaf, tidak ada armada yang tersedia untuk rute dan waktu yang Anda pilih',
+                                textAlign: TextAlign.center,
+                                style: smRegular.copyWith(color: black700_70),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                          : filteredItems.isEmpty
+                          ? Center(
+                        child: Text(
+                          'Tidak ada hasil pencarian',
+                          style: smRegular.copyWith(color: black700_70),
+                        ),
+                      )
+                          : ListView.builder(
+                        itemCount: filteredItems.length,
+                        padding: EdgeInsets.symmetric(horizontal: padding20),
+                        itemBuilder: (context, index) {
+                          final item = filteredItems[index];
+                          final isSelected = item.id == state.selectedClass?.id;
+
+                          return InkWell(
+                            onTap: () {
+                              Navigator.pop(modalContext);
+                              cubit.selectClass(item);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: paddingM,
+                                vertical: padding16,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? navy600
+                                    : Colors.transparent,
+                                borderRadius:
+                                BorderRadius.circular(borderRadius300),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item.name,
+                                          style: smMedium.copyWith(
+                                            color: isSelected
+                                                ? black00
+                                                : black950,
+                                          ),
+                                        ),
+                                        SizedBox(height: space100),
+                                        Text(
+                                          '${item.seatCapacity} kursi',
+                                          style: xsRegular.copyWith(
+                                            color: isSelected
+                                                ? black00.withOpacity(0.8)
+                                                : black700_70,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(height: spacing5),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -787,7 +971,7 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
                         _buildField(
                           label: "Agen Keberangkatan",
                           iconPath: "assets/icons/ic_destination.svg",
-                          text: state.selectedAgency?.name ?? "Pilih Agen",
+                          text: state.selectedAgency?.agencyName ?? "Pilih Agen",
                           onTap: () => _showAgencyBottomSheet(context),
                         ),
                         SizedBox(height: spacing6),
