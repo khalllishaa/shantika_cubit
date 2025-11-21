@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:shantika_cubit/features/home/books_ticket/cubit/detail_pesanan_screen.dart';
-import 'package:shantika_cubit/ui/shared_widget/custom_button.dart';
-import 'package:shantika_cubit/ui/typography.dart';
+
 import '../../../ui/color.dart';
 import '../../../ui/dimension.dart';
+import '../../../ui/shared_widget/custom_button.dart';
+import '../../../ui/typography.dart';
 
-class PilihKursiScreen extends StatefulWidget {
-  const PilihKursiScreen({Key? key}) : super(key: key);
+class KursiAndaScreen extends StatefulWidget {
+  const KursiAndaScreen({super.key});
 
   @override
-  State<PilihKursiScreen> createState() => _PilihKursiScreenState();
+  State<KursiAndaScreen> createState() => _KursiAndaScreenState();
 }
 
-class _PilihKursiScreenState extends State<PilihKursiScreen> {
+class _KursiAndaScreenState extends State<KursiAndaScreen> {
+
   bool isLantaiBawah = true;
   bool showDetail = false;
 
@@ -257,17 +258,7 @@ class _PilihKursiScreenState extends State<PilihKursiScreen> {
             borderRadius: borderRadius500,
             backgroundColor: primaryColor,
             padding: EdgeInsets.symmetric(vertical: padding16),
-            onPressed: () {
-              Navigator.pop(context);
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetailPesananScreen(pesananData: {},
-                  ),
-                ),
-              );
-            },
+            onPressed: () {},
             child: Text(
               'Pesan',
               style: mdSemiBold.copyWith(color: black00),
@@ -442,7 +433,7 @@ class _PilihKursiScreenState extends State<PilihKursiScreen> {
                 child: Text('Pintu', style: xsMedium.copyWith(color: black00)),
               ),
               Spacer(),
-              SvgPicture.asset('assets/icons/steering.svg', width: 24),
+              SvgPicture.asset('assets/icons/steering.svg', width: iconXL),
             ],
           ),
           SizedBox(height: spacing4),
