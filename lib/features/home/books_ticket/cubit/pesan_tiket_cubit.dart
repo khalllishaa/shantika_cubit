@@ -34,7 +34,7 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
         destinationAgencies: [],
         timeSlots: timeSlots,
         fleetClasses: fleetClasses,
-        availableFleetClasses: [], // ✅ Kosong di awal
+        availableFleetClasses: [],
       ));
     } catch (e) {
       print('Error loading initial data: $e');
@@ -50,7 +50,7 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
       selectedDepartureCity: city,
       selectedAgency: null,
       agencies: [],
-      clearAvailableFleets: true, // ✅ Reset available fleets
+      clearAvailableFleets: true,
     ));
 
     try {
@@ -84,7 +84,7 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
       final currentState = state as PesanTiketLoaded;
       emit(currentState.copyWith(
         selectedAgency: agencyCity,
-        clearAvailableFleets: true, // ✅ Reset saat ganti agency
+        clearAvailableFleets: true,
       ));
     }
   }
@@ -94,7 +94,7 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
       final currentState = state as PesanTiketLoaded;
       emit(currentState.copyWith(
         selectedDestinationAgency: agency,
-        clearAvailableFleets: true, // ✅ Reset saat ganti tujuan
+        clearAvailableFleets: true,
       ));
     }
   }
@@ -104,7 +104,7 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
       final currentState = state as PesanTiketLoaded;
       emit(currentState.copyWith(
         selectedDate: date,
-        clearAvailableFleets: true, // ✅ Reset saat ganti tanggal
+        clearAvailableFleets: true,
       ));
     }
   }
@@ -114,7 +114,7 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
       final currentState = state as PesanTiketLoaded;
       emit(currentState.copyWith(
         selectedTime: time,
-        clearAvailableFleets: true, // ✅ Reset saat ganti waktu
+        clearAvailableFleets: true,
       ));
     }
   }
@@ -126,12 +126,9 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
     }
   }
 
-// ✅ Method baru: Load available fleet classes berdasarkan form
   Future<void> loadAvailableFleetClasses() async {
     if (state is! PesanTiketLoaded) return;
     final currentState = state as PesanTiketLoaded;
-
-    // Validasi: semua field kecuali class harus terisi
     if (currentState.selectedAgency == null ||
         currentState.selectedDestinationAgency == null ||
         currentState.selectedDate == null ||
@@ -150,15 +147,13 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
         timeClassificationId: currentState.selectedTime!.id,
         date: dateString,
         agencyDepartureId: currentState.selectedAgency!.id,
-        // ✅ Hapus destinationCityId karena field tidak ada di model
-        // destinationCityId: currentState.selectedDestinationAgency!.cityId,
       );
 
       print('Available fleets loaded: ${availableFleets.length}');
 
       emit(currentState.copyWith(
         availableFleetClasses: availableFleets,
-        selectedClass: null, // Reset pilihan class
+        selectedClass: null,
       ));
     } catch (e) {
       print('Error loading available fleet classes: $e');
@@ -166,30 +161,6 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
       emit(currentState.copyWith(availableFleetClasses: []));
     }
   }
-
-  // Future<void> searchTickets() async {
-  //   if (state is! PesanTiketLoaded) return;
-  //   final currentState = state as PesanTiketLoaded;
-  //
-  //   if (!currentState.isValid) {
-  //     emit(PesanTiketError('Mohon lengkapi semua data'));
-  //     emit(currentState);
-  //     return;
-  //   }
-  //
-  //   try {
-  //     print('Searching tickets...');
-  //     print('Departure City: ${currentState.selectedDepartureCity?.name}');
-  //     print('Agency: ${currentState.selectedAgency?.name}');
-  //     print('Destination Agency: ${currentState.selectedDestinationAgency?.agencyName}');
-  //     print('Date: ${currentState.selectedDate}');
-  //     print('Time: ${currentState.selectedTime?.name} (${currentState.selectedTime?.timeStart} - ${currentState.selectedTime?.timeEnd})');
-  //     print('Class: ${currentState.selectedClass?.name}');
-  //   } catch (e) {
-  //     emit(PesanTiketError('Terjadi kesalahan: ${e.toString()}'));
-  //     emit(currentState);
-  //   }
-  // }
 
   Future<List<Route>?> searchTickets() async {
     if (state is! PesanTiketLoaded) return null;
@@ -202,8 +173,6 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
     }
 
     try {
-      emit(PesanTiketLoading());
-
       print('Searching tickets...');
       print('Departure City: ${currentState.selectedDepartureCity?.name}');
       print('Agency Departure: ${currentState.selectedAgency?.name}');
@@ -224,15 +193,65 @@ class PesanTiketCubit extends Cubit<PesanTiketState> {
 
       print('Routes found: ${routes.length}');
 
-      // Kembalikan state loaded
-      emit(currentState);
-
       return routes;
     } catch (e) {
       print('Error searching tickets: $e');
       emit(PesanTiketError('Gagal mencari tiket: ${e.toString()}'));
       emit(currentState);
       return null;
+    }
+  }
+
+  Future<void> getSeatLayout({
+    required int fleetRouteId,
+    required int timeClassificationId,
+    required String date,
+    required int departureAgencyId,
+    required int destinationAgencyId,
+  }) async {
+    try {
+      emit(SeatLayoutLoading());
+
+      print('Fetching seat layout...');
+      final seatLayout = await _repository.getSeatLayout(
+        fleetRouteId: fleetRouteId,
+        timeClassificationId: timeClassificationId,
+        date: date,
+        departureAgencyId: departureAgencyId,
+        destinationAgencyId: destinationAgencyId,
+      );
+
+      print('Seat layout loaded successfully');
+      emit(SeatLayoutLoaded(
+        layoutBawah: seatLayout.data,
+        layoutAtas: seatLayout.data,
+      ));
+
+    } catch (e) {
+      print('Error fetching seat layout: $e');
+      emit(SeatLayoutError('Gagal memuat layout kursi: ${e.toString()}'));
+    }
+  }
+
+  Future<void> loadSampleSeatLayout() async {
+    try {
+      emit(SeatLayoutLoading());
+      final seatLayout = await _repository.getSeatLayout(
+        fleetRouteId: 1,
+        timeClassificationId: 1,
+        date: '2024-01-01',
+        departureAgencyId: 1,
+        destinationAgencyId: 2,
+      );
+
+      emit(SeatLayoutLoaded(
+        layoutBawah: seatLayout.data,
+        layoutAtas: seatLayout.data,
+      ));
+
+    } catch (e) {
+      print('Error loading sample seat layout: $e');
+      emit(SeatLayoutError('Gagal memuat layout kursi: ${e.toString()}'));
     }
   }
 }

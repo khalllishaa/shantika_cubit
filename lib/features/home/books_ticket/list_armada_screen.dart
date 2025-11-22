@@ -13,6 +13,7 @@ class ListArmadaScreen extends StatefulWidget {
   final DateTime selectedDate;
   final String departureCity;
   final String destinationAgency;
+  final int timeClassificationId;
 
   const ListArmadaScreen({
     super.key,
@@ -20,6 +21,7 @@ class ListArmadaScreen extends StatefulWidget {
     required this.selectedDate,
     required this.departureCity,
     required this.destinationAgency,
+    required this.timeClassificationId,
   });
 
   @override
@@ -155,6 +157,30 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
                     style: smRegular.copyWith(color: black950),
                   ),
                 ),
+                SizedBox(width: space300),
+                if (widget.routes.isNotEmpty)
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: padding12,
+                      vertical: space200,
+                    ),
+                    decoration: BoxDecoration(
+                      color: black00,
+                      border: Border.all(color: black950.withOpacity(0.2)),
+                      borderRadius: BorderRadius.circular(borderRadius300),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.schedule, color: black700_70, size: iconS),
+                        SizedBox(width: space150),
+                        Text(
+                          widget.routes.first.fleetDetailTime,
+                          style: smRegular.copyWith(color: black950),
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             ),
           ),
@@ -202,7 +228,18 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
 
     return GestureDetector(
       onTap: () {
-        _showArmadaBottomSheet(context, route);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PilihKursiScreen(
+              route: route,
+              selectedDate: widget.selectedDate,
+              departureAgencyId: route.checkpoints.start.agencyId,
+              destinationAgencyId: route.checkpoints.destination.agencyId,
+              timeClassificationId: widget.timeClassificationId,
+            ),
+          ),
+        );
       },
       child: CustomCardContainer(
         borderRadius: borderRadius300,
@@ -271,19 +308,6 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
               ],
             ),
             SizedBox(height: spacing6),
-
-            // Departure Time
-            Row(
-              children: [
-                Icon(Icons.schedule, color: black700_70, size: iconM),
-                SizedBox(width: space200),
-                Text(
-                  route.fleetDetailTime,
-                  style: xsMedium.copyWith(color: black950),
-                ),
-              ],
-            ),
-            SizedBox(height: spacing4),
 
             // Locations
             Row(
@@ -375,249 +399,247 @@ class _ListArmadaScreenState extends State<ListArmadaScreen> {
     );
   }
 
-  Future<void> _showArmadaBottomSheet(BuildContext context, Route selectedRoute) {
-    return showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _ArmadaBottomSheetContent(route: selectedRoute),
-    );
-  }
+// Future<void> _showArmadaBottomSheet(BuildContext context, Route selectedRoute) {
+//   return showModalBottomSheet(
+//     context: context,
+//     isScrollControlled: true,
+//     backgroundColor: Colors.transparent,
+//     builder: (context) => _ArmadaBottomSheetContent(route: selectedRoute),
+//   );
+// }
 
-  Widget _ArmadaBottomSheetContent({required Route route}) {
-    return StatefulBuilder(
-      builder: (context, setState) {
-        String searchQuery = "";
+// Widget _ArmadaBottomSheetContent({required Route route}) {
+//   return StatefulBuilder(
+//     builder: (context, setState) {
+//       String searchQuery = "";
+//
+//       final List<Map<String, dynamic>> allCheckpoints = [
+//         {
+//           "agency": route.checkpoints.start,
+//           "label": "Keberangkatan",
+//         },
+//         {
+//           "agency": route.checkpoints.destination,
+//           "label": "Tujuan",
+//         },
+//         {
+//           "agency": route.checkpoints.end,
+//           "label": "Akhir",
+//         },
+//       ];
+//
+//       List<Map<String, dynamic>> getFilteredCheckpoints() {
+//         if (searchQuery.isEmpty) {
+//           return allCheckpoints;
+//         }
+//         return allCheckpoints.where((checkpoint) {
+//           final agency = checkpoint['agency'] as Destination;
+//           final agencyName = agency.agencyName.toLowerCase();
+//           final cityName = agency.cityName.toLowerCase();
+//           final query = searchQuery.toLowerCase();
+//           return agencyName.contains(query) || cityName.contains(query);
+//         }).toList();
+//       }
+//
+//       final filteredCheckpoints = getFilteredCheckpoints();
+//
+//       return Padding(
+//         padding: EdgeInsets.only(
+//           bottom: MediaQuery.of(context).viewInsets.bottom,
+//         ),
+//         child: Container(
+//           constraints: BoxConstraints(
+//             maxHeight: MediaQuery.of(context).size.height * 0.7,
+//           ),
+//           decoration: BoxDecoration(
+//             color: black00,
+//             borderRadius: BorderRadius.only(
+//               topLeft: Radius.circular(borderRadius500),
+//               topRight: Radius.circular(borderRadius500),
+//             ),
+//           ),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               Container(
+//                 margin: EdgeInsets.only(top: padding12),
+//                 width: 40,
+//                 height: 4,
+//                 decoration: BoxDecoration(
+//                   color: black700_70.withOpacity(0.3),
+//                   borderRadius: BorderRadius.circular(borderRadius100),
+//                 ),
+//               ),
+//               SizedBox(height: spacing5),
+//               Padding(
+//                 padding: EdgeInsets.symmetric(horizontal: padding16),
+//                 child: Text(
+//                   "Detail Rute - ${route.fleetClass}",
+//                   style: mdMedium,
+//                 ),
+//               ),
+//               SizedBox(height: spacing5),
+//               Padding(
+//                 padding: EdgeInsets.symmetric(horizontal: padding16),
+//                 child: TextField(
+//                   onChanged: (value) {
+//                     setState(() {
+//                       searchQuery = value;
+//                     });
+//                   },
+//                   style: smRegular,
+//                   decoration: InputDecoration(
+//                     hintText: "Cari Lokasi",
+//                     hintStyle: smRegular.copyWith(color: black700_70),
+//                     prefixIcon: Icon(Icons.search, size: iconM, color: black700_70),
+//                     filled: true,
+//                     fillColor: black250,
+//                     border: OutlineInputBorder(
+//                       borderRadius: BorderRadius.circular(borderRadius300),
+//                       borderSide: BorderSide.none,
+//                     ),
+//                     contentPadding: EdgeInsets.symmetric(
+//                       horizontal: padding16,
+//                       vertical: padding12,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               SizedBox(height: spacing5),
+//
+//               Flexible(
+//                 child: filteredCheckpoints.isEmpty
+//                     ? Center(
+//                   child: Padding(
+//                     padding: EdgeInsets.all(paddingXL),
+//                     child: Column(
+//                       mainAxisSize: MainAxisSize.min,
+//                       children: [
+//                         Icon(
+//                           Icons.search_off,
+//                           size: 48,
+//                           color: black700_70,
+//                         ),
+//                         SizedBox(height: padding12),
+//                         Text(
+//                           'Tidak ada hasil untuk "$searchQuery"',
+//                           style: smMedium.copyWith(color: black700_70),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 )
+//                     : ListView.separated(
+//                   shrinkWrap: true,
+//                   padding: EdgeInsets.only(
+//                     left: padding16,
+//                     right: padding16,
+//                     bottom: padding20,
+//                   ),
+//                   itemCount: filteredCheckpoints.length,
+//                   separatorBuilder: (_, __) => SizedBox(height: spacing4),
+//                   itemBuilder: (context, index) {
+//                     final checkpoint = filteredCheckpoints[index];
+//                     final agency = checkpoint['agency'] as Destination;
+//                     final label = checkpoint['label'] as String;
+//
+//                     return _buildCheckpointItem(
+//                       context: context,
+//                       agency: agency,
+//                       label: label,
+//                       onTap: () {
+//                         Navigator.pop(context);
+//                         Navigator.push(
+//                           context,
+//                           MaterialPageRoute(
+//                             builder: (context) => PilihKursiScreen(
+//                               route: route,
+//                               selectedDate: widget.selectedDate,
+//                               departureAgencyId: route.checkpoints.start.agencyId,
+//                               destinationAgencyId: agency.agencyId,
+//                               timeClassificationId: widget.timeClassificationId,
+//                             ),
+//                           ),
+//                         );
+//                       },
+//                     );
+//                   },
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       );
+//     },
+//   );
+// }
 
-        // Extract all checkpoints from the route
-        final List<Map<String, dynamic>> allCheckpoints = [
-          {
-            "agency": route.checkpoints.start,
-            "label": "Keberangkatan",
-          },
-          {
-            "agency": route.checkpoints.destination,
-            "label": "Tujuan",
-          },
-          {
-            "agency": route.checkpoints.end,
-            "label": "Akhir",
-          },
-        ];
-
-        List<Map<String, dynamic>> getFilteredCheckpoints() {
-          if (searchQuery.isEmpty) {
-            return allCheckpoints;
-          }
-          return allCheckpoints.where((checkpoint) {
-            final agency = checkpoint['agency'] as Destination;
-            final agencyName = agency.agencyName.toLowerCase();
-            final cityName = agency.cityName.toLowerCase();
-            final query = searchQuery.toLowerCase();
-            return agencyName.contains(query) || cityName.contains(query);
-          }).toList();
-        }
-
-        final filteredCheckpoints = getFilteredCheckpoints();
-
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Container(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.7,
-            ),
-            decoration: BoxDecoration(
-              color: black00,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(borderRadius500),
-                topRight: Radius.circular(borderRadius500),
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Handle bar
-                Container(
-                  margin: EdgeInsets.only(top: padding12),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: black700_70.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(borderRadius100),
-                  ),
-                ),
-                SizedBox(height: spacing5),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding16),
-                  child: Text(
-                    "Detail Rute - ${route.fleetClass}",
-                    style: mdMedium,
-                  ),
-                ),
-                SizedBox(height: spacing5),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding16),
-                  child: TextField(
-                    onChanged: (value) {
-                      setState(() {
-                        searchQuery = value;
-                      });
-                    },
-                    style: smRegular,
-                    decoration: InputDecoration(
-                      hintText: "Cari Lokasi",
-                      hintStyle: smRegular.copyWith(color: black700_70),
-                      prefixIcon: Icon(Icons.search, size: iconM, color: black700_70),
-                      filled: true,
-                      fillColor: black250,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(borderRadius300),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: padding16,
-                        vertical: padding12,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: spacing5),
-
-                Flexible(
-                  child: filteredCheckpoints.isEmpty
-                      ? Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(paddingXL),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.search_off,
-                            size: 48,
-                            color: black700_70,
-                          ),
-                          SizedBox(height: padding12),
-                          Text(
-                            'Tidak ada hasil untuk "$searchQuery"',
-                            style: smMedium.copyWith(color: black700_70),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                      : ListView.separated(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.only(
-                      left: padding16,
-                      right: padding16,
-                      bottom: padding20,
-                    ),
-                    itemCount: filteredCheckpoints.length,
-                    separatorBuilder: (_, __) => SizedBox(height: spacing4),
-                    itemBuilder: (context, index) {
-                      final checkpoint = filteredCheckpoints[index];
-                      final agency = checkpoint['agency'] as Destination;
-                      final label = checkpoint['label'] as String;
-
-                      return _buildCheckpointItem(
-                        context: context,
-                        agency: agency,
-                        label: label,
-                        onTap: () {
-                          // Navigate to seat selection
-                          Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PilihKursiScreen(
-                                // route: route,
-                                // selectedDate: widget.selectedDate,
-                                // departureAgencyId: route.checkpoints.start.agencyId,
-                                // destinationAgencyId: agency.agencyId,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildCheckpointItem({
-    required BuildContext context,
-    required Destination agency,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(padding12),
-      child: Container(
-        padding: EdgeInsets.all(padding16),
-        decoration: BoxDecoration(
-          color: black250,
-          borderRadius: BorderRadius.circular(borderRadius300),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.location_on_outlined,
-              color: navy400,
-              size: iconL,
-            ),
-            SizedBox(width: spacing4),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: space200,
-                          vertical: space100,
-                        ),
-                        decoration: BoxDecoration(
-                          color: navy600.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(borderRadius200),
-                        ),
-                        child: Text(
-                          label,
-                          style: xxsRegular.copyWith(color: navy600),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: space150),
-                  Text(
-                    agency.agencyName,
-                    style: smSemiBold.copyWith(color: black950),
-                  ),
-                  SizedBox(height: space100),
-                  Text(
-                    agency.cityName,
-                    style: xsRegular.copyWith(color: black700_70),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: iconS,
-              color: black700_70,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+// Widget _buildCheckpointItem({
+//   required BuildContext context,
+//   required Destination agency,
+//   required String label,
+//   required VoidCallback onTap,
+// }) {
+//   return InkWell(
+//     onTap: onTap,
+//     borderRadius: BorderRadius.circular(padding12),
+//     child: Container(
+//       padding: EdgeInsets.all(padding16),
+//       decoration: BoxDecoration(
+//         color: black250,
+//         borderRadius: BorderRadius.circular(borderRadius300),
+//       ),
+//       child: Row(
+//         children: [
+//           Icon(
+//             Icons.location_on_outlined,
+//             color: navy400,
+//             size: iconL,
+//           ),
+//           SizedBox(width: spacing4),
+//           Expanded(
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Row(
+//                   children: [
+//                     Container(
+//                       padding: EdgeInsets.symmetric(
+//                         horizontal: space200,
+//                         vertical: space100,
+//                       ),
+//                       decoration: BoxDecoration(
+//                         color: navy600.withOpacity(0.1),
+//                         borderRadius: BorderRadius.circular(borderRadius200),
+//                       ),
+//                       child: Text(
+//                         label,
+//                         style: xxsRegular.copyWith(color: navy600),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 SizedBox(height: space150),
+//                 Text(
+//                   agency.agencyName,
+//                   style: smSemiBold.copyWith(color: black950),
+//                 ),
+//                 SizedBox(height: space100),
+//                 Text(
+//                   agency.cityName,
+//                   style: xsRegular.copyWith(color: black700_70),
+//                 ),
+//               ],
+//             ),
+//           ),
+//           Icon(
+//             Icons.arrow_forward_ios,
+//             size: iconS,
+//             color: black700_70,
+//           ),
+//         ],
+//       ),
+//     ),
+//   );
+// }
 }

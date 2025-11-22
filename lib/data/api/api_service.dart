@@ -294,7 +294,7 @@ abstract class ApiService {
   });
 
   /// Get Seat Layout
-  @GET('/customer/layouts')
+  @GET('/layouts')
   Future<HttpResponse<SeatLayoutModel>> getSeatLayout({
     @Query('fleet_route_id') required int fleetRouteId,
     @Query('time_classification_id') required int timeClassificationId,

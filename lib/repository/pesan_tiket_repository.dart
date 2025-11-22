@@ -220,5 +220,4 @@ class TicketRepository extends BaseRepository {
     }
   }
 
-
 }

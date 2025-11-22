@@ -188,121 +188,139 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
       backgroundColor: Colors.transparent,
       builder: (modalContext) {
         List<departure.City> filteredItems = state.departureCities;
+        final FocusNode searchFocusNode = FocusNode();
+        final ScrollController scrollController = ScrollController();
+
+        searchFocusNode.addListener(() {
+          if (searchFocusNode.hasFocus) {
+            Future.delayed(Duration(milliseconds: 300), () {
+              if (scrollController.hasClients) {
+                scrollController.animateTo(
+                  0,
+                  duration: Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+              }
+            });
+          }
+        });
 
         return StatefulBuilder(
-          builder: (context, setModalState) => Container(
-            height: MediaQuery.of(context).size.height * 0.75,
-            decoration: BoxDecoration(
-              color: black00,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(borderRadius500),
+          builder: (context, setModalState) => GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.75,
+              decoration: BoxDecoration(
+                color: black00,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(borderRadius500),
+                ),
               ),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: padding12),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: black700_70.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(borderRadius500),
-                  ),
-                ),
-                SizedBox(height: spacing4),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding20),
-                  child: Text("Pilih Kota Keberangkatan", style: lgSemiBold),
-                ),
-                SizedBox(height: spacing5),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding20),
-                  child: Container(
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: padding12),
+                    width: 40,
+                    height: 4,
                     decoration: BoxDecoration(
-                      color: black00,
-                      borderRadius: BorderRadius.circular(borderRadius350),
+                      color: black700_70.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(borderRadius500),
                     ),
-                    child: TextField(
-                      onChanged: (query) {
-                        setModalState(() {
-                          filteredItems = query.isEmpty
-                              ? state.departureCities
-                              : state.departureCities
-                              .where((item) => item.name
-                              .toLowerCase()
-                              .contains(query.toLowerCase()))
-                              .toList();
-                        });
-                      },
-                      style: smRegular,
-                      decoration: InputDecoration(
-                        hintText: 'Cari Kota',
-                        hintStyle: smRegular.copyWith(color: black700_70),
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.all(padding12),
-                          child: SvgPicture.asset(
-                            "assets/icons/ic_search.svg",
-                            width: 16,
-                            height: 16,
-                            colorFilter: ColorFilter.mode(black700_70, BlendMode.srcIn),
+                  ),
+                  SizedBox(height: spacing4),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding20),
+                    child: Text("Pilih Kota Keberangkatan", style: lgSemiBold),
+                  ),
+                  SizedBox(height: spacing5),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding20),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: black00,
+                        borderRadius: BorderRadius.circular(borderRadius350),
+                      ),
+                      child: TextField(
+                        focusNode: searchFocusNode,
+                        onChanged: (query) {
+                          setModalState(() {
+                            filteredItems = query.isEmpty
+                                ? state.departureCities
+                                : state.departureCities
+                                .where((item) => item.name
+                                .toLowerCase()
+                                .contains(query.toLowerCase()))
+                                .toList();
+                          });
+                        },
+                        style: smRegular,
+                        decoration: InputDecoration(
+                          hintText: 'Cari Kota',
+                          hintStyle: smRegular.copyWith(color: black700_70),
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(padding12),
+                            child: SvgPicture.asset(
+                              "assets/icons/ic_search.svg",
+                              width: 16,
+                              height: 16,
+                              colorFilter: ColorFilter.mode(black700_70, BlendMode.srcIn),
+                            ),
                           ),
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: paddingM,
-                          vertical: padding12,
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: paddingM,
+                            vertical: padding12,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: spacing4),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: filteredItems.length,
-                    padding: EdgeInsets.symmetric(horizontal: padding20),
-                    itemBuilder: (context, index) {
-                      final item = filteredItems[index];
-                      final bool isSelected =
-                          item.id == state.selectedDepartureCity?.id;
+                  SizedBox(height: spacing4),
+                  Expanded(
+                    child: ListView.builder(
+                      controller: scrollController,
+                      itemCount: filteredItems.length,
+                      padding: EdgeInsets.symmetric(horizontal: padding20),
+                      itemBuilder: (context, index) {
+                        final item = filteredItems[index];
+                        final bool isSelected =
+                            item.id == state.selectedDepartureCity?.id;
 
-                      return InkWell(
-                        onTap: () async {
-                          Navigator.pop(modalContext);
-                          await cubit.selectDepartureCity(item);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: paddingM,
-                            vertical: padding16,
-                          ),
-                          decoration: BoxDecoration(
-                            // INI FIX SESUAI DESAIN : full NAVY kalau selected
-                            color: isSelected ? navy600 : Colors.transparent,
-                            borderRadius:
-                            BorderRadius.circular(borderRadius300),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  item.name,
-                                  style: smMedium.copyWith(
-                                    // TEXT JADI PUTIH kalau selected
-                                    color:
-                                    isSelected ? black00 : black950,
+                        return InkWell(
+                          onTap: () async {
+                            Navigator.pop(modalContext);
+                            await cubit.selectDepartureCity(item);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: paddingM,
+                              vertical: padding16,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected ? navy600 : Colors.transparent,
+                              borderRadius:
+                              BorderRadius.circular(borderRadius300),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    item.name,
+                                    style: smMedium.copyWith(
+                                      color:
+                                      isSelected ? black00 : black950,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -322,136 +340,153 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
       backgroundColor: Colors.transparent,
       builder: (modalContext) {
         List<byId.Agency> filteredItems = state.destinationAgencies;
+        final FocusNode searchFocusNode = FocusNode();
+        final ScrollController scrollController = ScrollController();
+
+        searchFocusNode.addListener(() {
+          if (searchFocusNode.hasFocus) {
+            Future.delayed(Duration(milliseconds: 300), () {
+              if (scrollController.hasClients) {
+                scrollController.animateTo(
+                  0,
+                  duration: Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+              }
+            });
+          }
+        });
 
         return StatefulBuilder(
-          builder: (context, setModalState) => Container(
-            height: MediaQuery.of(context).size.height * 0.75,
-            decoration: BoxDecoration(
-              color: black00,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(borderRadius500),
+          builder: (context, setModalState) => GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.75,
+              decoration: BoxDecoration(
+                color: black00,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(borderRadius500),
+                ),
               ),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: padding12),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: black700_70.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(borderRadius500),
-                  ),
-                ),
-                SizedBox(height: spacing4),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding20),
-                  child: Text("Pilih Tujuan", style: lgSemiBold),
-                ),
-                SizedBox(height: spacing5),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding20),
-                  child: Container(
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: padding12),
+                    width: 40,
+                    height: 4,
                     decoration: BoxDecoration(
-                      color: black00,
-                      borderRadius: BorderRadius.circular(borderRadius350),
+                      color: black700_70.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(borderRadius500),
                     ),
-                    child: TextField(
-                      onChanged: (query) {
-                        setModalState(() {
-                          filteredItems = query.isEmpty
-                              ? state.destinationAgencies
-                              : state.destinationAgencies
-                              .where((item) {
-                            // ✅ Search di agency name DAN city name
-                            final searchText = '${item.agencyName} - ${item.cityName}'.toLowerCase();
-                            return searchText.contains(query.toLowerCase());
-                          })
-                              .toList();
-                        });
-                      },
-                      style: smRegular,
-                      decoration: InputDecoration(
-                        hintText: 'Cari Tujuan',
-                        hintStyle: smRegular.copyWith(color: black700_70),
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.all(padding12),
-                          child: SvgPicture.asset(
-                            "assets/icons/ic_search.svg",
-                            width: 16,
-                            height: 16,
-                            colorFilter: ColorFilter.mode(black700_70, BlendMode.srcIn),
+                  ),
+                  SizedBox(height: spacing4),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding20),
+                    child: Text("Pilih Tujuan", style: lgSemiBold),
+                  ),
+                  SizedBox(height: spacing5),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding20),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: black00,
+                        borderRadius: BorderRadius.circular(borderRadius350),
+                      ),
+                      child: TextField(
+                        focusNode: searchFocusNode,
+                        onChanged: (query) {
+                          setModalState(() {
+                            filteredItems = query.isEmpty
+                                ? state.destinationAgencies
+                                : state.destinationAgencies
+                                .where((item) {
+                              final searchText = '${item.agencyName} - ${item.cityName}'.toLowerCase();
+                              return searchText.contains(query.toLowerCase());
+                            })
+                                .toList();
+                          });
+                        },
+                        style: smRegular,
+                        decoration: InputDecoration(
+                          hintText: 'Cari Tujuan',
+                          hintStyle: smRegular.copyWith(color: black700_70),
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(padding12),
+                            child: SvgPicture.asset(
+                              "assets/icons/ic_search.svg",
+                              width: 16,
+                              height: 16,
+                              colorFilter: ColorFilter.mode(black700_70, BlendMode.srcIn),
+                            ),
                           ),
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: paddingM,
-                          vertical: padding12,
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: paddingM,
+                            vertical: padding12,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: spacing4),
+                  SizedBox(height: spacing4),
+                  Expanded(
+                    child: filteredItems.isEmpty
+                        ? Center(
+                      child: Text(
+                        'Tidak ada tujuan tersedia',
+                        style: smRegular.copyWith(color: black700_70),
+                      ),
+                    )
+                        : ListView.builder(
+                      controller: scrollController,
+                      itemCount: filteredItems.length,
+                      padding: EdgeInsets.symmetric(horizontal: padding20),
+                      itemBuilder: (context, index) {
+                        final item = filteredItems[index];
+                        final bool isSelected =
+                            item.id == state.selectedDestinationAgency?.id;
 
-                Expanded(
-                  child: filteredItems.isEmpty
-                      ? Center(
-                    child: Text(
-                      'Tidak ada tujuan tersedia',
-                      style: smRegular.copyWith(color: black700_70),
-                    ),
-                  )
-                      : ListView.builder(
-                    itemCount: filteredItems.length,
-                    padding: EdgeInsets.symmetric(horizontal: padding20),
-                    itemBuilder: (context, index) {
-                      final item = filteredItems[index];
-                      final bool isSelected =
-                          item.id == state.selectedDestinationAgency?.id;
-
-                      return InkWell(
-                        onTap: () {
-                          Navigator.pop(modalContext);
-                          cubit.selectDestinationAgency(item);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: paddingM,
-                            vertical: padding16,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isSelected ? navy600 : Colors.transparent,
-                            borderRadius:
-                            BorderRadius.circular(borderRadius300),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  '${item.agencyName} - ${item.cityName}', // ✅ Format: "Agency - City"
-                                  style: smMedium.copyWith(
-                                    color:
-                                    isSelected ? black00 : black950,
+                        return InkWell(
+                          onTap: () {
+                            Navigator.pop(modalContext);
+                            cubit.selectDestinationAgency(item);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: paddingM,
+                              vertical: padding16,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected ? navy600 : Colors.transparent,
+                              borderRadius:
+                              BorderRadius.circular(borderRadius300),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '${item.agencyName} - ${item.cityName}',
+                                    style: smMedium.copyWith(
+                                      color:
+                                      isSelected ? black00 : black950,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
       },
     );
   }
-
 
   void _showAgencyBottomSheet(BuildContext context) {
     final cubit = context.read<PesanTiketCubit>();
@@ -465,122 +500,181 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
       backgroundColor: Colors.transparent,
       builder: (modalContext) {
         List<AgencyCity> filteredItems = state.agencies;
+        final FocusNode searchFocusNode = FocusNode();
+        final ScrollController scrollController = ScrollController();
+
+        searchFocusNode.addListener(() {
+          if (searchFocusNode.hasFocus) {
+            Future.delayed(Duration(milliseconds: 300), () {
+              if (scrollController.hasClients) {
+                scrollController.animateTo(
+                  0,
+                  duration: Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+              }
+            });
+          }
+        });
 
         return StatefulBuilder(
-          builder: (context, setModalState) => Container(
-            height: MediaQuery.of(context).size.height * 0.75,
-            decoration: BoxDecoration(
-              color: black00,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(borderRadius500),
+          builder: (context, setModalState) => GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.75,
+              decoration: BoxDecoration(
+                color: black00,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(borderRadius500),
+                ),
               ),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: padding12),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: black700_70.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(borderRadius500),
-                  ),
-                ),
-
-                SizedBox(height: spacing4),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding20),
-                  child: Text("Pilih Agen Keberangkatan", style: lgSemiBold),
-                ),
-
-                SizedBox(height: spacing5),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding20),
-                  child: Container(
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: padding12),
+                    width: 40,
+                    height: 4,
                     decoration: BoxDecoration(
-                      color: black00,
-                      borderRadius: BorderRadius.circular(borderRadius350),
+                      color: black700_70.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(borderRadius500),
                     ),
-                    child: TextField(
-                      onChanged: (query) {
-                        setModalState(() {
-                          filteredItems = query.isEmpty
-                              ? state.agencies
-                              : state.agencies
-                              .where((item) => item.name
-                              .toLowerCase()
-                              .contains(query.toLowerCase()))
-                              .toList();
-                        });
-                      },
-                      style: smRegular,
-                      decoration: InputDecoration(
-                        hintText: 'Cari Agen',
-                        hintStyle: smRegular.copyWith(color: black700_70),
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.all(padding12),
-                          child: SvgPicture.asset(
-                            "assets/icons/ic_search.svg",
-                            width: 16,
-                            height: 16,
-                            colorFilter: ColorFilter.mode(black700_70, BlendMode.srcIn),
+                  ),
+                  SizedBox(height: spacing4),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding20),
+                    child: Text("Pilih Agen Keberangkatan", style: lgSemiBold),
+                  ),
+                  SizedBox(height: spacing5),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding20),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: black00,
+                        borderRadius: BorderRadius.circular(borderRadius350),
+                      ),
+                      child: TextField(
+                        focusNode: searchFocusNode,
+                        onChanged: (query) {
+                          setModalState(() {
+                            filteredItems = query.isEmpty
+                                ? state.agencies
+                                : state.agencies
+                                .where((item) => item.name
+                                .toLowerCase()
+                                .contains(query.toLowerCase()))
+                                .toList();
+                          });
+                        },
+                        style: smRegular,
+                        decoration: InputDecoration(
+                          hintText: 'Cari Agen',
+                          hintStyle: smRegular.copyWith(color: black700_70),
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(padding12),
+                            child: SvgPicture.asset(
+                              "assets/icons/ic_search.svg",
+                              width: 16,
+                              height: 16,
+                              colorFilter: ColorFilter.mode(black700_70, BlendMode.srcIn),
+                            ),
                           ),
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: paddingM,
-                          vertical: padding12,
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: paddingM,
+                            vertical: padding12,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: spacing4),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: filteredItems.length,
-                    padding: EdgeInsets.symmetric(horizontal: padding20),
-                    itemBuilder: (context, index) {
-                      final item = filteredItems[index];
-                      final bool isSelected =
-                          item.id == state.selectedAgency?.id;
+                  SizedBox(height: spacing4),
+                  Expanded(
+                    child: BlocBuilder<PesanTiketCubit, PesanTiketState>(
+                      builder: (context, currentState) {
+                        if (currentState is! PesanTiketLoaded) {
+                          return Center(
+                            child: CircularProgressIndicator(color: primaryColor),
+                          );
+                        }
 
-                      return InkWell(
-                        onTap: () {
-                          Navigator.pop(modalContext);
-                          cubit.selectAgency(item);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: paddingM,
-                            vertical: padding16,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isSelected ? navy600 : Colors.transparent,
-                            borderRadius:
-                            BorderRadius.circular(borderRadius300),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  item.name,
-                                  style: smMedium.copyWith(
-                                    color:
-                                    isSelected ? black00 : black950,
-                                  ),
+                        final isLoadingAgencies = currentState.selectedDepartureCity != null &&
+                            currentState.agencies.isEmpty;
+
+                        if (isLoadingAgencies) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircularProgressIndicator(color: primaryColor),
+                                SizedBox(height: spacing4),
+                                Text(
+                                  'Memuat data agen...',
+                                  style: smRegular.copyWith(color: black700_70),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+
+                        if (filteredItems.length != currentState.agencies.length) {
+                          filteredItems = currentState.agencies;
+                        }
+
+                        if (filteredItems.isEmpty) {
+                          return Center(
+                            child: Text(
+                              'Tidak ada agen tersedia',
+                              style: smRegular.copyWith(color: black700_70),
+                            ),
+                          );
+                        }
+
+                        return ListView.builder(
+                          controller: scrollController,
+                          itemCount: filteredItems.length,
+                          padding: EdgeInsets.symmetric(horizontal: padding20),
+                          itemBuilder: (context, index) {
+                            final item = filteredItems[index];
+                            final bool isSelected =
+                                item.id == currentState.selectedAgency?.id;
+
+                            return InkWell(
+                              onTap: () {
+                                Navigator.pop(modalContext);
+                                cubit.selectAgency(item);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: paddingM,
+                                  vertical: padding16,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isSelected ? navy600 : Colors.transparent,
+                                  borderRadius:
+                                  BorderRadius.circular(borderRadius300),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        item.name,
+                                        style: smMedium.copyWith(
+                                          color:
+                                          isSelected ? black00 : black950,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -594,7 +688,6 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
 
     if (state is! PesanTiketLoaded) return;
 
-    // ✅ Validasi: pastikan semua field sebelumnya terisi
     if (state.selectedAgency == null ||
         state.selectedDestinationAgency == null ||
         state.selectedDate == null ||
@@ -608,7 +701,6 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
       return;
     }
 
-    // ✅ Show loading indicator
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -617,13 +709,10 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
       ),
     );
 
-    // ✅ Load available fleet classes
     await cubit.loadAvailableFleetClasses();
 
-    // ✅ Close loading
     Navigator.pop(context);
 
-    // ✅ Get updated state
     final updatedState = cubit.state;
     if (updatedState is! PesanTiketLoaded) return;
 
@@ -633,150 +722,168 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
       backgroundColor: Colors.transparent,
       builder: (modalContext) {
         List<available.FleetClass> filteredItems = updatedState.availableFleetClasses;
+        final FocusNode searchFocusNode = FocusNode();
+        final ScrollController scrollController = ScrollController();
+
+        searchFocusNode.addListener(() {
+          if (searchFocusNode.hasFocus) {
+            Future.delayed(Duration(milliseconds: 300), () {
+              if (scrollController.hasClients) {
+                scrollController.animateTo(
+                  0,
+                  duration: Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+              }
+            });
+          }
+        });
 
         return StatefulBuilder(
-          builder: (context, setModalState) => Container(
-            height: MediaQuery.of(context).size.height * 0.65,
-            decoration: BoxDecoration(
-              color: black00,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(borderRadius500),
+          builder: (context, setModalState) => GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.65,
+              decoration: BoxDecoration(
+                color: black00,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(borderRadius500),
+                ),
               ),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: padding12),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: black700_70.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(borderRadius500),
-                  ),
-                ),
-                SizedBox(height: spacing4),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding20),
-                  child: Text("Pilih Kelas Armada", style: lgSemiBold),
-                ),
-                SizedBox(height: spacing5),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding20),
-                  child: Container(
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: padding12),
+                    width: 40,
+                    height: 4,
                     decoration: BoxDecoration(
-                      color: black00,
-                      borderRadius: BorderRadius.circular(borderRadius350),
+                      color: black700_70.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(borderRadius500),
                     ),
-                    child: TextField(
-                      onChanged: (query) {
-                        setModalState(() {
-                          filteredItems = query.isEmpty
-                              ? updatedState.availableFleetClasses
-                              : updatedState.availableFleetClasses
-                              .where((item) => item.name
-                              .toLowerCase()
-                              .contains(query.toLowerCase()))
-                              .toList();
-                        });
-                      },
-                      style: smRegular,
-                      decoration: InputDecoration(
-                        hintText: 'Cari Kelas',
-                        hintStyle: smRegular.copyWith(color: black700_70),
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.all(padding12),
-                          child: SvgPicture.asset(
-                            "assets/icons/ic_search.svg",
-                            width: 16,
-                            height: 16,
-                            colorFilter: ColorFilter.mode(
-                              black700_70,
-                              BlendMode.srcIn,
+                  ),
+                  SizedBox(height: spacing4),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding20),
+                    child: Text("Pilih Kelas Armada", style: lgSemiBold),
+                  ),
+                  SizedBox(height: spacing5),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding20),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: black00,
+                        borderRadius: BorderRadius.circular(borderRadius350),
+                      ),
+                      child: TextField(
+                        focusNode: searchFocusNode,
+                        onChanged: (query) {
+                          setModalState(() {
+                            filteredItems = query.isEmpty
+                                ? updatedState.availableFleetClasses
+                                : updatedState.availableFleetClasses
+                                .where((item) => item.name
+                                .toLowerCase()
+                                .contains(query.toLowerCase()))
+                                .toList();
+                          });
+                        },
+                        style: smRegular,
+                        decoration: InputDecoration(
+                          hintText: 'Cari Kelas',
+                          hintStyle: smRegular.copyWith(color: black700_70),
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(padding12),
+                            child: SvgPicture.asset(
+                              "assets/icons/ic_search.svg",
+                              width: 16,
+                              height: 16,
+                              colorFilter: ColorFilter.mode(
+                                black700_70,
+                                BlendMode.srcIn,
+                              ),
                             ),
                           ),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: paddingM,
-                          vertical: padding12,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: paddingM,
+                            vertical: padding12,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                  SizedBox(height: spacing4),
+                  Expanded(
+                    child: filteredItems.isEmpty
+                        ? Center(
+                      child: Text(
+                        updatedState.availableFleetClasses.isEmpty
+                            ? 'Tidak ada armada tersedia untuk jadwal ini'
+                            : 'Tidak ada hasil',
+                        style: smRegular.copyWith(color: black700_70),
+                      ),
+                    )
+                        : ListView.builder(
+                      controller: scrollController,
+                      itemCount: filteredItems.length,
+                      padding: EdgeInsets.symmetric(horizontal: padding20),
+                      itemBuilder: (context, index) {
+                        final item = filteredItems[index];
+                        final isSelected = item.id == updatedState.selectedClass?.id;
 
-                SizedBox(height: spacing4),
-
-                Expanded(
-                  child: filteredItems.isEmpty
-                      ? Center(
-                    child: Text(
-                      updatedState.availableFleetClasses.isEmpty
-                          ? 'Tidak ada armada tersedia untuk jadwal ini'
-                          : 'Tidak ada hasil',
-                      style: smRegular.copyWith(color: black700_70),
-                    ),
-                  )
-                      : ListView.builder(
-                    itemCount: filteredItems.length,
-                    padding: EdgeInsets.symmetric(horizontal: padding20),
-                    itemBuilder: (context, index) {
-                      final item = filteredItems[index];
-                      final isSelected = item.id == updatedState.selectedClass?.id;
-
-                      return InkWell(
-                        onTap: () {
-                          Navigator.pop(modalContext);
-                          cubit.selectClass(item);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: paddingM,
-                            vertical: padding16,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? navy600
-                                : Colors.transparent,
-                            borderRadius:
-                            BorderRadius.circular(borderRadius300),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.name,
-                                      style: smMedium.copyWith(
-                                        color: isSelected
-                                            ? black00
-                                            : black950,
+                        return InkWell(
+                          onTap: () {
+                            Navigator.pop(modalContext);
+                            cubit.selectClass(item);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: paddingM,
+                              vertical: padding16,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? navy600
+                                  : Colors.transparent,
+                              borderRadius:
+                              BorderRadius.circular(borderRadius300),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.name,
+                                        style: smMedium.copyWith(
+                                          color: isSelected
+                                              ? black00
+                                              : black950,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(height: space100),
-                                    Text(
-                                      '${item.seatCapacity} kursi',
-                                      style: xsRegular.copyWith(
-                                        color: isSelected
-                                            ? black00.withOpacity(0.8)
-                                            : black700_70,
+                                      SizedBox(height: space100),
+                                      Text(
+                                        '${item.seatCapacity} kursi',
+                                        style: xsRegular.copyWith(
+                                          color: isSelected
+                                              ? black00.withOpacity(0.8)
+                                              : black700_70,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
-                ),
-                SizedBox(height: spacing5),
-              ],
+                  SizedBox(height: spacing5),
+                ],
+              ),
             ),
           ),
         );
@@ -842,7 +949,7 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
                           label: "Tujuan",
                           iconPath: "assets/icons/ic_location.svg",
                           text: state.selectedDestinationAgency != null
-                              ? '${state.selectedDestinationAgency!.agencyName} - ${state.selectedDestinationAgency!.cityName}' // ✅ Format: "Agency - City"
+                              ? '${state.selectedDestinationAgency!.agencyName} - ${state.selectedDestinationAgency!.cityName}'
                               : "Pilih Tujuan",
                           onTap: () => _showDestinationCityBottomSheet(context),
                         ),
@@ -912,6 +1019,7 @@ class _PesanTiketPageState extends State<PesanTiketPage> {
                                 departureCity: state.selectedDepartureCity!.name,
                                 destinationAgency:
                                 '${state.selectedDestinationAgency!.agencyName} - ${state.selectedDestinationAgency!.cityName}',
+                                timeClassificationId: state.selectedTime!.id,
                               ),
                             ),
                           );
