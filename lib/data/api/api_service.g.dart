@@ -1171,7 +1171,7 @@ class _ApiService implements ApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/customer/layouts',
+            '/layouts',
             queryParameters: queryParameters,
             data: _data,
           )

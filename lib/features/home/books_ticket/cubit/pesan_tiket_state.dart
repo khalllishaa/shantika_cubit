@@ -5,6 +5,8 @@ import 'package:shantika_cubit/model/agency_by_id_model.dart' as byId;
 import 'package:shantika_cubit/model/time_model.dart';
 import 'package:shantika_cubit/model/fleet_available_model.dart' as available;
 
+import '../../../../model/seat_layout_model.dart';
+
 abstract class PesanTiketState {}
 
 class PesanTiketInitial extends PesanTiketState {}
@@ -16,14 +18,14 @@ class PesanTiketLoaded extends PesanTiketState {
   final List<AgencyCity> agencies;
   final List<byId.Agency> destinationAgencies;
   final List<Time> timeSlots;
-  final List<FleetClass> fleetClasses; // Master data (untuk fallback)
-  final List<available.FleetClass> availableFleetClasses; // ✅ Armada yang tersedia
+  final List<FleetClass> fleetClasses;
+  final List<available.FleetClass> availableFleetClasses;
   final departure.City? selectedDepartureCity;
   final AgencyCity? selectedAgency;
   final byId.Agency? selectedDestinationAgency;
   final DateTime? selectedDate;
   final Time? selectedTime;
-  final available.FleetClass? selectedClass; // ✅ Ubah tipe ke available.FleetClass
+  final available.FleetClass? selectedClass;
 
   PesanTiketLoaded({
     required this.departureCities,
@@ -31,7 +33,7 @@ class PesanTiketLoaded extends PesanTiketState {
     required this.destinationAgencies,
     required this.timeSlots,
     required this.fleetClasses,
-    this.availableFleetClasses = const [], // ✅ Default kosong
+    this.availableFleetClasses = const [],
     this.selectedDepartureCity,
     this.selectedAgency,
     this.selectedDestinationAgency,
@@ -54,7 +56,7 @@ class PesanTiketLoaded extends PesanTiketState {
     Time? selectedTime,
     available.FleetClass? selectedClass,
     bool clearAgency = false,
-    bool clearAvailableFleets = false, // ✅ Flag untuk reset available fleets
+    bool clearAvailableFleets = false,
   }) {
     return PesanTiketLoaded(
       departureCities: departureCities ?? this.departureCities,
@@ -79,6 +81,24 @@ class PesanTiketLoaded extends PesanTiketState {
           selectedDate != null &&
           selectedTime != null &&
           selectedClass != null;
+}
+
+class SeatLayoutLoading extends PesanTiketState {}
+
+class SeatLayoutLoaded extends PesanTiketState {
+  final SeatLayoutData layoutBawah;
+  final SeatLayoutData layoutAtas;
+
+  SeatLayoutLoaded({
+    required this.layoutBawah,
+    required this.layoutAtas,
+  });
+}
+
+class SeatLayoutError extends PesanTiketState {
+  final String message;
+
+  SeatLayoutError(this.message);
 }
 
 class PesanTiketError extends PesanTiketState {
